@@ -1,0 +1,15 @@
+:root {
+  --app-bg: #f2fbf7;
+  --app-accent: #d7f0e5;
+  --app-primary: #4f8f78;
+  --app-text: #24352f;
+  --app-muted: #718078;
+  --app-line: #dbe5e0;
+  --app-soft: #f0f6f3;
+  /* 그림자/시트 뒤 배경은 색조 없이 유지하여 어느 팔레트에서도 민트가 남지 않게 합니다. */
+  --app-shadow: #00000022;
+  --app-backdrop: #00000055;
+}
+:root[data-theme='lavender'] { --app-bg: #f8f5ff; --app-accent: #e8e1fa; --app-primary: #7567a8; --app-text: #302b3d; --app-muted: #7b738a; --app-line: #e3ddef; --app-soft: #f5f2fa; }
+:root[data-theme='peach'] { --app-bg: #fff7f1; --app-accent: #f7dfd1; --app-primary: #a96545; --app-text: #3a2e28; --app-muted: #8b786d; --app-line: #eee0d7; --app-soft: #fdf4ef; }
+:root[data-theme='sky'] { --app-bg: #f2f8fd; --app-accent: #d9eaf7; --app-primary: #507fa5; --app-text: #273440; --app-muted: #71808e; --app-line: #dce6ee; --app-soft: #eff5fa; }

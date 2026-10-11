@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>로그인 서비스 · 가계부 톡톡</title><style>
+*{box-sizing:border-box}body{margin:0;padding:24px 16px 40px;background:#f0f3f1;color:#20342b;font-family:Pretendard,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input{font:inherit}button{color:inherit}h2{margin:0 0 10px}.subtitle{color:#66766e;line-height:1.6}.archive-banner{max-width:1080px;margin:0 auto 20px;padding:12px 16px;background:white;border:1px solid #d7e7e0;border-radius:12px;font-size:13px;line-height:1.6}.archive-banner a{color:#356f5b}.approval{display:none!important}.dialog .warning-icon{margin-left:auto;margin-right:auto}
+</style></head><body><aside class="archive-banner"><a href="index.html">목업 모음</a> · 로그인 서비스<br>승인 화면 보존본 · 정적 시안이며 실제 저장/인증은 동작하지 않습니다. 최신 정책은 <a href="../guide/PRD.md">PRD</a>와 <a href="../guide/Design.md">Design</a>를 따릅니다.</aside>
+<style>
+  .intro{max-width:1040px;margin:0 auto 20px}.decision{margin-top:12px;padding:12px 14px;border:1px solid #cfe5dc;border-radius:14px;background:#f1faf6;color:#345b4d;font-size:13px;line-height:1.55}.decision b{color:#137357}
+  .flows{display:grid;grid-template-columns:repeat(3,minmax(300px,1fr));gap:18px;max-width:1080px;margin:0 auto}.flow-card{padding:13px;border:1px solid #dce5e1;border-radius:22px;background:#fff;box-shadow:0 9px 26px rgba(31,62,52,.07)}.flow-label{display:flex;align-items:center;gap:8px;margin:0 3px 10px;color:#344d44;font-size:12px;font-weight:900}.step{display:grid;place-items:center;width:24px;height:24px;border-radius:8px;background:#dff2ea;color:#176c52}.phone{position:relative;min-height:680px;overflow:hidden;border:1px solid #d6dfdb;border-radius:28px;background:#f5faf8;color:#24352f}.status{display:flex;justify-content:space-between;padding:10px 16px 4px;font-size:10px;font-weight:850}.body{padding:22px 20px 28px}.brand{margin-top:10px;color:#255f4c;font-size:27px;font-weight:950}.headline{margin:10px 0 5px;font-size:20px;line-height:1.35}.sub{margin:0 0 22px;color:#718078;font-size:11px;line-height:1.55}.social{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:48px;margin-bottom:9px;border-radius:13px;font-size:13px;font-weight:900;box-sizing:border-box}.social .logo{display:grid;place-items:center;width:20px;height:20px;font-size:17px}.naver{border:0;background:#03c75a;color:#fff}.apple{border:1px solid #242424;background:#111;color:#fff}.divider{display:flex;align-items:center;gap:10px;margin:17px 0;color:#8a9691;font-size:10px}.divider:before,.divider:after{content:"";flex:1;height:1px;background:#dce5e1}.field-label{display:block;margin:11px 2px 6px;color:#53675f;font-size:10px;font-weight:850}.input{display:flex;align-items:center;min-height:46px;padding:0 12px;border:1px solid #d4dfda;border-radius:12px;background:#fff;color:#84908b;font-size:12px;box-sizing:border-box}.primary{display:grid;place-items:center;width:100%;min-height:48px;margin-top:16px;border:0;border-radius:13px;background:#4f9a80;color:#fff;font-size:13px;font-weight:900}.links{display:flex;justify-content:space-between;margin-top:13px;color:#5c746b;font-size:10px}.links b{color:#267057}.back{display:flex;align-items:center;gap:8px;margin-bottom:24px;color:#52675f;font-size:12px;font-weight:850}.back span{font-size:20px}.terms{margin:13px 2px 0;color:#7b8782;font-size:9px;line-height:1.55}.provider{display:flex;align-items:center;gap:9px;margin:16px 0 22px;padding:10px 12px;border-radius:12px;background:#eef6f2;color:#3b5c50;font-size:11px;font-weight:850}.provider .naver-mini{display:grid;place-items:center;width:24px;height:24px;border-radius:7px;background:#03c75a;color:#fff;font-weight:950}.hint{display:flex;gap:7px;margin-top:9px;color:#6c7d76;font-size:10px;line-height:1.45}.check{display:grid;place-items:center;flex:none;width:16px;height:16px;border-radius:50%;background:#dff2ea;color:#176c52;font-size:9px;font-weight:950}.flow-note{margin:10px 4px 2px;color:#687871;font-size:10px;line-height:1.55}.approval{max-width:1040px;margin:18px auto 0;padding:15px;border:2px solid #4f9a80;border-radius:16px;background:#f1faf6;cursor:pointer}.approval.selected{box-shadow:0 0 0 4px rgba(79,154,128,.16)}.approval strong{display:block;color:#176c52}.approval p{margin:5px 0 0;color:#526b61;font-size:12px;line-height:1.55}.tech{max-width:1040px;margin:12px auto 0;padding:11px 14px;border-radius:13px;background:#283a33;color:#dceae5;font-size:11px;line-height:1.55}.tech b{color:#87dfbd}
+  @media(max-width:1000px){.flows{grid-template-columns:1fr;max-width:390px}.intro,.approval,.tech{max-width:390px}}
+</style>
+
+<div class="intro">
+  <h2>로그인·회원가입 흐름 검토</h2>
+  <p class="subtitle">네이버와 Apple은 첫 로그인 시 자동으로 가입되며, 서비스에서 사용할 닉네임만 한 번 확인합니다.</p>
+  <div class="decision"><b>추천 흐름</b> 소셜 로그인 우선 → 이메일 로그인 → 이메일 회원가입 링크 순서입니다. 모바일에서 가장 빠르게 진입하면서 이메일 방식도 유지합니다.</div>
+</div>
+
+<div class="flows">
+  <section class="flow-card">
+    <div class="flow-label"><span class="step">1</span>로그인</div>
+    <div class="phone"><div class="status"><span>9:41</span><span>● ● ●</span></div><div class="body">
+      <div class="brand">가계부 톡톡</div><h3 class="headline">가볍게 기록하고<br>함께 관리하세요</h3><p class="sub">사용할 계정으로 로그인해주세요.</p>
+      <button class="social naver"><span class="logo">N</span>네이버로 계속하기</button>
+      <button class="social apple"><span class="logo">●</span>Apple로 계속하기</button>
+      <div class="divider">또는 이메일로 로그인</div>
+      <label class="field-label">이메일</label><div class="input">name@example.com</div>
+      <label class="field-label">비밀번호</label><div class="input">비밀번호 입력</div>
+      <button class="primary">로그인</button>
+      <div class="links"><span>비밀번호를 잊으셨나요?</span><b>이메일 회원가입</b></div>
+    </div></div>
+    <p class="flow-note">소셜 버튼은 가입과 로그인을 통합합니다. 공급자 인증 취소 시 이 화면으로 돌아옵니다.</p>
+  </section>
+
+  <section class="flow-card">
+    <div class="flow-label"><span class="step">2</span>이메일 회원가입</div>
+    <div class="phone"><div class="status"><span>9:41</span><span>● ● ●</span></div><div class="body">
+      <div class="back"><span>‹</span> 로그인으로</div><h3 class="headline">이메일로 시작하기</h3><p class="sub">확인 가능한 이메일을 사용해주세요.</p>
+      <label class="field-label">닉네임</label><div class="input">가계부 톡톡에서 사용할 이름</div>
+      <label class="field-label">이메일</label><div class="input">name@example.com</div>
+      <label class="field-label">비밀번호</label><div class="input">8자 이상 입력</div>
+      <button class="primary">확인 메일 받기</button>
+      <p class="terms">메일의 확인 링크를 누르면 가입이 완료되고 개인 가계부가 자동으로 만들어집니다.</p>
+    </div></div>
+    <p class="flow-note">이메일 가입만 확인 메일 단계를 거칩니다.</p>
+  </section>
+
+  <section class="flow-card">
+    <div class="flow-label"><span class="step">3</span>소셜 최초 닉네임</div>
+    <div class="phone"><div class="status"><span>9:41</span><span>● ● ●</span></div><div class="body">
+      <div class="brand">가계부 톡톡</div><h3 class="headline">마지막 한 단계예요</h3><p class="sub">가계부에 표시할 닉네임을 확인해주세요.</p>
+      <div class="provider"><span class="naver-mini">N</span>네이버 계정으로 연결됨</div>
+      <label class="field-label">닉네임</label><div class="input">도엽</div>
+      <div class="hint"><span class="check">✓</span><span>설정의 내 정보 관리에서 언제든 변경할 수 있어요.</span></div>
+      <div class="hint"><span class="check">✓</span><span>완료하면 개인 가계부와 기본 카테고리가 자동 생성돼요.</span></div>
+      <button class="primary">가계부 톡톡 시작하기</button>
+    </div></div>
+    <p class="flow-note">Apple도 동일한 화면을 사용합니다. Apple 웹 OAuth에서 이름을 받지 못하는 경우를 안전하게 처리합니다.</p>
+  </section>
+</div>
+
+<div class="approval" data-choice="approve-auth-social-flow"><strong>이 로그인·회원가입 흐름으로 진행</strong><p>네이버·Apple 소셜 로그인, 이메일 로그인·가입, 최초 닉네임 확인까지 하나의 인증 흐름으로 확정합니다.</p></div>
+<div class="tech"><b>구현 메모</b> Apple·네이버의 실제 지원 방식과 프로젝트 설정은 인증 구현 단계에 확인합니다. 특정 네이버 Custom Provider를 사전 확정하지 않습니다.</div>
+
+</body></html>

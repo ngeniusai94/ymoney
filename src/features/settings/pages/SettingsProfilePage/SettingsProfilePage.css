@@ -1,0 +1,32 @@
+.profile-topbar { display: grid; grid-template-columns: 36px 1fr 36px; align-items: center; min-height: 49px; margin: -8px -10px 0; padding: 0 13px; border-bottom: 1px solid var(--app-line); background: #fff; }
+.profile-topbar h1 { margin: 0; text-align: center; font-size: 17px; }
+.profile-topbar a { color: var(--app-primary); font-size: 27px; text-decoration: none; }
+.profile-body { padding: 15px 3px; }
+.profile-body h2 { margin: 17px 4px 8px; color: var(--app-muted); font-size: 11px; font-weight: 700; }
+.profile-panel { overflow: hidden; border: 1px solid var(--app-line); border-radius: 15px; background: #fff; }
+.profile-form { padding: 14px; }
+.profile-form label { display: block; margin-bottom: 8px; font-size: 12px; }
+.profile-input { display: flex; align-items: center; gap: 5px; min-height: 48px; padding: 0 12px; border: 1px solid var(--app-line); border-radius: 13px; }
+.profile-input input { width: 100%; min-width: 0; height: 44px; border: 0; background: transparent; color: inherit; font: inherit; font-size: 13px; }
+.profile-input small { flex: 0 0 auto; color: var(--app-muted); font-size: 10px; }
+.profile-help { margin: 9px 3px; color: var(--app-muted); font-size: 11px; line-height: 1.6; }
+.profile-save { width: 100%; min-height: 46px; margin-top: 3px; border: 0; border-radius: 12px; background: var(--app-primary); color: #fff; font-size: 13px; font-weight: 800; cursor: pointer; }
+.profile-account { display: flex; flex-direction: column; gap: 5px; padding: 16px; font-size: 12px; overflow-wrap: anywhere; }
+.profile-account span { color: var(--app-muted); font-size: 10px; }
+.profile-logout { width: 100%; min-height: 56px; padding: 0 15px; border: 0; background: #fff; color: inherit; text-align: left; font-size: 12px; cursor: pointer; }
+.profile-delete-button { width: 100%; padding: 16px; border: 0; border-top: 1px solid var(--app-line); background: #fff; color: #b85f5f; text-align: left; font-size: 12px; cursor: pointer; }
+.profile-delete-dialog { box-sizing: border-box; width: min(340px, calc(100vw - 32px)); max-height: calc(100dvh - 40px); padding: 20px; border: 0; border-radius: 20px; color: var(--app-text); background: #fff; }
+.profile-delete-dialog::backdrop { background: var(--app-backdrop, rgb(0 0 0 / .35)); }
+.profile-delete-dialog h2 { margin: 0 0 12px; font-size: 18px; }
+.profile-delete-dialog p, .profile-delete-dialog li { font-size: 12px; line-height: 1.6; }
+.profile-delete-dialog ul { padding: 12px 12px 12px 26px; border-radius: 12px; background: #faf3f3; color: #a65151; }
+.profile-delete-dialog label { display: block; margin: 14px 0 8px; font-size: 12px; }
+.profile-delete-dialog input { box-sizing: border-box; width: 100%; min-height: 44px; padding: 10px; border: 1px solid var(--app-line); border-radius: 12px; font: inherit; }
+.profile-delete-warning { width: 42px; height: 42px; margin: 0 auto 16px; display: grid; place-items: center; border-radius: 50%; background: #faf0f0; color: #b85f5f; font-size: 24px; }
+.profile-delete-actions { display: flex; gap: 8px; margin-top: 16px; }
+.profile-delete-dialog button { flex: 1; min-height: 44px; border: 1px solid var(--app-line); border-radius: 12px; background: #fff; color: inherit; cursor: pointer; }
+.profile-delete-dialog .profile-delete-danger { border: 0; background: #b85f5f; color: #fff; }
+.profile-delete-message { color: #b85f5f; }
+.profile-message { padding: 12px; color: var(--app-muted); font-size: 12px; line-height: 1.5; }
+.profile-message button { margin-left: 8px; border: 0; background: transparent; color: var(--app-primary); }
+.profile-screen button:disabled { opacity: .6; cursor: default; }

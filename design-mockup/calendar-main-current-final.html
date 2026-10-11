@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>월간 달력 · 가계부 톡톡</title><style>
+*{box-sizing:border-box}body{margin:0;padding:24px 16px 40px;background:#f0f3f1;color:#20342b;font-family:Pretendard,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input{font:inherit}button{color:inherit}h2{margin:0 0 10px}.subtitle{color:#66766e;line-height:1.6}.archive-banner{max-width:1080px;margin:0 auto 20px;padding:12px 16px;background:white;border:1px solid #d7e7e0;border-radius:12px;font-size:13px;line-height:1.6}.archive-banner a{color:#356f5b}.approval{display:none!important}.dialog .warning-icon{margin-left:auto;margin-right:auto}
+</style></head><body><aside class="archive-banner"><a href="index.html">목업 모음</a> · 월간 달력<br>승인 화면 보존본 · 정적 시안이며 실제 저장/인증은 동작하지 않습니다. 최신 정책은 <a href="../guide/PRD.md">PRD</a>와 <a href="../guide/Design.md">Design</a>를 따릅니다.</aside>
+<style>
+  .final { max-width:490px; margin:24px auto 0; padding:16px; border:2px solid #4f9a80; border-radius:24px; background:#fff; box-shadow:0 0 0 4px rgba(79,154,128,.10); }
+  .phone { position:relative; min-height:780px; overflow:hidden; border:1px solid #d6dfdb; border-radius:30px; background:#f5faf8; color:#24352f; box-shadow:0 15px 38px rgba(31,62,52,.10); }
+  .status { display:flex; justify-content:space-between; padding:9px 17px 2px; font-size:10px; font-weight:800; }
+  .top { display:flex; align-items:center; justify-content:space-between; padding:7px 16px 6px; }
+  .brand { font-size:18px; font-weight:950; }
+  .filter-icon { display:grid; place-items:center; padding:4px; border:0; color:#286b55; background:transparent; }
+  .filter-icon svg { width:21px; height:21px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; }
+  .total { display:flex; align-items:baseline; justify-content:space-between; margin:0 15px 5px; padding:5px 2px; border-bottom:1px solid #dfe9e4; }
+  .total span { color:#66776f; font-size:10px; font-weight:750; }
+  .total strong { font-size:17px; }
+  .month { display:flex; justify-content:space-between; padding:5px 18px 8px; font-size:14px; font-weight:950; }
+  .calendar { margin:0 8px; padding:12px 7px 10px; border-radius:19px; background:#fff; box-shadow:0 5px 16px rgba(31,62,52,.06); }
+  .week,.dates { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; text-align:center; }
+  .week { margin-bottom:5px; color:#7d8984; font-size:9px; font-weight:800; }
+  .week span:first-child { color:#d07b77; } .week span:last-child { color:#668fb1; }
+  .day { min-height:56px; padding:7px 1px 4px; border-radius:10px; font-size:11px; box-sizing:border-box; }
+  .day.muted { color:#c0c7c3; }
+  .day em { display:block; margin-top:9px; color:#397962; font-size:8px; font-style:normal; font-weight:800; }
+  .low { background:#f2f8f5; } .mid { background:#e7f4ef; } .high { background:#d5ece3; }
+  .day.on { color:#174d3b; background:#c7e7da; font-weight:950; box-shadow:inset 0 0 0 2px #4f9a80; }
+  .daily { margin:11px 13px 74px; }
+  .daily-head { display:flex; justify-content:space-between; padding:0 2px 7px; }
+  .daily-head strong { font-size:13px; } .daily-head span { color:#347b63; font-size:12px; font-weight:900; }
+  .tx { display:grid; grid-template-columns:25px auto 1fr auto; gap:6px; align-items:center; margin-bottom:6px; padding:9px 10px; border-radius:12px; background:#fff; white-space:nowrap; }
+  .icon { display:grid; place-items:center; width:24px; height:24px; border-radius:8px; background:#edf6f2; font-size:12px; }
+  .cat { color:#3c5b50; font-size:9px; font-weight:900; } .memo { overflow:hidden; color:#707d77; font-size:9px; text-overflow:ellipsis; } .price { font-size:10px; font-weight:950; }
+  .fab { position:absolute; right:17px; bottom:82px; display:grid; place-items:center; width:49px; height:49px; border-radius:50%; color:#fff; background:#4f9a80; font-size:23px; box-shadow:0 8px 18px rgba(79,154,128,.35); }
+  .pill-nav { position:absolute; left:50%; bottom:12px; display:grid; grid-template-columns:repeat(3,1fr); width:214px; height:55px; padding:4px 8px; transform:translateX(-50%); border:1px solid rgba(214,219,217,.95); border-radius:999px; background:rgba(255,255,255,.94); box-shadow:0 8px 24px rgba(21,32,28,.20); }
+  .nav-button { display:grid; place-items:center; border:0; color:#69736f; background:transparent; }
+  .nav-button span { display:grid; place-items:center; width:42px; height:39px; border-radius:999px; }
+  .nav-button svg { width:21px; height:21px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+  .nav-button.on { color:#173c30; } .nav-button.on span { background:#dfeee8; } .nav-button.on svg { stroke-width:2.25; }
+  .caption { padding:14px 5px 2px; } .caption h3 { margin:0 0 6px; } .caption p { margin:0; color:#65746e; font-size:14px; line-height:1.55; }
+</style>
+
+<h2>월간 달력 메인 화면 · 최종안</h2>
+<p class="subtitle">날짜 셀 높이와 일별 금액을 한 단계 더 키워 월간 지출 확인을 최우선으로 두었습니다.</p>
+
+<div class="final">
+  <div class="phone">
+    <div class="status"><span>9:41</span><span>● ● ●</span></div>
+    <div class="top"><span class="brand">가계부 톡톡</span><button class="filter-icon" aria-label="필터"><svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10M14 4v6M6 14v6"/></svg></button></div>
+    <div class="total"><span>9월 총지출</span><strong>1,284,500원</strong></div>
+    <div class="month"><span>‹</span><span>2026년 9월</span><span>›</span></div>
+    <div class="calendar">
+      <div class="week"><span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span></div>
+      <div class="dates">
+        <span class="day muted">30</span><span class="day muted">31</span><span class="day mid">1<em>24,000</em></span><span class="day">2</span><span class="day low">3<em>8,500</em></span><span class="day">4</span><span class="day high">5<em>41,000</em></span>
+        <span class="day">6</span><span class="day mid">7<em>17,800</em></span><span class="day">8</span><span class="day high">9<em>65,000</em></span><span class="day">10</span><span class="day">11</span><span class="day mid">12<em>22,000</em></span>
+        <span class="day">13</span><span class="day mid">14<em>12,300</em></span><span class="day">15</span><span class="day mid">16<em>28,000</em></span><span class="day">17</span><span class="day low">18<em>9,500</em></span><span class="day">19</span>
+        <span class="day on">20<em>35,800</em></span><span class="day">21</span><span class="day">22</span><span class="day">23</span><span class="day">24</span><span class="day">25</span><span class="day">26</span>
+        <span class="day">27</span><span class="day">28</span><span class="day">29</span><span class="day">30</span><span class="day muted">1</span><span class="day muted">2</span><span class="day muted">3</span>
+      </div>
+    </div>
+    <div class="daily">
+      <div class="daily-head"><strong>오늘 지출 · 9월 20일</strong><span>35,800원</span></div>
+      <div class="tx"><span class="icon">🍚</span><span class="cat">식비</span><span class="memo">저녁 식사</span><span class="price">-12,000원</span></div>
+      <div class="tx"><span class="icon">🛒</span><span class="cat">생활</span><span class="memo">생활용품</span><span class="price">-23,800원</span></div>
+    </div>
+    <div class="fab">＋</div>
+    <nav class="pill-nav" aria-label="주요 화면">
+      <button class="nav-button on" aria-label="가계부"><span><svg viewBox="0 0 24 24"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4H19a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H6.5A2.5 2.5 0 0 1 4 17.5z"/><path d="M4 7h16M15 12h5"/></svg></span></button>
+      <button class="nav-button" aria-label="통계"><span><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span></button>
+      <button class="nav-button" aria-label="설정"><span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 1 1-14 0 7 7 0 0 1 14 0zM12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9 7 7M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/></svg></span></button>
+    </nav>
+  </div>
+  <div class="caption"><h3>월간 달력 화면 확정</h3><p>필터 아이콘, 월 합계, 큰 달력, 선택 날짜 목록, 지출 추가와 캡슐형 아이콘 내비게이션을 반영했습니다.</p></div>
+</div>
+
+
+
+</body></html>
+

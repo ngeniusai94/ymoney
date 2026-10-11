@@ -1,0 +1,16 @@
+.settings-screen { min-height: calc(100dvh - 112px); color: var(--app-text); }
+.settings-topbar { margin: -8px -10px 0; padding: 14px 18px; border-bottom: 1px solid var(--app-line); background: #fff; }
+.settings-topbar h1 { margin: 0; font-size: 19px; font-weight: 900; }
+.settings-sections { padding: 4px 3px 0; }
+.settings-section { margin-top: 17px; }
+.settings-section h2 { margin: 0 4px 8px; color: var(--app-muted); font-size: 11px; font-weight: 800; }
+.settings-menu { overflow: hidden; border: 1px solid var(--app-line); border-radius: 14px; background: #fff; }
+.settings-menu-row { display: grid; min-height: 55px; grid-template-columns: 32px 1fr auto; align-items: center; padding: 0 12px; gap: 9px; border-bottom: 1px solid var(--app-line); color: inherit; text-decoration: none; }
+.settings-menu-row:last-child { border-bottom: 0; }
+.settings-menu-row strong { font-size: 13px; font-weight: 800; }
+.settings-menu-row small { color: var(--app-muted); font-size: 10px; }
+.settings-menu-row:not(.is-pending):active { background: var(--app-soft); }
+.settings-menu-row:focus-visible { outline: 2px solid var(--app-primary); outline-offset: -2px; }
+.settings-row-icon { display: grid; width: 30px; height: 30px; place-items: center; border-radius: 9px; background: var(--app-soft); color: var(--app-primary); }
+.settings-row-icon svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.settings-row-arrow { color: var(--app-muted); font-size: 19px; }

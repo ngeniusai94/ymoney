@@ -1,0 +1,63 @@
+.categories-screen { min-height: calc(100dvh - 112px); color: var(--app-text); }
+.categories-topbar { display: grid; min-height: 49px; grid-template-columns: 36px 1fr 36px; align-items: center; margin: -8px -10px 0; padding: 0 13px; border-bottom: 1px solid var(--app-line); background: #fff; }
+.categories-topbar h1 { margin: 0; font-size: 17px; font-weight: 900; text-align: center; }
+.categories-topbar a { color: var(--app-primary); font-size: 27px; text-decoration: none; }
+.categories-body { padding: 15px 3px 12px; }
+.categories-ledger-label { margin: 0 3px 8px; color: var(--app-muted); font-size: 11px; font-weight: 800; }
+.categories-ledger-picker { display: flex; width: 100%; min-height: 47px; align-items: center; justify-content: space-between; padding: 0 10px 0 13px; gap: 8px; border: 1px solid var(--app-line); border-radius: 12px; background: #fff; color: inherit; font-size: 13px; }
+.categories-ledger-picker strong { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* CSS 화살표는 테마 변수를 상속합니다. 클릭은 아래 select로 전달합니다. */
+.categories-ledger-picker { position: relative; }
+.categories-ledger-picker::after { content: ''; position: absolute; right: 25px; top: 50%; width: 6px; height: 6px; margin-top: -5px; border-right: 1.5px solid var(--app-primary); border-bottom: 1.5px solid var(--app-primary); transform: rotate(45deg); pointer-events: none; }
+.categories-ledger-select { width: 37px; min-width: 37px; height: 32px; padding: 0; appearance: none; border: 1px solid var(--app-line); border-radius: 8px; background: var(--app-soft); color: transparent; font-size: 13px; cursor: pointer; }
+.categories-ledger-select option { color: var(--app-text); }
+.categories-ledger-select:focus-visible { outline: 2px solid var(--app-primary); outline-offset: 2px; }
+.categories-ledger-select:disabled { cursor: default; opacity: .5; }
+.categories-list-toolbar { display: flex; min-height: 37px; align-items: center; justify-content: space-between; margin: 12px 3px 8px; }
+.categories-list-heading { margin: 0; font-size: 13px; font-weight: 900; }
+.categories-list-toolbar button { min-height: 28px; padding: 0 9px; border: 0; border-radius: 15px; background: var(--app-accent); color: var(--app-primary); font-size: 10px; font-weight: 800; cursor: pointer; }
+.categories-section { margin-bottom: 10px; }
+.categories-group-card { overflow: hidden; border: 1px solid var(--app-line); border-radius: 13px; background: #fff; }
+.categories-group-head { display: flex; min-height: 40px; align-items: center; padding: 0 12px; gap: 5px; background: var(--app-soft); }
+.categories-group-head strong { font-size: 12px; }
+.categories-group-head small { color: var(--app-muted); font-size: 10px; }
+.categories-parent-row { display: grid; min-height: 44px; grid-template-columns: 29px 1fr auto auto; align-items: center; padding: 0 11px; gap: 8px; border-top: 1px solid var(--app-line); background: var(--app-bg); }
+.categories-parent-row.has-no-icon { grid-template-columns: 1fr auto auto; padding-left: 14px; }
+.categories-parent-block.has-no-icon .categories-child-row { padding-left: 32px; }
+.categories-parent-block:first-child .categories-parent-row { border-top: 0; }
+.categories-parent-row strong { font-size: 12px; }
+.categories-edit-name { min-width: 0; min-height: 36px; padding: 0; border: 0; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; overflow-wrap: anywhere; }
+.categories-edit-name:focus-visible { outline: 2px solid var(--app-primary); outline-offset: 2px; border-radius: 4px; }
+.categories-edit-name:disabled { cursor: default; }
+.categories-sheet-disable { display: block; min-height: 36px; margin: 10px auto 0; padding: 0 12px; border: 0; background: transparent; color: #b85f5f; font: inherit; font-size: 12px; cursor: pointer; }
+.categories-sheet-disable:disabled { opacity: .5; cursor: default; }
+.categories-child-add { min-height: 26px; padding: 0 8px; border: 0; border-radius: 15px; background: var(--app-accent); color: var(--app-primary); font-size: 10px; font-weight: 800; cursor: pointer; }
+.categories-child-parent-name { margin: 0 0 12px; color: var(--app-primary); font-size: 13px; font-weight: 800; }
+.categories-parent-icon { display: grid; width: 27px; height: 27px; place-items: center; border-radius: 8px; background: var(--app-soft); font-size: 14px; }
+.categories-child-row { display: grid; min-height: 36px; grid-template-columns: 17px 1fr auto auto; align-items: center; padding: 0 12px 0 46px; gap: 8px; border-top: 1px solid var(--app-line); color: var(--app-text); font-size: 11px; }
+.categories-more { min-width: 24px; min-height: 32px; padding: 0; border: 0; background: transparent; color: var(--app-muted); font-size: 20px; cursor: pointer; }
+.categories-child-row > span:first-child { color: var(--app-muted); }
+.categories-inactive { color: #9b7777; font-size: 10px; }
+.categories-state { margin: 0; padding: 16px 12px; border: 1px solid var(--app-line); border-radius: 12px; background: #fff; color: var(--app-muted); font-size: 12px; text-align: center; }
+.categories-state.is-error { color: #b85f5f; }
+.categories-state button { display: block; margin: 7px auto 0; border: 0; background: none; color: var(--app-primary); font-size: 12px; font-weight: 800; }
+.categories-add-button { position: fixed; right: max(18px, calc((100vw - 410px) / 2 + 18px)); bottom: 96px; display: grid; width: 52px; height: 52px; padding: 0; place-items: center; border: 0; border-radius: 50%; background: var(--app-primary); box-shadow: 0 5px 17px var(--app-shadow); color: #fff; cursor: pointer; }
+.categories-add-button svg { display: block; width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+.categories-sheet-backdrop { position: fixed; z-index: 20; inset: 0; display: flex; align-items: flex-end; justify-content: center; background: var(--app-backdrop); }
+.categories-sheet { width: min(100%, 430px); max-height: min(90dvh, 720px); overflow-y: auto; padding: 12px 16px max(18px, env(safe-area-inset-bottom)); border-radius: 23px 23px 0 0; background: #fff; box-shadow: 0 -10px 30px var(--app-shadow); }
+.categories-sheet-handle { width: 36px; height: 4px; margin: 0 auto 12px; border-radius: 9px; background: var(--app-line); }
+.categories-sheet-heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.categories-sheet-heading h2 { margin: 0; font-size: 17px; }
+.categories-sheet-heading button { border: 0; background: transparent; color: var(--app-muted); font-size: 24px; cursor: pointer; }
+.categories-sheet-label { display: block; margin: 14px 0 7px; font-size: 11px; font-weight: 800; }
+.categories-sheet-input { box-sizing: border-box; width: 100%; height: 44px; padding: 0 11px; border: 1px solid var(--app-line); border-radius: 11px; font: inherit; }
+.categories-sheet-options, .categories-sheet-groups { display: flex; flex-wrap: wrap; gap: 7px; }
+.categories-sheet-options { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
+.categories-sheet-options button { display: grid; min-width: 0; width: 100%; height: 38px; padding: 0; place-items: center; border: 1px solid var(--app-line); border-radius: 9px; background: #fff; font-size: 18px; cursor: pointer; }
+.categories-sheet-options svg { width: 20px; height: 20px; fill: none; stroke: var(--app-muted); stroke-width: 1.7; stroke-linecap: round; }
+.categories-sheet-groups button { min-height: 31px; padding: 0 10px; border: 1px solid var(--app-line); border-radius: 20px; background: #fff; color: var(--app-text); font-size: 11px; cursor: pointer; }
+.categories-sheet-groups button.is-selected { border-color: var(--app-primary); background: var(--app-accent); color: var(--app-primary); }
+.categories-sheet-options button.is-selected { border-color: var(--app-primary); background: var(--app-accent); }
+.categories-sheet-error { margin: 12px 0 0; color: #b85f5f; font-size: 12px; }
+.categories-sheet-save { width: 100%; height: 45px; margin-top: 18px; border: 0; border-radius: 11px; background: var(--app-primary); color: #fff; font-size: 13px; font-weight: 800; cursor: pointer; }
+.categories-sheet-save:disabled { opacity: .6; cursor: default; }

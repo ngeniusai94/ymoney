@@ -1,0 +1,48 @@
+.payments-screen { min-height: calc(100dvh - 112px); color: var(--app-text); }
+.payments-topbar { display: grid; min-height: 49px; grid-template-columns: 36px 1fr 36px; align-items: center; margin: -8px -10px 0; padding: 0 13px; border-bottom: 1px solid var(--app-line); background: #fff; }
+.payments-topbar h1 { margin: 0; font-size: 17px; font-weight: 900; text-align: center; }
+.payments-topbar a { color: var(--app-primary); font-size: 27px; text-decoration: none; }
+.payments-body { padding: 15px 3px 12px; }
+.payments-ledger-label { margin: 0 3px 8px; color: var(--app-muted); font-size: 11px; font-weight: 800; }
+.payments-ledger-picker { display: flex; min-height: 47px; align-items: center; justify-content: space-between; padding: 0 10px 0 13px; gap: 8px; border: 1px solid var(--app-line); border-radius: 12px; background: #fff; font-size: 13px; }
+.payments-ledger-picker strong { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* SVG 내부 고정 색 대신 테마 색의 장식 화살표를 사용합니다. */
+.payments-ledger-picker { position: relative; }
+.payments-ledger-picker::after { content: ''; position: absolute; right: 25px; top: 50%; width: 6px; height: 6px; margin-top: -5px; border-right: 1.5px solid var(--app-primary); border-bottom: 1.5px solid var(--app-primary); transform: rotate(45deg); pointer-events: none; }
+.payments-ledger-select { width: 37px; min-width: 37px; height: 32px; padding: 0; appearance: none; border: 1px solid var(--app-line); border-radius: 8px; background: var(--app-soft); color: transparent; cursor: pointer; }
+.payments-ledger-select option { color: var(--app-text); }
+.payments-list-title { margin: 17px 3px 10px; font-size: 13px; font-weight: 900; }
+.payments-type-card { overflow: hidden; margin-bottom: 10px; border: 1px solid var(--app-line); border-radius: 13px; background: #fff; }
+.payments-type-card header { display: flex; min-height: 42px; align-items: center; padding: 0 11px; gap: 7px; background: var(--app-soft); font-size: 12px; }
+.payments-type-card header small { color: var(--app-muted); font-size: 10px; }
+.payments-type-icon, .payments-method-icon { display: grid; place-items: center; width: 27px; height: 27px; border-radius: 8px; background: var(--app-soft); color: var(--app-primary); }
+.payments-type-icon { background: #fff; }
+.payments-screen svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.payments-method { display: grid; width: 100%; min-height: 45px; grid-template-columns: 29px 1fr auto; gap: 8px; align-items: center; padding: 0 11px; border: 0; border-top: 1px solid var(--app-line); background: #fff; color: inherit; text-align: left; font: inherit; font-size: 12px; cursor: pointer; }
+.payments-method strong { min-width: 0; overflow-wrap: anywhere; }
+.payments-method:disabled { cursor: default; color: var(--app-muted); }
+.payments-inactive { color: #9b7777; font-size: 10px; }
+.payments-method-actions { display: flex; align-items: center; gap: 9px; }
+.payments-state, .payments-empty { margin: 0; padding: 16px 12px; color: var(--app-muted); font-size: 12px; text-align: center; }
+.payments-state { border: 1px solid var(--app-line); border-radius: 12px; background: #fff; }
+.payments-state.is-error, .payments-form-error { color: #b85f5f; }
+.payments-state button { display: block; margin: 7px auto 0; border: 0; background: none; color: var(--app-primary); cursor: pointer; }
+.payments-add { position: fixed; right: max(18px, calc((100vw - 410px) / 2 + 18px)); bottom: 96px; display: grid; width: 52px; height: 52px; padding: 0; place-items: center; border: 0; border-radius: 50%; background: var(--app-primary); box-shadow: 0 5px 17px var(--app-shadow); color: #fff; cursor: pointer; }
+.payments-add svg { width: 26px; height: 26px; }
+.payments-backdrop { position: fixed; z-index: 20; inset: 0; display: flex; align-items: flex-end; justify-content: center; background: var(--app-backdrop); }
+.payments-sheet { width: min(100%, 430px); max-height: min(90dvh, 720px); overflow-y: auto; padding: 12px 16px max(18px, env(safe-area-inset-bottom)); border-radius: 23px 23px 0 0; background: #fff; box-shadow: 0 -10px 30px var(--app-shadow); }
+.payments-handle { width: 36px; height: 4px; margin: 0 auto 12px; border-radius: 9px; background: var(--app-line); }
+.payments-sheet header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.payments-sheet h2 { margin: 0; font-size: 17px; }
+.payments-sheet header button { border: 0; background: transparent; color: var(--app-muted); font-size: 24px; cursor: pointer; }
+.payments-sheet fieldset { min-width: 0; padding: 0; margin: 0; border: 0; }
+.payments-sheet label, .payments-field-label { display: block; margin: 14px 0 7px; font-size: 11px; font-weight: 800; }
+.payments-sheet input { box-sizing: border-box; width: 100%; height: 44px; padding: 0 11px; border: 1px solid var(--app-line); border-radius: 11px; font: inherit; }
+.payments-type-options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.payments-type-option { display: flex; align-items: center; justify-content: flex-start; min-height: 46px; padding: 0 12px; gap: 8px; border: 1px solid var(--app-line); border-radius: 11px; color: var(--app-text); background: #fff; font-size: 12px; font-weight: 800; cursor: pointer; }
+.payments-type-option.is-selected { border-color: var(--app-primary); background: var(--app-soft); color: var(--app-primary); box-shadow: inset 0 0 0 1px var(--app-primary); }
+.payments-form-error { margin: 12px 0 0; font-size: 12px; }
+.payments-save { width: 100%; height: 45px; margin-top: 18px; border: 0; border-radius: 11px; background: var(--app-primary); color: #fff; font-size: 13px; font-weight: 800; cursor: pointer; }
+.payments-disable { display: block; min-height: 36px; margin: 10px auto 0; padding: 0 12px; border: 0; background: transparent; color: #b85f5f; font-size: 12px; cursor: pointer; }
+.payments-sheet button:disabled { opacity: .6; cursor: default; }
+.payments-screen button:focus-visible, .payments-screen select:focus-visible { outline: 2px solid var(--app-primary); outline-offset: 2px; }

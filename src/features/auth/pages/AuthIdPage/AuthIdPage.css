@@ -1,0 +1,33 @@
+/* 아이디 인증 화면의 입력 폼 전용 스타일입니다. */
+.auth-content {
+  width: min(100%, 430px);
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: max(26px, env(safe-area-inset-top)) 24px max(28px, env(safe-area-inset-bottom));
+}
+
+.auth-back { display: inline-flex; align-items: center; gap: 7px; padding: 0; border: 0; background: transparent; color: var(--app-muted); cursor: pointer; font-size: 13px; font-weight: 700; text-decoration: none; }
+.auth-back span { font-size: 27px; line-height: 1; }
+.auth-heading { margin-top: 44px; }
+.auth-brand { margin: 0 0 18px; color: var(--app-primary); font-size: 18px; font-weight: 900; }
+.auth-heading h1 { margin: 0; font-size: 27px; letter-spacing: -1px; }
+.auth-heading > p:last-child { margin: 9px 0 0; color: var(--app-muted); font-size: 13px; line-height: 1.55; }
+.auth-form { margin-top: 34px; }
+.auth-field { display: block; margin-top: 16px; text-align: left; }
+.auth-field > span { display: block; margin: 0 2px 7px; color: var(--app-muted); font-size: 12px; font-weight: 800; }
+.auth-field input { width: 100%; min-height: 50px; padding: 0 14px; border: 1px solid var(--app-line); border-radius: 13px; outline: none; background: #ffffff; color: var(--app-text); font: inherit; font-size: 14px; }
+.auth-field input:focus { border-color: var(--app-primary); box-shadow: 0 0 0 3px rgba(79, 154, 128, 0.13); }
+.auth-field input::placeholder { color: var(--app-muted); }
+.auth-field small { display: block; margin: 6px 2px 0; color: var(--app-muted); font-size: 10px; }
+.auth-submit { width: 100%; min-height: 50px; margin-top: 24px; border: 0; border-radius: 13px; background: var(--app-primary); color: #ffffff; cursor: pointer; font-size: 14px; font-weight: 900; }
+.auth-submit:active { background: var(--app-primary); }
+.auth-submit:disabled { cursor: wait; opacity: 0.65; }
+.auth-links { display: flex; justify-content: space-between; margin-top: 15px; gap: 12px; }
+.auth-links-center { justify-content: center; }
+.auth-links button { padding: 4px 0; border: 0; background: transparent; color: var(--app-muted); cursor: pointer; font-size: 11px; }
+.auth-links .auth-link-emphasis { color: var(--app-primary); }
+.auth-help { margin: 16px 2px 0; color: var(--app-muted); font-size: 11px; line-height: 1.55; text-align: center; }
+
+@media (min-width: 431px) {
+  .auth-content { background: var(--app-bg); }
+}

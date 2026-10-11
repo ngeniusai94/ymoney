@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>그룹 목록·상세 · 가계부 톡톡</title><style>
+*{box-sizing:border-box}body{margin:0;padding:24px 16px 40px;background:#f0f3f1;color:#20342b;font-family:Pretendard,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input{font:inherit}button{color:inherit}h2{margin:0 0 10px}.subtitle{color:#66766e;line-height:1.6}.archive-banner{max-width:1080px;margin:0 auto 20px;padding:12px 16px;background:white;border:1px solid #d7e7e0;border-radius:12px;font-size:13px;line-height:1.6}.archive-banner a{color:#356f5b}.approval{display:none!important}.dialog .warning-icon{margin-left:auto;margin-right:auto}
+</style></head><body><aside class="archive-banner"><a href="index.html">목업 모음</a> · 그룹 목록·상세<br>승인 화면 보존본 · 정적 시안이며 실제 저장/인증은 동작하지 않습니다. 최신 정책은 <a href="../guide/PRD.md">PRD</a>와 <a href="../guide/Design.md">Design</a>를 따릅니다.</aside>
+<style>
+  .review-head{max-width:830px;margin:0 auto 16px}.review-note{margin-top:11px;padding:11px 13px;border:1px solid #cfe1da;border-radius:13px;background:#f3f9f6;color:#43584f;font-size:12px;line-height:1.55}.review-note b{color:#286b55}.flow{display:grid;grid-template-columns:repeat(2,390px);justify-content:center;gap:28px;max-width:830px;margin:0 auto}.case-label{display:flex;align-items:center;gap:8px;margin:0 3px 9px;color:#43524c;font-size:12px;font-weight:900}.step{display:grid;place-items:center;width:25px;height:25px;border-radius:9px;background:#dfede8;color:#286b55}.phone{position:relative;width:390px;height:844px;overflow:hidden;border:1px solid #d8dfdc;border-radius:30px;background:#f5f8f7;color:#252e2a;box-shadow:0 15px 34px rgba(28,45,39,.12)}.status{display:flex;justify-content:space-between;padding:11px 17px 5px;background:#fff;font-size:10px;font-weight:900}.top{display:grid;grid-template-columns:38px 1fr 38px;align-items:center;min-height:54px;padding:0 12px;border-bottom:1px solid #e9edeb;background:#fff}.top h3{margin:0;text-align:center;font-size:18px;font-weight:950}.back,.top-action{display:grid;place-items:center;width:38px;height:38px;border:0;background:transparent;color:#2f4039;font-size:24px}.top-action{color:#34715b;font-size:11px;font-weight:900}.body{padding:14px 15px 105px}.quick{display:grid;grid-template-columns:1fr 1fr;gap:9px}.quick button{display:flex;align-items:center;justify-content:center;gap:7px;min-height:52px;border:1px solid #dbe5e1;border-radius:14px;background:#fff;color:#34594b;font-size:11px;font-weight:900}.quick svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.section-title{display:flex;justify-content:space-between;align-items:center;margin:17px 4px 8px;color:#77817d;font-size:10px;font-weight:900}.section-title b{color:#426c5c}.list,.panel{overflow:hidden;border:1px solid #e1e6e4;border-radius:15px;background:#fff}.list-row{display:grid;grid-template-columns:39px 1fr auto;gap:10px;align-items:center;min-height:69px;padding:0 13px;border-bottom:1px solid #edf0ef}.list-row:last-child{border-bottom:0}.group-icon{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:#e7f2ed;color:#3c745f;font-size:14px;font-weight:950}.name{font-size:12px;font-weight:950}.meta{margin-top:4px;color:#8a9691;font-size:9px}.chev{color:#96a19d;font-size:19px}.summary{display:grid;grid-template-columns:48px 1fr auto;gap:11px;align-items:center;padding:15px}.summary .group-icon{width:48px;height:48px;border-radius:15px;font-size:17px}.edit{border:0;background:transparent;color:#34715b;font-size:10px;font-weight:900}.row{display:flex;align-items:center;justify-content:space-between;min-height:57px;padding:0 14px;border-bottom:1px solid #edf0ef}.row:last-child{border-bottom:0}.member{display:flex;align-items:center;gap:10px}.avatar{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:#e0eee8;color:#376c58;font-size:10px;font-weight:900}.row-label{font-size:11px;font-weight:900}.you{margin-left:5px;color:#5d8c7a;font-size:8px}.soft{color:#8a9691;font-size:9px}.invite{padding:14px}.invite-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.invite-head b{font-size:11px}.capacity{padding:4px 7px;border-radius:999px;background:#e7f2ed;color:#34715b;font-size:8px;font-weight:900}.code{display:grid;grid-template-columns:1fr auto;align-items:center;padding:12px 12px;border-radius:12px;background:#f0f5f3}.code strong{font-size:15px;letter-spacing:2px}.copy{border:0;background:transparent;color:#34715b;font-size:10px;font-weight:900}.invite-actions{display:flex;align-items:center;justify-content:space-between;margin-top:10px}.hint{color:#84908b;font-size:8px}.reissue{border:0;background:transparent;color:#536d63;font-size:9px;font-weight:900}.danger-panel{overflow:hidden;margin-top:12px;border:1px solid #efdede;border-radius:15px;background:#fff}.danger-row{display:flex;align-items:center;justify-content:space-between;min-height:56px;padding:0 14px;color:#b35f5f;font-size:11px;font-weight:900}.danger-note{padding:10px 14px;border-top:1px solid #f3e7e7;color:#9a7777;font-size:8px;line-height:1.55}.pill-nav{position:absolute;left:50%;bottom:15px;display:grid;grid-template-columns:repeat(3,1fr);width:214px;height:55px;padding:4px 8px;transform:translateX(-50%);border:1px solid rgba(214,219,217,.95);border-radius:999px;background:rgba(255,255,255,.95);box-shadow:0 8px 24px rgba(21,32,28,.20)}.nav-button{display:grid;place-items:center;border:0;color:#69736f;background:transparent}.nav-button span{display:grid;place-items:center;width:42px;height:39px;border-radius:999px}.nav-button svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.nav-button.on{color:#173c30}.nav-button.on span{background:#dfeee8}.arrow-note{align-self:center;color:#7b8b84;font-size:22px;font-weight:900}.approval{max-width:830px;margin:17px auto 0;padding:14px;border:2px solid #4f9a80;border-radius:15px;background:#f2faf6;color:#3d5b50;font-size:12px;line-height:1.55}.approval b{color:#216a50}@media(max-width:850px){.review-head,.approval{max-width:390px}.flow{grid-template-columns:390px;gap:22px}.phone{max-width:100%}}
+</style>
+
+<div class="review-head">
+  <h2>그룹 관리 · B안 상세 흐름</h2>
+  <p class="subtitle">목록은 가볍게 유지하고, 선택한 그룹의 관리 기능은 별도 상세 화면에 모읍니다.</p>
+  <div class="review-note"><b>검토 포인트</b> 그룹 상세에서 이름 변경, 멤버, 초대 코드, 코드 재발급과 그룹 나가기를 한 번에 이해할 수 있는지 확인해주세요.</div>
+</div>
+
+<div class="flow">
+  <section>
+    <div class="case-label"><span class="step">1</span>그룹 목록</div>
+    <div class="phone">
+      <div class="status"><span>9:41</span><span>● ● ●</span></div>
+      <header class="top"><button class="back" aria-label="뒤로">‹</button><h3>그룹 관리</h3><span></span></header>
+      <main class="body">
+        <div class="quick">
+          <button><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>그룹 만들기</button>
+          <button><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M14 15h2v2h-2zM18 14h2v2M18 18h2v2M14 19h2"/></svg>코드로 참여</button>
+        </div>
+        <div class="section-title"><span>내 그룹</span><b>2개</b></div>
+        <div class="list">
+          <div class="list-row"><span class="group-icon">우</span><div><div class="name">우리집</div><div class="meta">멤버 2/2</div></div><span class="chev">›</span></div>
+          <div class="list-row"><span class="group-icon">여</span><div><div class="name">여행통장</div><div class="meta">멤버 1/2 · 초대 가능</div></div><span class="chev">›</span></div>
+        </div>
+      </main>
+      <nav class="pill-nav" aria-label="주요 화면"><button class="nav-button"><span><svg viewBox="0 0 24 24"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4H19v16H6.5A2.5 2.5 0 0 1 4 17.5z"/></svg></span></button><button class="nav-button"><span><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7"/></svg></span></button><button class="nav-button on"><span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 1 1-14 0 7 7 0 0 1 14 0z"/></svg></span></button></nav>
+    </div>
+  </section>
+
+  <section>
+    <div class="case-label"><span class="step">2</span>`여행통장` 선택 후 상세</div>
+    <div class="phone">
+      <div class="status"><span>9:41</span><span>● ● ●</span></div>
+      <header class="top"><button class="back" aria-label="그룹 목록으로">‹</button><h3>그룹 상세</h3><span></span></header>
+      <main class="body">
+        <div class="panel summary"><span class="group-icon">여</span><div><div class="name">여행통장</div><div class="meta">멤버 1/2</div></div><button class="edit">이름 변경</button></div>
+
+        <div class="section-title"><span>멤버</span><b>1명</b></div>
+        <div class="panel"><div class="row"><div class="member"><span class="avatar">나</span><div class="row-label">Guest <span class="you">doye********</span></div></div><span class="soft">참여 중</span></div></div>
+
+        <div class="section-title"><span>초대</span><b>최대 2명</b></div>
+        <div class="panel invite">
+          <div class="invite-head"><b>8자리 초대 코드</b></div>
+          <div class="code"><strong>A8K2P9Q4</strong><button class="copy">복사</button></div>
+          <div class="invite-actions"><span class="hint">재발급하면 기존 코드는 사용할 수 없어요.</span><button class="reissue">코드 재발급</button></div>
+        </div>
+
+        <div class="section-title"><span>그룹에서 나가기</span></div>
+        <div class="danger-panel"><div class="danger-row"><span>그룹 나가기</span><span>›</span></div><div class="danger-note">마지막 멤버가 나가면 그룹과 그룹의 모든 가계부 데이터가 삭제됩니다. 실행 전 다시 확인합니다.</div></div>
+      </main>
+      <nav class="pill-nav" aria-label="주요 화면"><button class="nav-button"><span><svg viewBox="0 0 24 24"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4H19v16H6.5A2.5 2.5 0 0 1 4 17.5z"/></svg></span></button><button class="nav-button"><span><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7"/></svg></span></button><button class="nav-button on"><span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 1 1-14 0 7 7 0 0 1 14 0z"/></svg></span></button></nav>
+    </div>
+  </section>
+</div>
+
+<div class="approval" data-choice="approve-group-detail-b-v1"><b>이 흐름을 확정할까요?</b> 목록에서 그룹을 선택하면 오른쪽 상세 화면으로 이동합니다. 괜찮다면 선택해주세요. 다음에는 그룹 만들기·코드로 참여 하단 시트를 이어서 보여드리겠습니다.</div>
+
+</body></html>
+

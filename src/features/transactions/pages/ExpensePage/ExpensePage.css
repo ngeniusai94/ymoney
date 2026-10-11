@@ -1,0 +1,41 @@
+.expense-screen { min-height: calc(100dvh - 16px); color: var(--app-text); }
+.expense-topbar { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; min-height: 49px; padding: 0 8px; }
+.expense-topbar strong { font-size: 17px; font-weight: 900; }
+.expense-topbar button { width: fit-content; padding: 8px 0; border: 0; background: transparent; color: #42715f; font-size: 13px; }
+.expense-topbar button:last-child { justify-self: end; }
+.expense-fields { padding: 0 7px 112px; }
+.expense-field { margin-top: 18px; }
+.expense-field-label { display: block; margin-bottom: 9px; color: #60776e; font-size: 12px; font-weight: 800; }
+.expense-chip-row { display: flex; overflow-x: auto; padding: 1px 0 4px; gap: 7px; scrollbar-width: none; }
+.expense-chip-row::-webkit-scrollbar { display: none; }
+.expense-chip { flex: 0 0 auto; min-height: 36px; padding: 8px 12px; border: 1px solid var(--app-line); border-radius: 999px; background: #fff; color: #4e625a; font-size: 12px; font-weight: 750; white-space: nowrap; }
+.expense-chip.is-selected { border-color: var(--app-primary); background: #dff2ea; color: var(--app-primary); box-shadow: inset 0 0 0 1px var(--app-primary); }
+.expense-ledger-chip { min-height: 39px; padding-inline: 14px; font-size: 13px; }
+.expense-ledger-chip.is-selected { background: var(--app-primary); color: #fff; }
+.expense-subcategory { margin-top: 11px; padding-left: 3px; }
+.expense-subcategory .expense-field-label { margin-bottom: 6px; font-size: 11px; }
+.expense-amount-line { display: flex; align-items: baseline; gap: 7px; border-bottom: 2px solid var(--app-primary); }
+.expense-amount-line input { min-width: 0; flex: 1; padding: 4px 0 9px; border: 0; outline: 0; background: transparent; color: var(--app-text); font: inherit; font-size: 34px; font-weight: 900; text-align: right; }
+.expense-amount-line input::placeholder { color: #a5b4ad; }
+.expense-amount-line span { font-size: 17px; font-weight: 800; }
+.expense-datetime-line { display: flex; min-height: 48px; align-items: center; padding: 0 12px; gap: 9px; border: 1px solid var(--app-line); border-radius: 13px; background: #fff; }
+.expense-datetime-line > span { color: var(--app-primary); font-size: 18px; }
+.expense-datetime-line input { width: 100%; min-width: 0; border: 0; outline: 0; background: transparent; color: var(--app-text); font: inherit; font-size: 13px; font-weight: 700; }
+.expense-memo { width: 100%; min-height: 48px; padding: 11px 12px; border: 1px solid var(--app-line); border-radius: 13px; background: #fff; color: var(--app-text); font: inherit; font-size: 13px; }
+.expense-memo::placeholder { color: #98aaa1; }
+.expense-form-state { margin: 0; padding: 11px 12px; border: 1px solid var(--app-line); border-radius: 12px; background: #fff; color: var(--app-muted); font-size: 12px; }
+.expense-form-state.is-error,.expense-form-error { color: #b85f5f; }
+.expense-form-error { margin: 15px 0 0; font-size: 12px; line-height: 1.5; }
+.expense-delete-trigger { display: block; margin-top: 24px; padding: 8px 0; border: 0; background: transparent; color: #b85f5f; font: inherit; font-size: 13px; font-weight: 800; }
+.expense-delete-trigger:disabled { opacity: .6; }
+.expense-delete-overlay { position: fixed; inset: 0; z-index: 10; display: grid; place-items: center; padding: 18px; background: rgba(25, 41, 34, .42); }
+.expense-delete-dialog { width: min(100%, 360px); padding: 22px 18px 18px; border-radius: 18px; background: #fff; box-shadow: 0 18px 45px rgba(0, 0, 0, .18); }
+.expense-delete-dialog h2 { margin: 0; font-size: 17px; }
+.expense-delete-dialog > p { margin: 10px 0 20px; color: #60776e; font-size: 13px; line-height: 1.5; }
+.expense-delete-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.expense-delete-actions button { min-height: 44px; border: 1px solid var(--app-line); border-radius: 12px; background: #fff; color: var(--app-text); font: inherit; font-size: 13px; font-weight: 800; }
+.expense-delete-actions button.is-danger { border-color: #b85f5f; background: #b85f5f; color: #fff; }
+.expense-delete-actions button:disabled { opacity: .6; }
+.expense-save-area { position: fixed; bottom: 0; left: 50%; z-index: 4; width: min(100%, 430px); padding: 14px 17px max(16px, env(safe-area-inset-bottom)); transform: translateX(-50%); background: linear-gradient(transparent, var(--app-bg) 16%); }
+.expense-save-area button { width: 100%; min-height: 50px; border: 0; border-radius: 14px; background: var(--app-primary); color: #fff; box-shadow: 0 7px 18px rgba(79,154,128,.25); font-size: 14px; font-weight: 900; }
+.expense-save-area button:disabled { opacity: .6; }

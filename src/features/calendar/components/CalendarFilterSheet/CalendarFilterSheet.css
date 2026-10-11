@@ -1,0 +1,36 @@
+.filter-backdrop { position: fixed; z-index: 30; inset: 0; display: flex; justify-content: center; align-items: flex-end; background: #16282155; }
+.calendar-filter-sheet { display: flex; flex-direction: column; width: min(100%, 430px); height: min(86dvh, 750px); overflow: hidden; border-radius: 23px 23px 0 0; background: #fff; color: var(--app-text); box-shadow: 0 -10px 28px #1f3e342b; }
+.filter-sheet-head { padding: 8px 13px; border-bottom: 1px solid var(--app-soft); }
+.filter-handle { width: 34px; height: 4px; margin: 0 auto 9px; border-radius: 99px; background: var(--app-line); }
+.filter-sheet-head > div:last-child { display: flex; align-items: center; gap: 13px; }
+.filter-sheet-head h2 { flex: 1; margin: 0; font-size: 16px; }
+.filter-sheet-head button { padding: 4px; border: 0; background: transparent; color: var(--app-primary); font-size: 12px; cursor: pointer; }
+.filter-segments { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; margin: 8px 12px; padding: 3px; border-radius: 11px; background: var(--app-soft); }
+.filter-segments button { padding: 8px; border: 0; border-radius: 8px; background: transparent; color: var(--app-muted); font-size: 12px; cursor: pointer; }
+.filter-segments button.is-selected { background: #fff; color: var(--app-primary); box-shadow: 0 2px 7px #1f3e3412; }
+.filter-sheet-scroll { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 0 12px 18px; }
+.filter-scope-title { display: flex; justify-content: space-between; margin: 9px 1px 5px; font-size: 12px; color: var(--app-text); }
+.filter-ledger { margin-bottom: 7px; border: 1px solid var(--app-line); border-radius: 11px; overflow: hidden; }
+.filter-ledger-head { display: flex; justify-content: space-between; align-items: center; min-height: 40px; padding: 0 8px; background: var(--app-soft); }
+.filter-ledger-head button { border: 0; background: transparent; color: var(--app-muted); width: 32px; height: 32px; font-size: 18px; cursor: pointer; }
+.filter-check { display: flex; align-items: center; gap: 7px; min-width: 0; color: var(--app-text); font-size: 12px; font-weight: 800; cursor: pointer; }
+.filter-check span { overflow-wrap: anywhere; }
+.filter-check input { flex: 0 0 auto; width: 15px; height: 15px; margin: 0; accent-color: var(--app-primary); }
+.filter-ledger-details { padding: 8px 7px; }
+.filter-ledger-details h3 { margin: 2px 1px 7px; font-size: 12px; }
+.filter-ledger-details .filter-payment-title { margin-top: 12px; padding-top: 9px; border-top: 1px solid var(--app-line); }
+.filter-category-section { margin-bottom: 6px; padding: 8px; border: 1px solid var(--app-line); border-radius: 10px; background: var(--app-soft); }
+.filter-category-section > .filter-check { margin-bottom: 7px; font-size: 11px; }
+.filter-chips { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.filter-category-item { display: flex; min-width: 0; flex-direction: column; gap: 5px; }
+.filter-category-item > .filter-chips { grid-template-columns: minmax(0, 1fr); }
+.filter-chip { display: grid; place-items: center; width: 100%; height: 38px; min-width: 0; padding: 4px 5px; overflow: hidden; border: 1px solid var(--app-line); border-radius: 10px; background: #fff; color: var(--app-text); font-size: 11px; line-height: 1.25; cursor: pointer; overflow-wrap: anywhere; }
+.filter-chip.is-selected { border-color: var(--app-primary); background: var(--app-primary); color: #fff; }
+.filter-chip.is-partial { border-color: var(--app-primary); background: var(--app-accent); color: var(--app-primary); }
+.filter-child { font-size: 10px; padding: 4px 5px; }
+.filter-ungrouped { margin: 2px 1px 7px; padding: 3px 7px; }
+.calendar-filter-sheet footer { padding: 10px 12px max(13px, env(safe-area-inset-bottom)); border-top: 1px solid var(--app-soft); }
+.calendar-filter-sheet footer button { width: 100%; min-height: 44px; border: 0; border-radius: 11px; background: var(--app-primary); color: #fff; font-size: 13px; cursor: pointer; }
+.calendar-filter-sheet footer button:disabled { opacity: .55; cursor: default; }
+.filter-state { padding: 20px 10px; text-align: center; font-size: 12px; color: var(--app-muted); }
+.filter-state button { display: block; margin: 9px auto 0; border: 0; background: transparent; color: var(--app-primary); }

@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>조회 필터 · 가계부 톡톡</title><style>
+*{box-sizing:border-box}body{margin:0;padding:24px 16px 40px;background:#f0f3f1;color:#20342b;font-family:Pretendard,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input{font:inherit}button{color:inherit}h2{margin:0 0 10px}.subtitle{color:#66766e;line-height:1.6}.archive-banner{max-width:1080px;margin:0 auto 20px;padding:12px 16px;background:white;border:1px solid #d7e7e0;border-radius:12px;font-size:13px;line-height:1.6}.archive-banner a{color:#356f5b}.approval{display:none!important}.dialog .warning-icon{margin-left:auto;margin-right:auto}
+</style></head><body><aside class="archive-banner"><a href="index.html">목업 모음</a> · 조회 필터<br>승인 화면 보존본 · 정적 시안이며 실제 저장/인증은 동작하지 않습니다. 최신 정책은 <a href="../guide/PRD.md">PRD</a>와 <a href="../guide/Design.md">Design</a>를 따릅니다.</aside>
+<style>
+  .preview { width:min(360px,100%); margin:24px auto 0; }
+  .phone { position:relative; min-height:760px; overflow:hidden; border:1px solid #d6dfdb; border-radius:28px; background:#f5faf8; color:#24352f; box-shadow:0 12px 30px rgba(31,62,52,.10); }
+  .status { display:flex; justify-content:space-between; padding:9px 15px 3px; font-size:9px; font-weight:800; }
+  .top { display:flex; align-items:center; justify-content:space-between; padding:7px 14px; }
+  .brand { font-size:17px; font-weight:950; }
+  .filter-icon { display:grid; place-items:center; padding:4px; border:0; color:#286b55; background:transparent; }
+  .filter-icon svg { width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; }
+  .dim { position:absolute; inset:0; top:55px; background:rgba(22,40,33,.18); }
+  .sheet { position:absolute; left:0; right:0; bottom:0; height:682px; overflow:hidden; border-radius:23px 23px 0 0; background:#fff; box-shadow:0 -10px 28px rgba(31,62,52,.17); }
+  .sheet-head { padding:7px 13px 8px; border-bottom:1px solid #edf1ef; }
+  .handle { width:34px; height:4px; margin:0 auto 9px; border-radius:99px; background:#d7dfdb; }
+  .head-row { display:flex; justify-content:space-between; font-size:12px; font-weight:950; }
+  .reset { color:#4f9a80; font-size:9px; }
+  .segments { display:grid; grid-template-columns:repeat(3,1fr); gap:3px; margin:8px 12px; padding:3px; border-radius:11px; background:#edf2ef; }
+  .segment { padding:7px; border-radius:8px; color:#6d7b75; text-align:center; font-size:9px; font-weight:900; }
+  .segment.on { color:#286b55; background:#fff; box-shadow:0 2px 7px rgba(31,62,52,.07); }
+  .scroll { height:537px; overflow:hidden; padding:0 12px 18px; box-sizing:border-box; background:linear-gradient(#fff 95%,#eef3f1); }
+  .scope-title { display:flex; justify-content:space-between; margin:8px 1px 4px; color:#2f4d42; font-size:10px; font-weight:950; }
+  .scope-title small { color:#7b8782; font-size:7px; font-weight:700; }
+  .ledger-head { display:grid; grid-template-columns:17px 1fr auto; gap:6px; align-items:center; min-height:36px; padding:0 7px; border:1px solid #dfe8e4; border-radius:11px 11px 0 0; background:#edf7f3; }
+  .check { display:grid; place-items:center; width:14px; height:14px; border:1px solid #78aa99; border-radius:4px; color:#fff; background:#4f9a80; font-size:8px; }
+  .ledger-name { color:#2e5748; font-size:9px; font-weight:950; }
+  .arrow { color:#668078; font-size:10px; font-weight:900; }
+  .details { padding:7px 6px 8px; border:1px solid #dfe8e4; border-top:0; border-radius:0 0 11px 11px; }
+  .section-title { margin:2px 1px 6px; color:#293f37; font-size:9px; font-weight:950; }
+  .section-title.payment { margin-top:10px; padding-top:8px; border-top:1px solid #e9eeec; }
+  .group { margin-bottom:5px; padding:7px 8px; border:1px solid #dfe8e4; border-radius:10px; background:#f8fbfa; }
+  .group-head { display:flex; align-items:center; gap:5px; margin-bottom:6px; color:#355c4e; font-size:8px; font-weight:950; }
+  .mini-check { display:grid; place-items:center; width:13px; height:13px; border:1px solid #88ad9f; border-radius:4px; color:#fff; background:#4f9a80; font-size:7px; }
+  .mini-check.off { color:transparent; background:#fff; }
+  .chips { display:flex; flex-wrap:wrap; gap:4px; }
+  .chip { padding:5px 7px; border:1px solid #dbe5e0; border-radius:999px; background:#fff; color:#53665e; font-size:7px; font-weight:800; }
+  .chip.on { border-color:#4f9a80; color:#fff; background:#4f9a80; }
+  .ungrouped { margin:1px 1px 6px; padding:3px 7px; }
+  .collapsed { margin-top:5px; border-radius:11px; background:#f8fbfa; }
+  .more { padding:7px 0 1px; color:#75827c; text-align:center; font-size:7px; }
+  .sheet-foot { position:absolute; left:0; right:0; bottom:0; padding:9px 12px 13px; border-top:1px solid #edf1ef; background:#fff; }
+  .apply { width:100%; padding:11px; border:0; border-radius:11px; color:#fff; background:#4f9a80; font-size:10px; font-weight:950; }
+  .notes { display:flex; justify-content:center; gap:7px; flex-wrap:wrap; margin-top:14px; }
+  .note { padding:7px 10px; border-radius:999px; color:#40584e; background:#edf7f3; font-size:10px; font-weight:800; }
+</style>
+
+<h2>필터 UI · 모바일 최종안</h2>
+<p class="subtitle">360px 모바일 폭에 맞추고 불필요한 요약 문구를 제거했습니다.</p>
+
+<div class="preview">
+  <div class="phone">
+    <div class="status"><span>9:41</span><span>● ● ●</span></div>
+    <div class="top"><span class="brand">가계부 톡톡</span><button class="filter-icon" aria-label="필터"><svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10M14 4v6M6 14v6"/></svg></button></div>
+    <div class="dim"></div>
+    <div class="sheet">
+      <div class="sheet-head"><div class="handle"></div><div class="head-row"><span>필터</span><span class="reset">초기화</span></div></div>
+      <div class="segments"><span class="segment on">전체</span><span class="segment">그룹</span><span class="segment">개인</span></div>
+      <div class="scroll">
+        <div class="scope-title"><span>그룹</span><small>2개</small></div>
+        <div class="ledger-head"><span class="check">✓</span><span class="ledger-name">우리집</span><span class="arrow">⌃</span></div>
+        <div class="details">
+          <div class="section-title">카테고리</div>
+          <div class="group"><div class="group-head"><span class="mini-check">✓</span><span>생활비</span></div><div class="chips"><span class="chip on">식비</span><span class="chip on">카페</span><span class="chip">장보기</span></div></div>
+          <div class="group"><div class="group-head"><span class="mini-check off">✓</span><span>고정비</span></div><div class="chips"><span class="chip">주거</span><span class="chip">통신</span><span class="chip">보험</span></div></div>
+          <div class="group"><div class="group-head"><span class="mini-check off">✓</span><span>특별비</span></div><div class="chips"><span class="chip">여행</span><span class="chip">선물</span></div></div>
+          <div class="ungrouped"><div class="chips"><span class="chip">취미</span><span class="chip">반려동물</span></div></div>
+          <div class="section-title payment">결제수단</div>
+          <div class="group"><div class="group-head"><span class="mini-check">✓</span><span>카드</span></div><div class="chips"><span class="chip on">현대카드</span><span class="chip on">롯데카드</span><span class="chip">삼성카드</span></div></div>
+          <div class="group"><div class="group-head"><span class="mini-check off">✓</span><span>현금</span></div><div class="chips"><span class="chip">현금</span><span class="chip">지역화폐</span><span class="chip">카카오페이</span></div></div>
+        </div>
+        <div class="ledger-head collapsed"><span class="check">✓</span><span class="ledger-name">여행모임</span><span class="arrow">›</span></div>
+        <div class="scope-title"><span>개인</span><small>1개</small></div>
+        <div class="ledger-head collapsed"><span class="check">✓</span><span class="ledger-name">개인 가계부</span><span class="arrow">›</span></div>
+        <div class="more">↕ 내용이 길어지면 이 영역만 스크롤</div>
+      </div>
+      <div class="sheet-foot"><button class="apply">선택한 조건으로 보기</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="notes"><span class="note">360px 기준</span><span class="note">요약 문구 제거</span><span class="note">가로 넘침 없음</span></div>
+
+
+</body></html>
+
