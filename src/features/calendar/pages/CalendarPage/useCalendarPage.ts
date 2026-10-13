@@ -15,6 +15,8 @@ export function useCalendarPage() {
   const [search_params, set_search_params] = useSearchParams()
   const applied_filters = parse_calendar_filters(search_params.get('filters'))
   const [filter_state, set_filter_state] = useState<'closed' | 'open'>('closed')
+  const [expense_sheet_state, set_expense_sheet_state] = useState<'closed' | 'open'>('closed')
+  const [editing_transaction_id, set_editing_transaction_id] = useState<string | undefined>()
   // URL만을 선택 상태의 원본으로 두어 새로고침/뒤로가기 시 같은 범위를 복원합니다.
   const scope_param = search_params.get('scope')
   let ledger_scope: LedgerScope = 'ALL'
@@ -105,6 +107,16 @@ export function useCalendarPage() {
 
   const close_filter = useCallback(() => set_filter_state('closed'), [set_filter_state])
   function open_filter() { set_filter_state('open') }
+  const close_expense_sheet = useCallback(() => {
+    set_expense_sheet_state('closed')
+    set_editing_transaction_id(undefined)
+  }, [])
+  function open_expense_sheet() { set_editing_transaction_id(undefined); set_expense_sheet_state('open') }
+  function open_expense_edit(transaction_id: number) {
+    set_editing_transaction_id(String(transaction_id))
+    set_expense_sheet_state('open')
+  }
+  function expense_saved(date: string) { choose_date(get_calendar_start_date(date)) }
   function apply_filter(scope: LedgerScope, filters: CalendarFilters) {
     set_search_params((previous) => {
       const next = new URLSearchParams(previous)
@@ -137,6 +149,12 @@ export function useCalendarPage() {
 
   return {
     calendar_days,
+    expense_sheet_state,
+    editing_transaction_id,
+    open_expense_edit,
+    close_expense_sheet,
+    open_expense_sheet,
+    expense_saved,
     expense_query: expense_params.toString(),
     applied_filters,
     filter_state,

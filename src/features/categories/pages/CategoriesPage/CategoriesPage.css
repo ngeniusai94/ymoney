@@ -21,9 +21,7 @@
 .categories-group-head { display: flex; min-height: 40px; align-items: center; padding: 0 12px; gap: 5px; background: var(--app-soft); }
 .categories-group-head strong { font-size: 12px; }
 .categories-group-head small { color: var(--app-muted); font-size: 10px; }
-.categories-parent-row { display: grid; min-height: 44px; grid-template-columns: 29px 1fr auto auto; align-items: center; padding: 0 11px; gap: 8px; border-top: 1px solid var(--app-line); background: var(--app-bg); }
-.categories-parent-row.has-no-icon { grid-template-columns: 1fr auto auto; padding-left: 14px; }
-.categories-parent-block.has-no-icon .categories-child-row { padding-left: 32px; }
+.categories-parent-row { display: grid; min-height: 44px; grid-template-columns: 1fr auto auto auto; align-items: center; padding: 0 11px 0 14px; gap: 8px; border-top: 1px solid var(--app-line); background: var(--app-bg); }
 .categories-parent-block:first-child .categories-parent-row { border-top: 0; }
 .categories-parent-row strong { font-size: 12px; }
 .categories-edit-name { min-width: 0; min-height: 36px; padding: 0; border: 0; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; overflow-wrap: anywhere; }
@@ -33,8 +31,7 @@
 .categories-sheet-disable:disabled { opacity: .5; cursor: default; }
 .categories-child-add { min-height: 26px; padding: 0 8px; border: 0; border-radius: 15px; background: var(--app-accent); color: var(--app-primary); font-size: 10px; font-weight: 800; cursor: pointer; }
 .categories-child-parent-name { margin: 0 0 12px; color: var(--app-primary); font-size: 13px; font-weight: 800; }
-.categories-parent-icon { display: grid; width: 27px; height: 27px; place-items: center; border-radius: 8px; background: var(--app-soft); font-size: 14px; }
-.categories-child-row { display: grid; min-height: 36px; grid-template-columns: 17px 1fr auto auto; align-items: center; padding: 0 12px 0 46px; gap: 8px; border-top: 1px solid var(--app-line); color: var(--app-text); font-size: 11px; }
+.categories-child-row { display: grid; min-height: 36px; grid-template-columns: 17px 1fr auto auto; align-items: center; padding: 0 12px 0 32px; gap: 8px; border-top: 1px solid var(--app-line); color: var(--app-text); font-size: 11px; }
 .categories-more { min-width: 24px; min-height: 32px; padding: 0; border: 0; background: transparent; color: var(--app-muted); font-size: 20px; cursor: pointer; }
 .categories-child-row > span:first-child { color: var(--app-muted); }
 .categories-inactive { color: #9b7777; font-size: 10px; }
@@ -51,13 +48,9 @@
 .categories-sheet-heading button { border: 0; background: transparent; color: var(--app-muted); font-size: 24px; cursor: pointer; }
 .categories-sheet-label { display: block; margin: 14px 0 7px; font-size: 11px; font-weight: 800; }
 .categories-sheet-input { box-sizing: border-box; width: 100%; height: 44px; padding: 0 11px; border: 1px solid var(--app-line); border-radius: 11px; font: inherit; }
-.categories-sheet-options, .categories-sheet-groups { display: flex; flex-wrap: wrap; gap: 7px; }
-.categories-sheet-options { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
-.categories-sheet-options button { display: grid; min-width: 0; width: 100%; height: 38px; padding: 0; place-items: center; border: 1px solid var(--app-line); border-radius: 9px; background: #fff; font-size: 18px; cursor: pointer; }
-.categories-sheet-options svg { width: 20px; height: 20px; fill: none; stroke: var(--app-muted); stroke-width: 1.7; stroke-linecap: round; }
+.categories-sheet-groups { display: flex; flex-wrap: wrap; gap: 7px; }
 .categories-sheet-groups button { min-height: 31px; padding: 0 10px; border: 1px solid var(--app-line); border-radius: 20px; background: #fff; color: var(--app-text); font-size: 11px; cursor: pointer; }
 .categories-sheet-groups button.is-selected { border-color: var(--app-primary); background: var(--app-accent); color: var(--app-primary); }
-.categories-sheet-options button.is-selected { border-color: var(--app-primary); background: var(--app-accent); }
 .categories-sheet-error { margin: 12px 0 0; color: #b85f5f; font-size: 12px; }
 .categories-sheet-save { width: 100%; height: 45px; margin-top: 18px; border: 0; border-radius: 11px; background: var(--app-primary); color: #fff; font-size: 13px; font-weight: 800; cursor: pointer; }
 .categories-sheet-save:disabled { opacity: .6; cursor: default; }

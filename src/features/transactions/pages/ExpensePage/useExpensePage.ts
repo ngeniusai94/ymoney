@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { loadCurrentProfile } from '../../../auth/auth.api'
@@ -23,7 +23,13 @@ export function useExpenseRecord(transaction_id: string | undefined) {
 }
 
 /** 입력 상태와 가계부별 선택 목록, 저장 후 달력 복귀를 관리합니다. */
-export function useExpensePage(existing_expense: ExistingExpense | null) {
+export type ExpenseFormCallbacks = {
+  on_close?: () => void
+  on_saved?: (date: string) => void
+  on_busy_change?: (busy: boolean) => void
+}
+
+export function useExpensePage(existing_expense: ExistingExpense | null, callbacks: ExpenseFormCallbacks = {}) {
   const { session } = useAuth()
   const navigate = useNavigate()
   const query_client = useQueryClient()
@@ -52,6 +58,8 @@ export function useExpensePage(existing_expense: ExistingExpense | null) {
   const [is_deleting, set_is_deleting] = useState(false)
   const [is_delete_confirm_open, set_is_delete_confirm_open] = useState(false)
   const [form_error, set_form_error] = useState('')
+  const on_busy_change = callbacks.on_busy_change
+  useEffect(() => { on_busy_change?.(is_saving || is_deleting) }, [is_saving, is_deleting, on_busy_change])
 
   const ledger_query = useQuery({
     queryKey: ['expense-entry', 'ledgers', session?.user.id ?? 'signed-out'],
@@ -107,6 +115,8 @@ export function useExpensePage(existing_expense: ExistingExpense | null) {
   }
 
   function close_form() {
+    if (is_saving || is_deleting) return
+    if (callbacks.on_close) { callbacks.on_close(); return }
     navigate(calendar_return_url(existing_expense?.trans_date ?? date_time.slice(0, 10)))
   }
 
@@ -147,7 +157,12 @@ export function useExpensePage(existing_expense: ExistingExpense | null) {
       }
       // 달력의 원격 캐시를 무효화하면 복귀 후 최신 합계와 목록을 다시 요청합니다.
       await query_client.invalidateQueries({ queryKey: ['calendar', 'monthly-expenses', session?.user.id] })
-      navigate(calendar_return_url(date_time.slice(0, 10)), { replace: true })
+      if (callbacks.on_saved) {
+        callbacks.on_saved(date_time.slice(0, 10))
+        callbacks.on_close?.()
+      } else {
+        navigate(calendar_return_url(date_time.slice(0, 10)), { replace: true })
+      }
     } catch (error) {
       set_form_error(error instanceof Error ? error.message : '지출을 저장하지 못했습니다.')
     } finally {
@@ -180,7 +195,12 @@ export function useExpensePage(existing_expense: ExistingExpense | null) {
       await delete_expense(existing_expense.transaction_id, existing_expense.ledger_id, user_srno)
       // 삭제된 행이 월·일 합계와 목록에서 빠지도록 캐시를 다시 읽게 합니다.
       await query_client.invalidateQueries({ queryKey: ['calendar', 'monthly-expenses', session?.user.id] })
-      navigate(calendar_return_url(existing_expense.trans_date), { replace: true })
+      if (callbacks.on_saved) {
+        callbacks.on_saved(existing_expense.trans_date)
+        callbacks.on_close?.()
+      } else {
+        navigate(calendar_return_url(existing_expense.trans_date), { replace: true })
+      }
     } catch (error) {
       set_form_error(error instanceof Error ? error.message : '지출을 삭제하지 못했습니다.')
     } finally {

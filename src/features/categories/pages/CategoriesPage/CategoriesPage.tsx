@@ -44,9 +44,8 @@ function CategoriesPage() {
             </header>
           ) : null}
           {section.items.map((item) => (
-            <div className={`categories-parent-block${item.icon_key ? '' : ' has-no-icon'}`} key={item.category_id}>
-              <div className={`categories-parent-row${item.icon_key ? '' : ' has-no-icon'}`}>
-                {item.icon_key ? <span className="categories-parent-icon" aria-hidden="true">{item.icon_key}</span> : null}
+            <div className="categories-parent-block" key={item.category_id}>
+              <div className="categories-parent-row">
                 <button type="button" className="categories-edit-name" aria-label={`${item.category_name} 수정`} onClick={() => page.open_edit_sheet(item)}><strong>{item.category_name}</strong></button>
                 {item.is_active ? null : <small className="categories-inactive">비활성</small>}
                 {item.is_active ? <button type="button" className="categories-child-add" aria-label={`${item.category_name} 하위 카테고리 추가`} onClick={() => page.open_add_child_sheet(item)}>＋</button> : null}
@@ -129,15 +128,6 @@ function CategoriesPage() {
               <>
                 <label className="categories-sheet-label" htmlFor="new-category-name">이름</label>
                 <input id="new-category-name" className="categories-sheet-input" value={page.new_name} onChange={(event) => page.set_new_name(event.target.value)} maxLength={30} placeholder="새 카테고리" autoFocus />
-                <div id="category-icon-label" className="categories-sheet-label">아이콘(선택)</div>
-                <div className="categories-sheet-options" role="group" aria-labelledby="category-icon-label">
-                  <button type="button" className={page.new_icon ? '' : 'is-selected'} aria-label="아이콘 없음" title="아이콘 없음" aria-pressed={!page.new_icon} onClick={() => page.set_new_icon('')}>
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" /><path d="m6.5 6.5 11 11" /></svg>
-                  </button>
-                  {page.icon_choices.map((icon) => (
-                    <button key={icon} type="button" className={page.new_icon === icon ? 'is-selected' : ''} aria-label={`${icon} 선택`} aria-pressed={page.new_icon === icon} onClick={() => page.toggle_icon(icon)}>{icon}</button>
-                  ))}
-                </div>
                 <div className="categories-sheet-label">카테고리 그룹 · 선택사항</div>
                 <div className="categories-sheet-groups" role="group" aria-label="카테고리 그룹 선택">
                   {(page.category_query.data?.groups ?? []).filter((group) => group.is_active).map((group) => (

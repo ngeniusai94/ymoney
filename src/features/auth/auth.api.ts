@@ -1,6 +1,7 @@
 import type { AuthError, User } from '@supabase/supabase-js'
 import { get_supabase_client } from '../../lib/supabase'
 import { to_auth_email } from './id-credentials'
+import { clear_withdrawal_intent } from './withdrawal-intent'
 
 type SignUpInput = {
   user_id: string
@@ -67,6 +68,7 @@ async function ensureCurrentProfile(user: User, nickname: string): Promise<UserP
 
 /** 카카오 OAuth의 비밀 키는 Supabase 대시보드가 보관하며 브라우저에는 넣지 않습니다. */
 export async function sign_in_with_kakao() {
+  clear_withdrawal_intent()
   const { error } = await get_supabase_client().auth.signInWithOAuth({
     provider: 'kakao',
     options: {

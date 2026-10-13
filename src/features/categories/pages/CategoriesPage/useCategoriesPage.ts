@@ -7,8 +7,6 @@ import { create_category_group, create_child_category, create_parent_category, d
 import { build_category_sections, get_category_group_error, get_child_category_error, get_parent_category_error } from '../../categories.utils'
 import type { CategoryGroup, ManagedCategory } from '../../categories.utils'
 
-const icon_choices = ['🍚', '☕', '🛒', '🏠', '🎨', '🐾']
-
 /** 관리할 가계부 선택과 해당 가계부의 카테고리 조회 상태를 소유합니다. */
 export function useCategoriesPage() {
   const { session } = useAuth()
@@ -19,7 +17,6 @@ export function useCategoriesPage() {
   const [editing_category, set_editing_category] = useState<ManagedCategory | null>(null)
   const [editing_group, set_editing_group] = useState<CategoryGroup | null>(null)
   const [new_name, set_new_name] = useState('')
-  const [new_icon, set_new_icon] = useState('')
   const [new_group_id, set_new_group_id] = useState<string | null>(null)
   const [new_group_name, set_new_group_name] = useState('')
   const [form_error, set_form_error] = useState('')
@@ -64,7 +61,6 @@ export function useCategoriesPage() {
     set_editing_group(null)
     set_editing_category(null)
     set_new_name('')
-    set_new_icon('')
     set_new_group_id(null)
     set_form_error('')
     set_sheet_state('category-editing')
@@ -98,7 +94,6 @@ export function useCategoriesPage() {
     set_editing_group(null)
     set_editing_category(category)
     set_new_name(category.category_name)
-    set_new_icon(category.icon_key ?? '')
     set_new_group_id(category.category_group_id)
     set_form_error('')
     if (category.parent_category_id === null) {
@@ -123,14 +118,6 @@ export function useCategoriesPage() {
     set_new_group_name(group.group_name)
     set_form_error('')
     set_sheet_state('group-editing')
-  }
-
-  /** 선택한 아이콘을 다시 누르면 미선택 상태로 돌아갑니다. */
-  function toggle_icon(icon: string) {
-    set_new_icon((current) => {
-      if (current === icon) return ''
-      return icon
-    })
   }
 
   // JSX에서는 제목 선택을 위한 중첩 삼항식을 추가하지 않습니다.
@@ -200,7 +187,8 @@ export function useCategoriesPage() {
         .filter((category) => category.parent_category_id === parent_id)
         .map((category) => category.sort_order)) + 1
       if (editing_category) {
-        const input: Parameters<typeof update_category>[0] = { ledger_id, category: editing_category, category_name: new_name.trim(), icon_key: new_icon.trim() || null, category_group_id: new_group_id }
+        // 관리 UI에서 아이콘을 편집하지 않으므로 기존 값을 보존합니다.
+        const input: Parameters<typeof update_category>[0] = { ledger_id, category: editing_category, category_name: new_name.trim(), icon_key: editing_category.icon_key, category_group_id: new_group_id }
         if (activate) input.is_active = true
         await update_category(input)
       } else if (parent_id) {
@@ -209,7 +197,7 @@ export function useCategoriesPage() {
         await create_parent_category({
           ledger_id,
           category_name: new_name.trim(),
-          icon_key: new_icon.trim() || null,
+          icon_key: null,
           category_group_id: new_group_id,
           sort_order: next_order,
         })
@@ -295,13 +283,11 @@ export function useCategoriesPage() {
     editing_category,
     editing_group,
     form_error,
-    icon_choices,
     ledger_query,
     ledgers,
     nickname: ledger_query.data?.profile.nickname ?? null,
     new_group_id,
     new_group_name,
-    new_icon,
     new_name,
     open_add_sheet,
     open_add_group_sheet,
@@ -312,12 +298,10 @@ export function useCategoriesPage() {
     save_group,
     sections,
     selected_ledger,
-    set_new_icon,
     set_new_group_name,
     set_new_name,
     sheet_state,
     sheet_title,
     toggle_group,
-    toggle_icon,
   }
 }

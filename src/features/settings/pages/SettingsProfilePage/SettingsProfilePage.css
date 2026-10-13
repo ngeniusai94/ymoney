@@ -27,6 +27,8 @@
 .profile-delete-dialog button { flex: 1; min-height: 44px; border: 1px solid var(--app-line); border-radius: 12px; background: #fff; color: inherit; cursor: pointer; }
 .profile-delete-dialog .profile-delete-danger { border: 0; background: #b85f5f; color: #fff; }
 .profile-delete-message { color: #b85f5f; }
+.profile-delete-dialog .profile-delete-close { position: absolute; top: 10px; right: 10px; display: grid; width: 32px; height: 32px; min-height: 32px; padding: 0; place-items: center; border: 0; background: transparent; color: var(--app-muted); font-size: 25px; line-height: 1; }
+.profile-delete-dialog .profile-kakao-withdraw { min-height: 49px; border: 0; border-radius: 0; background: #ffeb00; color: #000; font-size: 16px; font-weight: 600; }
 .profile-message { padding: 12px; color: var(--app-muted); font-size: 12px; line-height: 1.5; }
 .profile-message button { margin-left: 8px; border: 0; background: transparent; color: var(--app-primary); }
 .profile-screen button:disabled { opacity: .6; cursor: default; }

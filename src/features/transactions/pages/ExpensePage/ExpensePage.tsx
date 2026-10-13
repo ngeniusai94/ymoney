@@ -2,11 +2,12 @@ import { Link, useParams } from 'react-router-dom'
 import type { ExistingExpense } from '../../transactions.api'
 import { get_ledger_display_name } from '../../../ledgers/ledgers.utils'
 import { useExpensePage, useExpenseRecord } from './useExpensePage'
+import type { ExpenseFormCallbacks } from './useExpensePage'
 import './ExpensePage.css'
 
 /** 신규 입력과 수정을 같은 한 화면 폼으로 렌더링합니다. */
-function ExpenseForm({ existing_expense }: { existing_expense: ExistingExpense | null }) {
-  const form = useExpensePage(existing_expense)
+export function ExpenseForm({ existing_expense, ...callbacks }: { existing_expense: ExistingExpense | null } & ExpenseFormCallbacks) {
+  const form = useExpensePage(existing_expense, callbacks)
   let ledger_content
   let category_content
   let payment_content
@@ -98,7 +99,7 @@ function ExpenseForm({ existing_expense }: { existing_expense: ExistingExpense |
   return (
     <section className="expense-screen" aria-label={form.is_edit_mode ? '지출 수정' : '새 지출 입력'}>
       <header className="expense-topbar">
-        <button type="button" onClick={form.close_form}>취소</button>
+        <button type="button" onClick={form.close_form} disabled={form.is_saving || form.is_deleting}>취소</button>
         <strong>{form.is_edit_mode ? '지출 수정' : '새 지출'}</strong>
         {/* <button type="button" onClick={form.reset_form}>{form.is_edit_mode ? '원래대로' : '초기화'}</button> */}
         {form.is_edit_mode ? (

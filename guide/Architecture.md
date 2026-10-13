@@ -48,25 +48,26 @@ React 화면 → 기능별 TypeScript API → supabase-js → 기존 Supabase Au
 | 인증 | `src/features/auth/AuthProvider.tsx` | 세션 복원·변경·로그아웃 상태 |
 | 인증 | `src/features/auth/auth.api.ts` | 인증 요청·기존 프로필 확인/가입 준비 |
 | 달력 | `src/components/AppLayout.tsx` | 중앙 한 열 앱·아이콘 탭바 |
-| 달력 | `src/features/calendar/pages/CalendarPage/CalendarPage.tsx`, `useCalendarPage.ts`, `CalendarPage.css` | CalendarView 공용 UI와 실제 조회/이동 wrapper 분리. 둘러보기는 UI만 재사용 |
+| 달력 | `src/features/calendar/pages/CalendarPage/CalendarPage.tsx`, `useCalendarPage.ts`, `CalendarPage.css`, `CalendarHeader.tsx`, `CalendarMonth.tsx`, `CalendarDaily.tsx`, `useCalendarSwipe.ts` | 상단/월 달력/일별 목록 분리. Pointer Events 드래그 추적·거리/속도 판단·월 전환/복귀 애니메이션은 useCalendarSwipe에 집중, 타이머/프레임 해제. 둘러보기는 공용 UI만 재사용 |
 | 달력 | `src/features/calendar/calendar.utils.ts` | 날짜 셀·일별/월별 집계 |
 | 가계부 초기화·목록 | `src/features/ledgers/ledgers.api.ts` | 개인 가계부와 본인 연결 준비 RPC, 본인 목록 조회 RPC 호출 |
 | 가계부 표시 | `src/features/ledgers/ledgers.utils.ts` | 개인 가계부 닉네임/기본 이름과 공유 가계부 이름 공통 규칙 |
 | 달력 | `src/features/transactions/transactions.api.ts` | 월 조회·지출 저장/수정·소프트 삭제 |
 | 원격 데이터 | `src/lib/queryClient.ts` | TanStack Query 클라이언트 기본 설정 |
 | 지출 | `src/features/transactions/pages/ExpensePage/ExpensePage.tsx`, `useExpensePage.ts`, `ExpensePage.css` | 새 지출과 기존 지출 수정에 공용으로 쓰는 폼 UI·상태·화면 스타일 |
+| 지출 시트 | `src/features/transactions/pages/ExpensePage/ExpenseSheet.tsx`, `useExpenseSheet.ts`, `ExpenseSheet.css` | 추가·수정 모두 기존 ExpenseForm과 시트 애니메이션 재사용. 수정 ID로 useExpenseRecord 조회, 로딩/오류는 시트 안에 표시. 80dvh/320ms/배경 스크롤 잠금. 저장·삭제 후 월 캐시 갱신 및 달력 유지 |
 | 지출 | `src/features/transactions/expense-options.api.ts`, `expense.utils.ts` | 가계부별 초기 항목·선택 목록, 날짜/금액 입력 규칙 |
 | 필터 | `src/features/calendar/components/CalendarFilterSheet/CalendarFilterSheet.tsx`, `useCalendarFilterSheet.ts`, `CalendarFilterSheet.css` | 가계부별 접기/선택 UI·임시 선택/조회 훅·시트 스타일 |
 | 필터 | `src/features/calendar/filter.api.ts`, `filter.utils.ts` | 기존 가계부/분류/결제수단 읽기 API 조립, 선택 상태·URL 검증·OR/AND 조건 |
 | 관리 | `src/features/settings/pages/SettingsPage/SettingsPage.tsx`, `SettingsPage.css` | 설정 메뉴와 카테고리 관리 이동 |
-| 분류 | `src/features/categories/pages/CategoriesPage/CategoriesPage.tsx`, `useCategoriesPage.ts`, `CategoriesPage.css`, `src/features/categories/categories.api.ts`, `categories.utils.ts` | 가계부별 그룹·상하위 조회와 추가. 카테고리/그룹 수정·비활성화는 후속 작업 |
+| 분류 | `src/features/categories/pages/CategoriesPage/CategoriesPage.tsx`, `useCategoriesPage.ts`, `CategoriesPage.css`, `src/features/categories/categories.api.ts`, `categories.utils.ts` | 가계부별 그룹·상하위 조회/추가/수정/활성화. 관리 아이콘 UI·선택 상태 제거, 신규 icon_key=null/수정 기존 값 보존 |
 | 결제 | `src/features/payment-methods/pages/PaymentMethodsPage/PaymentMethodsPage.tsx`, `usePaymentMethodsPage.ts`, `PaymentMethodsPage.css`, `src/features/payment-methods/payment-methods.api.ts` | 카드/현금 목록·추가·이름/유형 수정·비활성화. 화면/훅/API 분리 |
 | 그룹 | `src/features/groups/pages/GroupsPage/{GroupsPage.tsx,useGroupsPage.ts,GroupsPage.css}`, `pages/GroupDetailPage/{GroupDetailPage.tsx,useGroupDetailPage.ts,GroupDetailPage.css}`, `groups.api.ts` | 목록·상세·생성/참여·멤버 표시·이름 변경·코드 복사·나가기. 코드 재발급은 후속 |
 | 내 정보 | `src/features/settings/pages/SettingsProfilePage/SettingsProfilePage.tsx`, `useSettingsProfilePage.ts`, `SettingsProfilePage.css`, `src/features/settings/profile.api.ts` | 닉네임·본인 로그인 정보·현재 기기 로그아웃 |
 | 소셜 인증 | `src/features/auth/useIntroPage.ts`, `useAuthCallbackPage.ts`, `auth.api.ts` | 카카오 OAuth 시작→SDK 세션 복원→인증 서버 getUser 확인→기존 tb_user 재사용 또는 M 프로필 생성→달력 이동. 키는 Supabase Dashboard에만 보관 |
-| 계정 삭제 | `src/features/settings/pages/SettingsProfilePage/SettingsAccountDelete.tsx`, `useSettingsAccountDelete.ts`, `src/features/settings/profile.api.ts`, `supabase/account-withdrawal.sql` | 단계별 전체 폼/전용 훅/API 분리. 아이디 비밀번호 재인증 후 기존 ymoney.fn_mon_withdraw_account(text) 호출. 세션 본인 M/최근 로그인/확인값 검사와 가계부·Auth 정리, 기존 yWeather 함수 보존. 소셜 연결 계정은 재인증/해제 준비 전 UI/API 차단 |
+| 계정 삭제 | `src/features/settings/pages/SettingsProfilePage/SettingsAccountDelete.tsx`, `useSettingsAccountDelete.ts`, `src/features/settings/profile.api.ts`, `kakao-withdrawal.api.ts`, `src/features/auth/withdrawal-intent.ts`, `supabase/account-withdrawal.sql` | 전체 폼/훅/API 분리. 아이디 비밀번호 또는 카카오 재로그인 후 확인 입력. 카카오 전용 앱 연결 해제 후 기존 M 삭제 함수 호출. Apple 등 미지원 공급자 차단, 기존 yWeather 함수 보존 |
 | 테마 | `src/features/settings/pages/SettingsThemePage/SettingsThemePage.tsx`, `SettingsThemePage.css` | 승인 B안 팔레트 목록과 즉시 선택 |
-| 테마 | `src/features/theme/ThemeProvider.tsx`, `useTheme.ts`, `theme.const.ts`, `theme.css` | Context·기기 저장/복원·저장 실패 안내·CSS 변수. 인트로 고정 디자인 유지 |
+| 테마 | `src/features/theme/ThemeProvider.tsx`, `useTheme.ts`, `theme.const.ts`, `theme.css` | Context·기기 저장/복원·저장 실패 안내·CSS 변수. 인트로도 테마 적용, 소셜 브랜드 색은 유지 |
 | 통계 | `src/features/statistics/StatisticsPage.tsx` | 준비 중 화면 |
 | 둘러보기 | `src/features/preview/preview-data.ts`, `src/features/preview/pages/PreviewCalendarPage/PreviewCalendarPage.tsx`, `usePreviewCalendarPage.ts` | CalendarView와 AppLayout 탭 모양만 재사용. 고정 예시 합계와 공통 로그인 안내; URL/선택 상태/필터 시트/다른 화면 없음. 가계부 원격 요청 없음 |
 | 재사용 발생 시 | `src/components/BottomSheet.tsx`, `ConfirmDialog.tsx` | 공통 시트·확인 팝업 |
@@ -78,7 +79,20 @@ React 화면 → 기능별 TypeScript API → supabase-js → 기존 Supabase Au
 
 축약한 API 파일 경로는 같은 행의 화면 파일과 동일한 폴더를 사용한다. 예: `categories.api.ts`는 `src/features/categories/categories.api.ts`이다. 화면이 과도하게 커지면 해당 기능 폴더 내부에서 시트/폼만 분리하고 이 지도를 갱신한다.
 
+지출 목록 조회 모델은 `category_name`(전체 접근성 이름)과 `parent_category_name`/`child_category_name`(배치용 이름)을 따로 전달한다. 화면에서 구분 문자열을 다시 분해하지 않는다. 시트는 opening→open→closing 상태를 사용하며 두 requestAnimationFrame 뒤 열기 전환을 시작한다. CSS 전환과 닫기 지연은 320ms로 맞춘다.
+
+월 지출 조회는 거래에 참조된 결제수단 ID와 접근 가능한 ledger_id로 결제수단 이름·유형을 함께 읽고 `payment_method_name`을 전달한다. 비활성 항목도 과거 기록에 표시한다. 상세 이름이 비었으면 CARD/CASH를 카드/현금으로 표시하며 참조 항목 자체가 없으면 임의로 유형을 추정하지 않고 `결제수단 없음`으로 표시한다. 기존 SELECT 권한을 사용하며 새 DB 객체는 필요하지 않다.
+
 ## 3. 라우트와 상태
+
+### 카카오 탈퇴 설정과 경계
+
+- 별도 서버/Edge Function/DB 객체를 추가하지 않는다. `kakao-withdrawal.api.ts`가 공식 JavaScript SDK 2.8.3을 필요할 때만 로드하며 고정 버전/SHA384 무결성 검사를 사용한다.
+- `.env`와 Vercel에 `VITE_KAKAO_JAVASCRIPT_KEY`를 입력한다. Kakao Developers → 앱 → 플랫폼 키 → JavaScript 키에서 확인하는 공개용 키다. Admin/REST API 키/Client Secret은 넣지 않는다. 같은 키의 JavaScript SDK 도메인에 `http://localhost:5173`, `https://ymoney.vercel.app`를 등록한다. 환경값 변경 후 로컬 서버 재시작 및 배포 환경 재배포는 사용자가 한다. Supabase Redirect URL은 기존 `/auth/callback`을 그대로 사용한다.
+- `withdrawal-intent.ts`는 OAuth 왕복용 원래 UUID·시작/확인 시각만 sessionStorage에 보관한다. 자체 권한 증명이 아니며 토큰/비밀번호/삭제 입력은 별도로 저장하지 않는다. 인증 서버 getUser, 기존 활성 M 프로필, 원래 UUID, 공급자 토큰을 확인한다. 탈퇴 콜백은 일반 가입 완료 로직을 호출하지 않는다.
+- 본인 확인 후 `/app/settings/profile?withdrawal=ready`에서 삭제 확인 모달을 연다. 확인 입력/실제 삭제는 별도 사용자 액션이다. DB의 최근 세션 검사와 기존 공유 서비스 보호 제한을 유지한다.
+- Kakao API의 `/v2/user/me` 회원번호를 getUser의 Kakao identity.id(서버 provider_id)에 대조하고 `/v1/user/unlink`를 호출한다. 토큰은 SDK 메모리에만 할당(`persist=false`)하고 호출 후 Auth.cleanup으로 비운다. 사용자 수정 가능한 user_metadata는 판정에 쓰지 않는다.
+- 연결 해제 성공 후 DB 오류면 같은 모달에서는 연결 해제를 반복하지 않고 DB 삭제를 다시 시도할 수 있다. 응답 유실은 성공/실패로 단정하지 않는다. 모달 종료/재로그인으로 다시 시도할 수 있지만 두 외부 시스템 사이 원자성은 없으며 종합 오류 검증은 MVP 게이트에 남긴다.
 
 | 경로 | 용도 |
 |---|---|
@@ -100,7 +114,7 @@ React 화면 → 기능별 TypeScript API → supabase-js → 기존 Supabase Au
 - 세션/테마는 Context, 폼/시트는 가까운 컴포넌트 state, 원격 데이터는 Query 캐시, 적용된 필터는 URL로 소유권을 구분한다.
 - 캐시 키는 사용자·가계부·월·필터를 구분한다. 로그아웃/계정 전환 시 이전 데이터 캐시를 비운다. TanStack Query는 서버에 있는 데이터를 React 화면 상태와 분리해 캐시하며, 월 이동 후 돌아왔을 때 재사용하고 요청 중복을 줄이는 용도다.
 - 필터에는 개인정보나 토큰을 URL에 넣지 않는다. URL의 가계부 ID가 접근 권한을 부여하는 것은 아니다.
-- 달력 퀵필터는 URL `scope=ALL|PERSONAL|GROUP`을 사용한다. `useCalendarPage`가 URL 선택과 사용자·월·scope Query 키를 관리하고 `get_monthly_transactions`가 기존 본인 가계부 목록 중 종류가 맞는 ledger_id로 조회를 제한한다. 변경된 expenses 하나로 월/일 합계·날짜 금액·목록을 계산한다. 기본/잘못된 scope는 ALL이며 DB 객체/정책 변경은 없다. 상세 필터 연결 시 같은 scope를 재사용한다.
+- 달력 상단 콤보박스는 제거하고 상세 필터에서 URL `scope=ALL|PERSONAL|GROUP`을 관리한다. `useCalendarPage`의 사용자·월·scope Query 키와 `get_monthly_transactions`의 ledger_id 범위 조회는 유지한다. 같은 expenses로 월/일 합계·날짜 금액·목록을 계산한다. 기본/잘못된 scope는 ALL이며 DB 객체/정책 변경은 없다.
 - 상세 시트는 기존 본인 목록/카테고리 관리/결제수단 조회만 사용하고 초기 항목을 생성하지 않는다. 옵션 Query 키는 calendar/filter-options/사용자 UUID다. 비활성 항목도 과거 지출 검색용으로 표시한다.
 - 적용 조건은 URL filters에 가계부 ID별 enabled/category_ids/payment_ids로 저장한다. null은 전체(새 항목 포함), []는 전체 해제다. 시트 내부 draft는 URL과 분리하고 적용 시 scope/filters/date를 함께 기록한다. 닫기는 적용하지 않으며 초기화는 draft 전체 범위/항목으로 복구한다.
 - 월 조회에 payment_method_id를 포함하며, 캐시된 해당 범위의 전체 월 내역을 TypeScript에서 가계부별 카테고리 OR·결제수단 OR 사이 AND로 걸러낸다. 월/일 합계·날짜 금액·목록 모두 같은 결과를 사용하므로 별도 상세 필터별 원격 요청/캐시를 만들지 않는다. 선택일 원본에는 지출이 있지만 결과만 0이면 조건 없음 문구를 표시한다.
@@ -183,7 +197,7 @@ React 화면 → 기능별 TypeScript API → supabase-js → 기존 Supabase Au
 ### 지출 추가 최소 접근 — 2026-10-04 적용
 
 - `expense_entry_access` migration으로 기존 `ymoney` 카테고리 그룹·카테고리·결제수단·거래 테이블에 `authenticated`의 필요한 SELECT/INSERT만 열었다. 기존 SELECT 정책은 유지하고 해당 가계부의 활성 멤버만 읽고 추가하도록 RLS 정책을 붙였다. UPDATE/DELETE, anon 권한, 새 테이블·함수·트리거는 추가하지 않았다. SQL mirror는 `supabase/migrations/202610040001_expense_entry_access.sql`이다. Supabase CLI는 사용자 프로필의 telemetry 쓰기 권한 오류로 migration 파일 생성 명령이 실패해 파일명을 수동 지정했다.
-- 지출 화면은 선택 가계부에서 카테고리/결제수단이 완전히 비어 있을 때만 PRD의 기본 그룹 3개, 상위 카테고리 4개, 현금 1개를 클라이언트 CRUD로 준비한다. 첫 로그인 때에는 초기 항목 생성을 하지 않는다. 여러 요청이 단일 트랜잭션은 아니므로 동시 첫 진입의 중복 생성과 중간 실패에 따른 일부 생성 가능성은 MVP 확인 후 필요 시 보완한다.
+- 개인 가계부 준비 RPC 직후와 그룹 생성 성공 직후 `ensure_default_expense_options`를 호출한다. 카테고리가 완전히 비었을 때 그룹 미지정 6개(식비·카페·교통·문화·의료·기타), 결제수단이 완전히 비었을 때 현금을 기존 CRUD로 준비한다. 지출 옵션 조회도 빈 가계부 복구를 위해 같은 함수를 사용한다. 같은 클라이언트의 동시 요청은 Map의 Promise를 공유하며, 그룹 생성 뒤 기본값 준비 실패 재시도는 생성된 ledger_id를 재사용한다. 여러 요청의 원자성·다른 기기의 동시 초기화·일부 생성 후 복구는 MVP 게이트에 남긴다. 기존 항목/그룹을 덮어쓰지 않는다.
 - 지출 INSERT 정책은 작성자 본인 번호, 가계부 멤버십, 같은 가계부의 활성 카테고리·결제수단, 양수 금액을 확인한다. 초기값에는 상위 카테고리만 생성한다.
 
 ### 하위 카테고리 추가 — 2026-10-05 적용

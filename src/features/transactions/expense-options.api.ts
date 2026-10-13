@@ -24,10 +24,29 @@ type PaymentRow = Omit<ExpensePaymentMethod, 'payment_method_id'> & {
   payment_method_id: number | string
   is_active: boolean
 }
-type GroupRow = { category_group_id: number | string; group_name: string }
+// 초기 카테고리는 모두 독립 상위 항목이며 그룹을 강제로 만들지 않습니다.
+const default_categories = [
+  { name: '식비', icon: '🍚' },
+  { name: '카페', icon: '☕' },
+  { name: '교통', icon: '🚌' },
+  { name: '문화', icon: '🎬' },
+  { name: '의료', icon: '💊' },
+  { name: '기타', icon: '📦' },
+]
+// 같은 클라이언트의 중복 요청은 하나로 합칩니다. 기존 항목은 변경/삭제하지 않습니다.
+const pending_defaults = new Map<string, Promise<void>>()
 
 /** 새 가계부에 지출 항목이 아직 없다면 PRD의 최소 기본값을 준비합니다. */
-async function ensure_default_expense_options(ledger_id: string) {
+export async function ensure_default_expense_options(ledger_id: string): Promise<void> {
+  const pending = pending_defaults.get(ledger_id)
+  if (pending) return pending
+  const task = prepare_default_expense_options(ledger_id)
+  pending_defaults.set(ledger_id, task)
+  try { await task }
+  finally { pending_defaults.delete(ledger_id) }
+}
+
+async function prepare_default_expense_options(ledger_id: string) {
   const supabase = get_supabase_client().schema('ymoney')
   const [category_result, payment_result] = await Promise.all([
     supabase.from('tb_mon_category').select('category_id').eq('ledger_id', ledger_id).limit(1),
@@ -39,43 +58,10 @@ async function ensure_default_expense_options(ledger_id: string) {
   }
 
   if (!category_result.data?.length) {
-    const { data: existing_groups, error: group_error } = await supabase
-      .from('tb_mon_category_group')
-      .select('category_group_id, group_name')
-      .eq('ledger_id', ledger_id)
-      .eq('trans_type', 'EXPENSE')
-
-    if (group_error) throw new Error('카테고리 그룹을 확인하지 못했습니다.')
-
-    const group_names = ['생활비', '고정비', '특별비']
-    const missing_groups = group_names.filter((name) =>
-      !(existing_groups ?? []).some((group) => group.group_name === name),
-    )
-    let groups = (existing_groups ?? []) as GroupRow[]
-
-    if (missing_groups.length) {
-      const { data: inserted_groups, error: insert_group_error } = await supabase
-        .from('tb_mon_category_group')
-        .insert(missing_groups.map((name, index) => ({
-          ledger_id, trans_type: 'EXPENSE', group_name: name, sort_order: index,
-        })))
-        .select('category_group_id, group_name')
-
-      if (insert_group_error) throw new Error('기본 카테고리 그룹을 준비하지 못했습니다.')
-      groups = [...groups, ...((inserted_groups ?? []) as GroupRow[])]
-    }
-
-    const group_id = (name: string) => groups.find((group) => group.group_name === name)?.category_group_id
-    const default_categories = [
-      { name: '식비', icon: '🍚', group: '생활비' },
-      { name: '카페', icon: '☕', group: '생활비' },
-      { name: '주거', icon: '🏠', group: '고정비' },
-      { name: '취미', icon: '🎨', group: '특별비' },
-    ]
     const { error: insert_category_error } = await supabase.from('tb_mon_category').insert(
       default_categories.map((category, index) => ({
         ledger_id,
-        category_group_id: group_id(category.group),
+        category_group_id: null,
         parent_category_id: null,
         trans_type: 'EXPENSE',
         category_name: category.name,

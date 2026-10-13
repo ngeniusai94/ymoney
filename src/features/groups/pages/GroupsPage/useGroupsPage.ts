@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '../../../auth/AuthProvider'
 import { loadCurrentProfile } from '../../../auth/auth.api'
 import { create_group, join_group, list_groups } from '../../groups.api'
+import { ensure_default_expense_options } from '../../../transactions/expense-options.api'
 
 /** 그룹 목록은 기존 본인 가계부 조회를 사용하며 임의 샘플을 만들지 않습니다. */
 export function useGroupsPage() {
@@ -15,6 +16,8 @@ export function useGroupsPage() {
   const [group_name, set_group_name] = useState('')
   const [invite_code, set_invite_code] = useState('')
   const [form_error, set_form_error] = useState('')
+  // 그룹 생성은 성공하고 기본 항목 준비만 실패했다면 재시도 시 그룹을 또 만들지 않습니다.
+  const created_ledger = useRef<string | null>(null)
   const query = useQuery({
     queryKey: ['groups', 'list', session?.user.id ?? 'signed-out'],
     queryFn: async () => {
@@ -30,6 +33,7 @@ export function useGroupsPage() {
   else if (query.isError) data_state = 'error'
   else if (query.data.length === 0) data_state = 'empty'
   function open_sheet(mode: 'create' | 'join') {
+    created_ledger.current = null
     set_group_name('')
     set_invite_code('')
     set_form_error('')
@@ -55,7 +59,11 @@ export function useGroupsPage() {
     set_form_error('')
     try {
       let ledger_id = ''
-      if (sheet_mode === 'create') ledger_id = await create_group(name)
+      if (sheet_mode === 'create') {
+        ledger_id = created_ledger.current ?? await create_group(name)
+        created_ledger.current = ledger_id
+        await ensure_default_expense_options(ledger_id)
+      }
       else ledger_id = await join_group(code)
       // 목록을 캐시하는 화면들이 새로 참여한 가계부를 다시 읽도록 갱신합니다.
       await Promise.all([
@@ -69,7 +77,10 @@ export function useGroupsPage() {
     } catch (error) {
       const message = error instanceof Error ? error.message : '요청을 완료하지 못했습니다.'
       if (sheet_mode === 'join') window.alert(message)
-      else set_form_error(message)
+      else if (created_ledger.current) {
+        set_form_error(`그룹은 생성되었습니다. 기본 항목 준비를 다시 시도해주세요. ${message}`)
+        await query_client.invalidateQueries({ queryKey: ['groups'] })
+      } else set_form_error(message)
     } finally {
       set_request_state('idle')
     }

@@ -1,4 +1,5 @@
 import { get_supabase_client } from '../../lib/supabase'
+import { ensure_default_expense_options } from '../transactions/expense-options.api'
 
 /** 달력의 빠른 조회 범위. 가계부 ID나 접근 권한과는 별개인 표시 조건입니다. */
 export type LedgerScope = 'ALL' | 'PERSONAL' | 'GROUP'
@@ -25,6 +26,9 @@ export async function ensure_personal_ledger(): Promise<string> {
     throw new Error('개인 가계부를 준비하지 못했습니다. 다시 시도해주세요.')
   }
 
+  // 가계부/멤버 준비 직후 기본 항목도 준비해 관리 화면의 첫 조회부터 표시합니다.
+  // 기존 항목이 있으면 변경하지 않으며, 중간 실패 시 같은 ledger로 재시도합니다.
+  await ensure_default_expense_options(String(data))
   // React Query의 queryFn은 undefined 대신 실제 조회 결과를 반환해야 합니다.
   return String(data)
 }

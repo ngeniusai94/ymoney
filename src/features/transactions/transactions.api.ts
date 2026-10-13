@@ -29,6 +29,10 @@ export type MonthlyExpense = {
   category_id: number
   payment_method_id: number
   category_name: string
+  payment_method_name: string
+  // 화면에서 문자열을 분리하지 않도록 실제 부모·하위 이름을 각각 전달합니다.
+  parent_category_name: string
+  child_category_name: string | null
   category_icon: string | null
   amount: number
   memo: string | null
@@ -230,6 +234,22 @@ export async function get_monthly_transactions(
     }
   }
 
+  // 비활성 결제수단도 과거 거래에 사용된 이름을 표시하므로 활성 여부로 제외하지 않습니다.
+  const payment_method_ids = [...new Set(transaction_rows.map((row) => row.payment_method_id))]
+  const { data: payment_methods, error: payment_error } = await supabase.schema('ymoney')
+    .from('tb_mon_payment_method')
+    .select('payment_method_id, method_name, method_type')
+    .in('payment_method_id', payment_method_ids)
+    .in('ledger_id', ledger_ids)
+  if (payment_error) throw new Error('지출 결제수단을 불러오지 못했습니다.')
+  const payment_name_by_id = new Map<string, string>()
+  for (const method of payment_methods ?? []) {
+    let method_name = method.method_name?.trim()
+    if (!method_name && method.method_type === 'CARD') method_name = '카드'
+    else if (!method_name && method.method_type === 'CASH') method_name = '현금'
+    payment_name_by_id.set(String(method.payment_method_id), method_name || '결제수단 없음')
+  }
+
   return {
     has_ledger: true,
     expenses: transaction_rows.map((row) => {
@@ -241,7 +261,10 @@ export async function get_monthly_transactions(
       return {
         ...row,
         amount: Number(row.amount),
+        payment_method_name: payment_name_by_id.get(String(row.payment_method_id)) ?? '결제수단 없음',
         category_name: parent ? `${parent.category_name} · ${category?.category_name}` : category?.category_name ?? '카테고리 없음',
+        parent_category_name: parent?.category_name ?? category?.category_name ?? '카테고리 없음',
+        child_category_name: parent ? category?.category_name ?? null : null,
         category_icon: parent ? parent.icon_key : category?.icon_key ?? null,
       }
     }),

@@ -57,7 +57,10 @@ function PaymentMethodsPage() {
       if (page.editing_method.is_active === false) action_label = '활성화'
       disable_button = <button type="button" className="payments-disable" disabled={page.sheet_state === 'saving'} onClick={() => void page.disable_method()}>{action_label}</button>
     }
-    sheet = <div className="payments-backdrop"><form className="payments-sheet" role="dialog" aria-modal="true" aria-labelledby="payments-sheet-title" onSubmit={(event) => { event.preventDefault(); void page.save_method() }}>
+    // 배경 자체를 눌렀을 때만 닫습니다. 폼 안의 클릭은 유지하고 저장 중 닫기는 훅에서 막습니다.
+    sheet = <div className="payments-backdrop" onClick={(event) => {
+      if (event.target === event.currentTarget) page.close_sheet()
+    }}><form className="payments-sheet" role="dialog" aria-modal="true" aria-labelledby="payments-sheet-title" onSubmit={(event) => { event.preventDefault(); void page.save_method() }}>
       <div className="payments-handle" aria-hidden="true" />
       <header><h2 id="payments-sheet-title">{page.sheet_title}</h2><button type="button" aria-label="닫기" disabled={page.sheet_state === 'saving'} onClick={page.close_sheet}>×</button></header>
       <fieldset disabled={page.sheet_state === 'saving'}>

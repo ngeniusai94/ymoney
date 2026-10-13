@@ -27,22 +27,28 @@ button:focus-visible {
 
 .intro-page {
   min-height: 100dvh;
-  background: #ffffff;
+  background: var(--app-bg);
+  color: var(--app-text);
 }
 
 .intro-content {
+  position: relative;
   display: flex;
   width: min(100%, 430px);
-  min-height: 100dvh;
+  min-height: max(100dvh, 740px);
   margin: 0 auto;
   padding: max(48px, env(safe-area-inset-top)) 24px max(24px, env(safe-area-inset-bottom));
   flex-direction: column;
   text-align: center;
 }
 
+/* 서비스명은 상단, 달력 로고 중심은 화면 중앙, 로그인 수단은 하단에 배치합니다. */
+.intro-heading { margin-top: 12px; }
+
 .intro-heading h1 {
   margin: 0;
-  color: #171717;
+  color: var(--app-primary);
+  line-height: 44px;
   font-size: clamp(30px, 8vw, 36px);
   font-weight: 900;
   letter-spacing: -1.8px;
@@ -50,17 +56,23 @@ button:focus-visible {
 
 .intro-heading p {
   margin: 8px 0 0;
-  color: #5f5f5f;
+  color: var(--app-muted);
   font-size: 15px;
   font-weight: 700;
   letter-spacing: -0.3px;
 }
 
 .intro-art {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: block;
-  width: min(100%, 340px);
+  width: min(82%, 320px);
   height: auto;
-  margin: 14px auto 6px;
+  margin: 0;
+  padding: 0;
+  background: transparent;
 }
 
 .intro-actions { margin-top: auto; }
@@ -73,7 +85,7 @@ button:focus-visible {
   min-height: 52px;
   margin-top: 10px;
   gap: 11px;
-  border: 1px solid #d1d1d1;
+  border: 1px solid var(--app-line);
   border-radius: 14px;
   background: #ffffff;
   color: #202020;
@@ -101,7 +113,7 @@ button:focus-visible {
   align-items: center;
   justify-content: center;
   margin-top: 12px;
-  color: #626262;
+  color: var(--app-primary);
   font-size: 12px;
   font-weight: 700;
 }
@@ -119,7 +131,7 @@ button:focus-visible {
 .secondary-divider {
   width: 1px;
   height: 12px;
-  background: #d0d0d0;
+  background: var(--app-line);
 }
 
 .policy-actions {
@@ -127,7 +139,7 @@ button:focus-visible {
   justify-content: center;
   margin-top: 12px;
   gap: 12px;
-  color: #929292;
+  color: var(--app-muted);
   font-size: 10px;
 }
 
@@ -140,21 +152,20 @@ button:focus-visible {
 .intro-notice {
   min-height: 18px;
   margin: 9px 0 0;
-  color: #666666;
+  color: var(--app-muted);
   font-size: 11px;
 }
 
 @media (max-height: 760px) {
   .intro-content { padding-top: max(28px, env(safe-area-inset-top)); }
   .intro-art {
-    width: min(80%, 280px);
-    margin-top: 4px;
+    width: min(72%, 280px);
   }
 }
 
 @media (min-width: 431px) {
-  .intro-page { background: #f4f6f5; }
-  .intro-content { background: #ffffff; }
+  .intro-page { background: var(--app-soft); }
+  .intro-content { background: var(--app-bg); }
 }
 
 /* 인증 화면 배경은 이메일 콜백·아이디 인증 화면에서 함께 사용합니다. */

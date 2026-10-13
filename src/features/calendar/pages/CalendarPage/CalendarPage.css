@@ -1,7 +1,6 @@
 .calendar-screen { padding-bottom: 82px; }
 .calendar-topbar { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 5px; min-height: 39px; padding: 0 7px; }
-.calendar-scope-select { grid-column: 1; width: 100%; max-width: 110px; min-width: 0; height: 32px; padding: 0 4px; border: 1px solid var(--app-line); border-radius: 9px; background: #fff; color: var(--app-text); font: inherit; font-size: 10px; cursor: pointer; }
-.calendar-scope-select:focus-visible { outline: 2px solid var(--app-primary); outline-offset: 2px; }
+.calendar-month-region { touch-action: pan-y; user-select: none; }
 .calendar-topbar > strong { grid-column: 2; justify-self: center; font-size: 17px; font-weight: 950; white-space: nowrap; }
 .calendar-filter-button { display: grid; width: 34px; height: 34px; padding: 6px; place-items: center; border: 0; background: transparent; color: var(--app-primary); }
 .calendar-topbar > .calendar-filter-button { grid-column: 3; justify-self: end; }
@@ -13,6 +12,12 @@
 .calendar-month-switcher strong { font-size: 14px; font-weight: 900; }
 .calendar-month-switcher button { height: 34px; border: 0; background: transparent; color: var(--app-primary); font-size: 23px; }
 .calendar-grid { padding: 11px 7px 9px; border-radius: 19px; background: #fff; box-shadow: 0 5px 16px rgba(31,62,52,.06); }
+/* 달력만 이동시키고 상단 필터와 하단 지출 목록은 움직이지 않습니다. */
+.calendar-swipe-viewport { overflow: hidden; border-radius: 19px; touch-action: pan-y; }
+.calendar-grid.is-dragging { transition: none; will-change: transform; }
+.calendar-grid.is-exiting { transition: transform 160ms ease-out; will-change: transform; }
+.calendar-grid.is-entering, .calendar-grid.is-returning { transition: transform 200ms cubic-bezier(.2,.7,.3,1); will-change: transform; }
+@media (prefers-reduced-motion: reduce) { .calendar-grid { transition-duration: 1ms !important; } }
 .calendar-weekdays,.calendar-date-grid { display: grid; grid-template-columns: repeat(7,minmax(0,1fr)); gap: 4px; text-align: center; }
 .calendar-weekdays { margin-bottom: 5px; color: var(--app-muted); font-size: 10px; font-weight: 800; }
 .calendar-weekdays span:first-child { color: #d07b77; }
@@ -33,11 +38,14 @@
 .calendar-expense-list li { min-width: 0; border-bottom: 1px solid var(--app-line); }
 .calendar-expense-item { display: flex; width: 100%; min-width: 0; align-items: center; padding: 10px 2px; gap: 9px; border: 0; background: transparent; color: inherit; text-align: left; cursor: pointer; }
 .calendar-expense-item:focus-visible { border-radius: 8px; outline: 2px solid var(--app-primary); outline-offset: 2px; }
-.calendar-expense-icon { display: grid; width: 30px; height: 30px; flex: 0 0 30px; place-items: center; border-radius: 50%; background: var(--app-accent); color: var(--app-primary); font-size: 14px; }
-.calendar-expense-description { display: flex; min-width: 0; flex: 1; flex-direction: column; gap: 2px; }
+/* 분류의 실제 글자 폭을 사용해 짧은 분류 뒤에도 메모가 가까이 붙습니다. */
+.calendar-expense-description { display: flex; min-width: 0; max-width: 35%; flex: 0 1 auto; flex-direction: column; gap: 2px; }
+.calendar-expense-memo { min-width: 0; flex: 1; margin-left: 3px; overflow: hidden; color: var(--app-muted); font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
 .calendar-expense-description strong { overflow: hidden; color: var(--app-text); font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
 .calendar-expense-description small { overflow: hidden; color: var(--app-muted); font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
-.calendar-expense-amount { flex: 0 0 auto; color: var(--app-text); font-size: 12px; }
+.calendar-expense-amount { flex: 0 0 auto; margin-left: auto; color: var(--app-text); font-size: 12px; }
+.calendar-expense-payment { display: flex; max-width: 35%; min-width: 0; flex: 0 1 auto; flex-direction: column; align-items: flex-end; gap: 2px; margin-left: auto; }
+.calendar-expense-payment small { max-width: 100%; overflow: hidden; color: var(--app-muted); font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
 .calendar-add-button { position: fixed; right: max(calc((100vw - 430px) / 2 + 17px), 17px); bottom: max(82px, calc(env(safe-area-inset-bottom) + 72px)); display: grid; width: 49px; height: 49px; place-items: center; border: 0; border-radius: 50%; background: var(--app-primary); color: #fff; font-size: 23px; box-shadow: 0 8px 18px rgba(79,154,128,.35); }
 .calendar-add-button:disabled { opacity: .55; }
 
