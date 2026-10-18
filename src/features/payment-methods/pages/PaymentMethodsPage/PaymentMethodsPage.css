@@ -9,8 +9,9 @@
 /* SVG 내부 고정 색 대신 테마 색의 장식 화살표를 사용합니다. */
 .payments-ledger-picker { position: relative; }
 .payments-ledger-picker::after { content: ''; position: absolute; right: 25px; top: 50%; width: 6px; height: 6px; margin-top: -5px; border-right: 1.5px solid var(--app-primary); border-bottom: 1.5px solid var(--app-primary); transform: rotate(45deg); pointer-events: none; }
-.payments-ledger-select { width: 37px; min-width: 37px; height: 32px; padding: 0; appearance: none; border: 1px solid var(--app-line); border-radius: 8px; background: var(--app-soft); color: transparent; cursor: pointer; }
+.payments-ledger-select { position: absolute; inset: 0; width: 100%; height: 100%; padding: 0; appearance: none; border: 0; border-radius: 12px; background: transparent; opacity: 0; cursor: pointer; }
 .payments-ledger-select option { color: var(--app-text); }
+.payments-ledger-picker:focus-within { outline: 2px solid var(--app-primary); outline-offset: 2px; }
 .payments-list-title { margin: 17px 3px 10px; font-size: 13px; font-weight: 900; }
 .payments-type-card { overflow: hidden; margin-bottom: 10px; border: 1px solid var(--app-line); border-radius: 13px; background: #fff; }
 .payments-type-card header { display: flex; min-height: 42px; align-items: center; padding: 0 11px; gap: 7px; background: var(--app-soft); font-size: 12px; }
