@@ -10,10 +10,18 @@ import './ExpensePage.css'
 export function ExpenseForm({ existing_expense, ...callbacks }: { existing_expense: ExistingExpense | null } & ExpenseFormCallbacks) {
   // 화면이 DOM 참조를 소유하고, 클릭 시에만 훅의 포커스 이동 함수에 전달합니다.
   const memo_ref = useRef<HTMLInputElement>(null)
+  const payment_methods_ref = useRef<HTMLDivElement>(null)
   const form = useExpensePage(existing_expense, callbacks)
   let ledger_content
   let category_content
   let payment_content
+
+  function choose_category(category_id: string) {
+    form.set_category_id(category_id)
+    const first_payment_method = payment_methods_ref.current?.querySelector<HTMLButtonElement>('button:not(:disabled)')
+    if (first_payment_method) first_payment_method.focus()
+    else payment_methods_ref.current?.focus()
+  }
 
   if (form.ledger_query.isPending) {
     ledger_content = <p className="expense-form-state">가계부를 불러오고 있어요.</p>
@@ -56,7 +64,7 @@ export function ExpenseForm({ existing_expense, ...callbacks }: { existing_expen
               type="button"
               className={`expense-chip${form.active_parent_id === category.category_id ? ' is-selected' : ''}`}
               aria-pressed={form.active_parent_id === category.category_id}
-              onClick={() => form.set_category_id(category.category_id)}
+              onClick={() => choose_category(category.category_id)}
             >
               {category.category_name}
             </button>
@@ -72,7 +80,7 @@ export function ExpenseForm({ existing_expense, ...callbacks }: { existing_expen
                   type="button"
                   className={`expense-chip${form.category_id === category.category_id ? ' is-selected' : ''}`}
                   aria-pressed={form.category_id === category.category_id}
-                  onClick={() => form.set_category_id(category.category_id)}
+                  onClick={() => choose_category(category.category_id)}
                 >
                   {category.category_name}
                 </button>
@@ -83,7 +91,7 @@ export function ExpenseForm({ existing_expense, ...callbacks }: { existing_expen
       </>
     )
     payment_content = (
-      <div className="expense-chip-row" role="group" aria-label="결제수단 선택">
+      <div ref={payment_methods_ref} className="expense-chip-row" role="group" aria-label="결제수단 선택" tabIndex={-1}>
         {form.payment_methods.map((method) => (
           <button
             key={method.payment_method_id}
