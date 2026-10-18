@@ -208,6 +208,12 @@ export function useExpensePage(existing_expense: ExistingExpense | null, callbac
     }
   }
 
+  // 사용자 클릭 안에서 바로 포커스하여 모바일에서도 메모 입력을 이어갈 수 있게 합니다.
+  function choose_payment_method(payment_method_id: string, memo_input: HTMLInputElement | null) {
+    set_payment_method_id(payment_method_id)
+    memo_input?.focus()
+  }
+
   return {
     active_parent_id,
     amount,
@@ -216,6 +222,7 @@ export function useExpensePage(existing_expense: ExistingExpense | null, callbac
     child_categories,
     cancel_delete,
     choose_ledger,
+    choose_payment_method,
     close_form,
     confirm_delete,
     date_time,

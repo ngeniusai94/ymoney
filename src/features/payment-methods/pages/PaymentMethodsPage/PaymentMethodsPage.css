@@ -20,6 +20,8 @@
 .payments-screen svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
 .payments-method { display: grid; width: 100%; min-height: 45px; grid-template-columns: 29px 1fr auto; gap: 8px; align-items: center; padding: 0 11px; border: 0; border-top: 1px solid var(--app-line); background: #fff; color: inherit; text-align: left; font: inherit; font-size: 12px; cursor: pointer; }
 .payments-method strong { min-width: 0; overflow-wrap: anywhere; }
+.payments-method { grid-template-columns: 29px 1fr auto; }
+.payments-method-icon { width: 27px; background: transparent; }
 .payments-method:disabled { cursor: default; color: var(--app-muted); }
 .payments-inactive { color: #9b7777; font-size: 10px; }
 .payments-method-actions { display: flex; align-items: center; gap: 9px; }

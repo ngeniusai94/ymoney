@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useBottomSheetClose } from '../../../../lib/useBottomSheetClose'
 import { useQuery } from '@tanstack/react-query'
 import { useAuth } from '../../../auth/AuthProvider'
 import type { LedgerScope } from '../../../ledgers/ledgers.api'
@@ -7,6 +8,7 @@ import { get_ledger_selection, toggle_filter_ids } from '../../filter.utils'
 import type { CalendarFilters, FilterLedger } from '../../filter.utils'
 
 export function useCalendarFilterSheet(initial_scope: LedgerScope, initial_filters: CalendarFilters, on_close: () => void) {
+  const { phase: sheet_phase, request_close } = useBottomSheetClose(on_close)
   const { session } = useAuth()
   const [scope, set_scope] = useState(initial_scope)
   const [filters, set_filters] = useState(initial_filters)
@@ -25,13 +27,13 @@ export function useCalendarFilterSheet(initial_scope: LedgerScope, initial_filte
   useEffect(() => {
     const previous = document.body.style.overflow
     document.body.style.overflow = 'hidden'
-    const handle_key = (event: KeyboardEvent) => { if (event.key === 'Escape') on_close() }
+    const handle_key = (event: KeyboardEvent) => { if (event.key === 'Escape') request_close() }
     document.addEventListener('keydown', handle_key)
     return () => {
       document.body.style.overflow = previous
       document.removeEventListener('keydown', handle_key)
     }
-  }, [on_close])
+  }, [request_close])
   let data_state: 'loading' | 'error' | 'ready' = 'ready'
   if (query.isPending) data_state = 'loading'
   else if (query.isError) data_state = 'error'
@@ -65,5 +67,6 @@ export function useCalendarFilterSheet(initial_scope: LedgerScope, initial_filte
   }
   function reset() { set_scope('ALL'); set_filters({}) }
   return { query, data_state, scope, set_scope, filters, visible_ledgers, collapsed_ids,
+    sheet_phase, request_close,
     toggle_ledger, toggle_items, toggle_collapsed, reset }
 }

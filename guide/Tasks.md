@@ -81,6 +81,12 @@
 
 ## 6. 결제수단 관리 화면·기능
 
+- ✅ 2026-10-18 로고 선택 UX: 선택 로고를 26×22px로 줄이고 로고 미선택 시 기본으로 선택된 것처럼 보이던 상태를 바로잡았다. `선택 안 함`을 제공하며 로고는 선택하지 않아도 저장 가능하다. 카드/현금 유형 필수 규칙과 목록 기본 아이콘 표시는 유지한다. `npx.cmd tsc -b --pretty false` 및 변경 TSX 2개 파일 `npx.cmd eslint ...` 통과. 원격 DB 변경 없음.
+- ✅ 2026-10-18 현금 아이콘: 다운로드 폴더의 파주페이 PNG를 확인했으나 이는 파주페이 캐릭터이며 앱 사용 허가를 확인하지 못해 추가하지 않았다. PNG를 SVG로 감싸는 방식도 라이선스 문제를 해결하지 않으므로 보류하고, `cash.svg`를 단순한 자체 지폐 아이콘으로 교체했다. 선택 로고와 결제수단 목록에서 공통 사용한다. `npx.cmd tsc -b --pretty false`, `npx.cmd eslint src/features/payment-methods/payment-icons.ts`, `git diff --check` 통과. 원격 DB 변경 없음.
+- ✅ 2026-10-18 기본 결제 이미지 및 카드사 옵션 제거: 다운로드의 `cardpng.png`/`cashpng.png`를 `src/assets/card-brands/card.png`/`cash.png`로 복사해 기본 아이콘으로 연결했다. KB·BC·현대 등 카드사별 선택 옵션 및 해당 SVG 자산은 제거했다. 저장된 과거 카드사 키는 유형 기본 아이콘으로 표시하며 편집 저장 시 NULL로 정리한다. `npx.cmd tsc -b --pretty false`, `npx.cmd eslint src/features/payment-methods/payment-icons.ts src/features/payment-methods/pages/PaymentMethodsPage/usePaymentMethodsPage.ts`, 카드사 SVG/선택 참조 `rg` 검색(일치 없음), `git diff --check` 통과. 원격 DB 변경 없음.
+- ✅ 2026-10-18 로고 선택 기능 제거: 결제수단 추가·수정 시트에서 로고 선택 UI를 제거하고 훅의 선택 상태/검증 및 API 입력·수정 저장의 icon_key 처리를 제거했다. 기본 카드·현금 PNG는 관리 목록의 유형 표시용으로 유지한다. 기존 DB icon_key 컬럼과 데이터는 삭제/변경하지 않는다. 원격 DB 변경 없음.
+- ✅ 2026-10-18 기본 아이콘 원복: 현재 Git HEAD에는 결제 아이콘 자산이 추적되지 않음을 확인했다. 작업 중 추가했던 다운로드 PNG 대신 기존 기본 카드·현금 SVG 아이콘을 다시 연결했다. 결제수단 추가/수정의 로고 선택 제거는 유지한다. `npx.cmd tsc -b --pretty false`, `npx.cmd eslint src/features/payment-methods`, 두 SVG XML 검증, `git diff --check` 통과. 원격 DB 변경 없음.
+- ✅ 2026-10-18 아이콘 표시 방식 재확인: 사용자가 확인한 기존 구현에 맞춰 관리 목록의 카드는 인라인 카드 선 SVG, 현금은 `₩` 문자로 복원했다. 임시 이미지 자산과 helper 참조를 제거했다. 로고 선택 기능 제거는 유지한다. `npx.cmd tsc -b --pretty false`, 변경 TSX ESLint, `git diff --check` 통과.
 - ⏸ `pages/PaymentMethodsPage/` 화면·훅·CSS와 API 연결. CARD/CASH 고정 유형 목록 및 설정 이동 구현, 사용자 화면 확인 대기.
 - ⏸ 추가·이름 변경·유형 이동·비활성화와 유형 변경 안내 구현 및 최소 권한 적용. 실제 저장 확인 대기.
 - ⏸ 비활성 결제수단 표시/⋮ 유지, 수정/활성화 및 중복 검사 구현·정책 적용. 실제 복구 확인 대기.
@@ -152,6 +158,12 @@
 - ⬜ 개인정보/약관/계정 삭제 안내, 심사 계정 또는 둘러보기, 스토어 자료 준비 후 심사·배포.
 
 ## 재개 기록 — 이 영역만 계속 갱신
+
+- 2026-10-18 바텀시트 닫기 공통화/카테고리 아이콘 잔여 출력 제거: src/lib/useBottomSheetClose.ts와 bottom-sheet.css에 closing→320ms 슬라이드다운·페이드→제거/이동, 중복 요청 방지·타이머 정리를 모았다. 카테고리/하위/분류 그룹, 결제수단, 달력 필터, 그룹 생성/참여/이름 변경, 지출 native dialog가 같은 닫기 훅을 사용한다. 지출 dialog는 기존 열기/transform/포커스/배경 스크롤 잠금을 보존했다. 배경/×/필터 ESC·적용/저장 성공 닫기를 연결하고 카테고리·그룹 시트 배경 닫기도 추가했다. ExpensePage의 category.icon_key 렌더링을 제거했으며 JSX 내 다른 카테고리 아이콘 출력은 rg 검색 결과 없다. DB 아이콘/카테고리 이름에 사용자가 입력한 이모지는 보존했다. agent-dev에 바텀시트 공통 규칙을 추가하고 PRD/Design/Architecture 갱신. npx tsc -b --pretty false exit0, 관련 변경 경로 npx eslint에서 처음 의존성 경고 2건 후 수정·재실행 0건, git -c core.safecrlf=false diff --check exit0. 브라우저 카테고리 추가와 그룹 이름 변경에서 닫기 직후 시트가 유지되고 전환 후 제거되는 것을 확인했으며 카테고리 닫힘 중 화면을 저장했다. 실제 저장/생성/탈퇴/DB/서버/배포/테스트 파일 변경 없음. 카드사 로고는 삼성카드 공식 자산 탐색 및 공식 홈페이지 읽기를 시도했으나 SVG를 확보하지 못했고 원격 읽기는 호스트 연결 실패했다. 임의 제작/외부 핫링크 없이 보류한다. 다음: 사용자가 적용 카드사 목록과 확보한 공식 SVG/PNG를 제공하면 이름 기반 로고 매칭을 연결한다. 모바일 감속 체감 및 그룹 생성/참여 성공 후 전환은 실데이터를 만들지 않아 미검증.
+
+- 2026-10-18 최종 확인: 아래 결제수단 닫기/지출 포커스 변경의 마지막 `npx tsc -b --pretty false`, 변경 TS/TSX 4파일 `npx eslint`, `git -c core.safecrlf=false diff --check` 모두 exit0. 실기기 포커스/닫기 애니메이션은 로그인 후 사용자 확인 대기.
+
+- 2026-10-18 결제수단 닫기/지출 포커스: usePaymentMethodsPage에 closing 상태와 320ms 후 제거/타이머 정리를 추가했다. PaymentMethodsPage/CSS에서 배경 페이드와 ease-in-out 슬라이드다운을 연결하고 ×·바깥 클릭·저장/활성화/비활성화 성공에 동일 적용한다. 저장 중 닫기 방지는 유지한다. ExpensePage의 신규 금액 input에 autoFocus, 결제수단 선택 시 useExpensePage.choose_payment_method로 선택과 메모 DOM focus를 연결하고 라벨을 메모(선택)으로 변경했다. DOM 참조는 화면 컴포넌트가 소유해 ref 객체가 훅 반환 객체에 섞일 때 발생한 React refs 린트 오류를 해결했다. Design 갱신. 최초 린트 실패 후 수정한 4개 TS/TSX eslint exit0; 최종 TypeScript/diff 확인은 아래 결과에 기록한다. 브라우저가 /auth 로그인 화면이어서 시트/포커스 실동작은 미검증이며 로그인·저장·데이터 추가는 실행하지 않았다. DB/서버/배포/테스트 파일 변경 없음. 다음: 로그인 후 결제수단 추가·수정의 ×/바깥 닫기, 새 지출 금액 첫 포커스와 결제수단→메모 이동을 모바일 키보드와 함께 확인한다.
 
 - 2026-10-14 달력 아이콘 자리/결제수단 시트 닫기: CalendarDaily.tsx의 아이콘 span과 빈 값 대체 ‘•’, CalendarPage.css의 전용 스타일을 제거했다. 결제수단 PaymentMethodsPage.tsx의 배경에 target===currentTarget 검사로 close_sheet 연결; 폼 내부 클릭은 유지하고 기존 훅의 saving 닫기 방지를 재사용한다. PRD/Design 갱신. 변경 TSX 2파일 npx eslint와 git -c core.safecrlf=false diff --check exit0. 브라우저에서 결제수단 추가·수정 모두 바깥 클릭 닫기, 내부 입력 클릭 시 유지, 달력 오늘 5,000원 행의 별도 아이콘 영역 제거를 확인했다. 실제 저장/삭제/DB/서버/배포/테스트 파일 변경 없음. 금융사 이름 기반 SVG 자동 매칭은 아직 구현하지 않았으며 사용자에게 적용 금융사 목록을 요청한다. 공식 자산이 없으면 사용자 SVG 제공 여부를 확인하고 미인식 이름은 기존 유형 아이콘을 유지하는 방향이다. 다음: 사용자가 원하는 금융사 이름 목록을 제공한다.
 

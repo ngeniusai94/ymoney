@@ -1,4 +1,5 @@
 import { Link, useParams } from 'react-router-dom'
+import { useRef } from 'react'
 import type { ExistingExpense } from '../../transactions.api'
 import { get_ledger_display_name } from '../../../ledgers/ledgers.utils'
 import { useExpensePage, useExpenseRecord } from './useExpensePage'
@@ -7,6 +8,8 @@ import './ExpensePage.css'
 
 /** 신규 입력과 수정을 같은 한 화면 폼으로 렌더링합니다. */
 export function ExpenseForm({ existing_expense, ...callbacks }: { existing_expense: ExistingExpense | null } & ExpenseFormCallbacks) {
+  // 화면이 DOM 참조를 소유하고, 클릭 시에만 훅의 포커스 이동 함수에 전달합니다.
+  const memo_ref = useRef<HTMLInputElement>(null)
   const form = useExpensePage(existing_expense, callbacks)
   let ledger_content
   let category_content
@@ -55,7 +58,7 @@ export function ExpenseForm({ existing_expense, ...callbacks }: { existing_expen
               aria-pressed={form.active_parent_id === category.category_id}
               onClick={() => form.set_category_id(category.category_id)}
             >
-              {category.icon_key ? <span aria-hidden="true">{category.icon_key}</span> : null} {category.category_name}
+              {category.category_name}
             </button>
           ))}
         </div>
@@ -87,7 +90,7 @@ export function ExpenseForm({ existing_expense, ...callbacks }: { existing_expen
             type="button"
             className={`expense-chip${form.payment_method_id === method.payment_method_id ? ' is-selected' : ''}`}
             aria-pressed={form.payment_method_id === method.payment_method_id}
-            onClick={() => form.set_payment_method_id(method.payment_method_id)}
+            onClick={() => form.choose_payment_method(method.payment_method_id, memo_ref.current)}
           >
             <span aria-hidden="true">{method.method_type === 'CARD' ? '💳' : '💵'}</span> {method.method_name}
           </button>
@@ -137,6 +140,7 @@ export function ExpenseForm({ existing_expense, ...callbacks }: { existing_expen
           <div className="expense-amount-line">
             <input
               id="expense-amount"
+              autoFocus={!form.is_edit_mode}
               type="text"
               inputMode="numeric"
               pattern="[0-9]*"
@@ -164,9 +168,10 @@ export function ExpenseForm({ existing_expense, ...callbacks }: { existing_expen
         </div>
 
         <div className="expense-field">
-          <label className="expense-field-label" htmlFor="expense-memo">메모 · 선택</label>
+          <label className="expense-field-label" htmlFor="expense-memo">메모(선택)</label>
           <input
             id="expense-memo"
+            ref={memo_ref}
             className="expense-memo"
             type="text"
             maxLength={200}

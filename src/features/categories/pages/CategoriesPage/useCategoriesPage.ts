@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useBottomSheetClose } from '../../../../lib/useBottomSheetClose'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { loadCurrentProfile } from '../../../auth/auth.api'
 import { useAuth } from '../../../auth/AuthProvider'
@@ -13,6 +14,7 @@ export function useCategoriesPage() {
   const query_client = useQueryClient()
   const [chosen_ledger_id, set_chosen_ledger_id] = useState<string | null>(null)
   const [sheet_state, set_sheet_state] = useState<'closed' | 'category-editing' | 'category-saving' | 'group-editing' | 'group-saving' | 'child-editing' | 'child-saving'>('closed')
+  const sheet = useBottomSheetClose(() => set_sheet_state('closed'))
   const [child_parent, set_child_parent] = useState<ManagedCategory | null>(null)
   const [editing_category, set_editing_category] = useState<ManagedCategory | null>(null)
   const [editing_group, set_editing_group] = useState<CategoryGroup | null>(null)
@@ -68,7 +70,7 @@ export function useCategoriesPage() {
 
   function close_add_sheet() {
     if (sheet_state.endsWith('saving')) return
-    set_sheet_state('closed')
+    sheet.request_close()
   }
 
   function open_add_group_sheet() {
@@ -159,7 +161,7 @@ export function useCategoriesPage() {
         query_client.invalidateQueries({ queryKey: ['expense-entry', 'options', session?.user.id, ledger_id] }),
         query_client.invalidateQueries({ queryKey: ['calendar', 'monthly-expenses', session?.user.id] }),
       ])
-      set_sheet_state('closed')
+      sheet.request_close()
     } catch (error) {
       set_form_error(error instanceof Error ? error.message : '카테고리를 비활성화하지 못했습니다.')
       set_sheet_state(editing_state)
@@ -208,7 +210,7 @@ export function useCategoriesPage() {
         // 달력의 과거 지출도 변경된 분류 이름/아이콘으로 다시 표시합니다.
         query_client.invalidateQueries({ queryKey: ['calendar', 'monthly-expenses', session?.user.id] }),
       ])
-      set_sheet_state('closed')
+      sheet.request_close()
     } catch (save_error) {
       set_form_error(save_error instanceof Error ? save_error.message : '카테고리를 저장하지 못했습니다.')
       set_sheet_state(parent_id ? 'child-editing' : 'category-editing')
@@ -227,7 +229,7 @@ export function useCategoriesPage() {
     set_form_error('')
     try {
       await deactivate_category_group(ledger_id, editing_group.category_group_id)
-      set_sheet_state('closed')
+      sheet.request_close()
     } catch (error) {
       set_form_error(error instanceof Error ? error.message : '그룹을 비활성화하지 못했습니다.')
       set_sheet_state('group-editing')
@@ -266,7 +268,7 @@ export function useCategoriesPage() {
         await create_category_group({ ledger_id, group_name: new_group_name.trim(), sort_order: next_order })
       }
       await refresh_group_options()
-      set_sheet_state('closed')
+      sheet.request_close()
     } catch (save_error) {
       set_form_error(save_error instanceof Error ? save_error.message : '카테고리 그룹을 저장하지 못했습니다.')
       set_sheet_state('group-editing')
@@ -301,6 +303,7 @@ export function useCategoriesPage() {
     set_new_group_name,
     set_new_name,
     sheet_state,
+    sheet_phase: sheet.phase,
     sheet_title,
     toggle_group,
   }

@@ -106,7 +106,9 @@ function CategoriesPage() {
         </button>
       ) : null}
       {page.sheet_state !== 'closed' ? (
-        <div className="categories-sheet-backdrop">
+        <div className={`categories-sheet-backdrop bottom-sheet-${page.sheet_phase}`} onClick={(event) => {
+          if (event.target === event.currentTarget) page.close_add_sheet()
+        }}>
           <form className="categories-sheet" role="dialog" aria-modal="true" aria-labelledby="categories-sheet-title" onSubmit={(event) => { event.preventDefault(); void (page.sheet_state.startsWith('group-') ? page.save_group() : page.save_category()) }}>
             <div className="categories-sheet-handle" aria-hidden="true" />
             <div className="categories-sheet-heading">

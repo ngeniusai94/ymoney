@@ -123,11 +123,13 @@ function CalendarFilterSheet(props: SheetProps) {
       {ledgers.map((ledger) => <FilterLedgerCard key={ledger.ledger_id} ledger={ledger} page={page} />)}
     </div>
   })
-  return <div className="filter-backdrop">
+  return <div className={`filter-backdrop bottom-sheet-${page.sheet_phase}`} onClick={(event) => {
+    if (event.target === event.currentTarget) page.request_close()
+  }}>
     <section className="calendar-filter-sheet" role="dialog" aria-modal="true" aria-labelledby="filter-title">
       <header className="filter-sheet-head"><div className="filter-handle" /><div>
         <h2 id="filter-title">필터</h2><button type="button" onClick={page.reset}>초기화</button>
-        <button type="button" aria-label="필터 닫기" onClick={props.on_close}>×</button>
+        <button type="button" aria-label="필터 닫기" onClick={() => page.request_close()}>×</button>
       </div></header>
       <div className="filter-segments">{([{ value: 'ALL', label: '전체' }, { value: 'GROUP', label: '그룹' }, { value: 'PERSONAL', label: '개인' }] as const).map((scope) => {
         let class_name = ''
@@ -137,7 +139,7 @@ function CalendarFilterSheet(props: SheetProps) {
       })}</div>
       <div className="filter-sheet-scroll">{content}</div>
       <footer><button type="button" disabled={page.data_state !== 'ready'}
-        onClick={() => props.on_apply(page.scope, page.filters)}>선택한 조건으로 보기</button></footer>
+        onClick={() => page.request_close(() => props.on_apply(page.scope, page.filters))}>선택한 조건으로 보기</button></footer>
     </section>
   </div>
 }

@@ -1,0 +1,7 @@
+/* useBottomSheetClose의 제거 대기 시간과 동일하게 유지합니다. */
+:root { --bottom-sheet-duration: 320ms; }
+.bottom-sheet-closing { animation: bottom-sheet-backdrop-out var(--bottom-sheet-duration) ease-in-out both; }
+.bottom-sheet-closing > :first-child { animation: bottom-sheet-slide-out var(--bottom-sheet-duration) ease-in-out both; pointer-events: none; }
+@keyframes bottom-sheet-slide-out { from { transform: translateY(0); } to { transform: translateY(100%); } }
+@keyframes bottom-sheet-backdrop-out { from { background: var(--app-backdrop); } to { background: transparent; } }
+@media (prefers-reduced-motion: reduce) { .bottom-sheet-closing, .bottom-sheet-closing > :first-child { animation-duration: 1ms; } }

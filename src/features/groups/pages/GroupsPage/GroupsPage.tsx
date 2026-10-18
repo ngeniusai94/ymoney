@@ -43,7 +43,9 @@ function GroupsPage() {
   if (page.form_error) form_error = <p className="group-form-error" role="alert">{page.form_error}</p>
   let sheet: ReactNode = null
   if (page.sheet_mode !== 'closed') {
-    sheet = <div className="group-backdrop">
+    sheet = <div className={`group-backdrop bottom-sheet-${page.sheet_phase}`} onClick={(event) => {
+      if (event.target === event.currentTarget) page.close_sheet()
+    }}>
       <form className="group-sheet" role="dialog" aria-modal="true" aria-labelledby="group-sheet-title"
         onSubmit={(event) => { event.preventDefault(); void page.submit_sheet() }}>
         <header><h2 id="group-sheet-title">{title}</h2>

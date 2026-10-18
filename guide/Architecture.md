@@ -56,12 +56,14 @@ React 화면 → 기능별 TypeScript API → supabase-js → 기존 Supabase Au
 | 원격 데이터 | `src/lib/queryClient.ts` | TanStack Query 클라이언트 기본 설정 |
 | 지출 | `src/features/transactions/pages/ExpensePage/ExpensePage.tsx`, `useExpensePage.ts`, `ExpensePage.css` | 새 지출과 기존 지출 수정에 공용으로 쓰는 폼 UI·상태·화면 스타일 |
 | 지출 시트 | `src/features/transactions/pages/ExpensePage/ExpenseSheet.tsx`, `useExpenseSheet.ts`, `ExpenseSheet.css` | 추가·수정 모두 기존 ExpenseForm과 시트 애니메이션 재사용. 수정 ID로 useExpenseRecord 조회, 로딩/오류는 시트 안에 표시. 80dvh/320ms/배경 스크롤 잠금. 저장·삭제 후 월 캐시 갱신 및 달력 유지 |
+| 공통 시트 닫기 | `src/lib/useBottomSheetClose.ts`, `src/lib/bottom-sheet.css` | 중복 요청 방지·320ms 제거 대기·화면 이동 시 타이머 정리. 카테고리/결제/필터/그룹은 공통 클래스, 네이티브 지출 dialog는 기존 transform/::backdrop 유지하며 같은 훅 재사용 |
 | 지출 | `src/features/transactions/expense-options.api.ts`, `expense.utils.ts` | 가계부별 초기 항목·선택 목록, 날짜/금액 입력 규칙 |
 | 필터 | `src/features/calendar/components/CalendarFilterSheet/CalendarFilterSheet.tsx`, `useCalendarFilterSheet.ts`, `CalendarFilterSheet.css` | 가계부별 접기/선택 UI·임시 선택/조회 훅·시트 스타일 |
 | 필터 | `src/features/calendar/filter.api.ts`, `filter.utils.ts` | 기존 가계부/분류/결제수단 읽기 API 조립, 선택 상태·URL 검증·OR/AND 조건 |
 | 관리 | `src/features/settings/pages/SettingsPage/SettingsPage.tsx`, `SettingsPage.css` | 설정 메뉴와 카테고리 관리 이동 |
 | 분류 | `src/features/categories/pages/CategoriesPage/CategoriesPage.tsx`, `useCategoriesPage.ts`, `CategoriesPage.css`, `src/features/categories/categories.api.ts`, `categories.utils.ts` | 가계부별 그룹·상하위 조회/추가/수정/활성화. 관리 아이콘 UI·선택 상태 제거, 신규 icon_key=null/수정 기존 값 보존 |
 | 결제 | `src/features/payment-methods/pages/PaymentMethodsPage/PaymentMethodsPage.tsx`, `usePaymentMethodsPage.ts`, `PaymentMethodsPage.css`, `src/features/payment-methods/payment-methods.api.ts` | 카드/현금 목록·추가·이름/유형 수정·비활성화. 화면/훅/API 분리 |
+| 결제 아이콘 | `src/features/payment-methods/pages/PaymentMethodsPage/PaymentMethodsPage.tsx` | 관리 목록에서 카드는 인라인 카드 선 SVG, 현금은 `₩` 문자로 표시. 추가/수정에서는 로고 선택·저장 기능을 제공하지 않으며 기존 DB icon_key 데이터는 변경하지 않는다 |
 | 그룹 | `src/features/groups/pages/GroupsPage/{GroupsPage.tsx,useGroupsPage.ts,GroupsPage.css}`, `pages/GroupDetailPage/{GroupDetailPage.tsx,useGroupDetailPage.ts,GroupDetailPage.css}`, `groups.api.ts` | 목록·상세·생성/참여·멤버 표시·이름 변경·코드 복사·나가기. 코드 재발급은 후속 |
 | 내 정보 | `src/features/settings/pages/SettingsProfilePage/SettingsProfilePage.tsx`, `useSettingsProfilePage.ts`, `SettingsProfilePage.css`, `src/features/settings/profile.api.ts` | 닉네임·본인 로그인 정보·현재 기기 로그아웃 |
 | 소셜 인증 | `src/features/auth/useIntroPage.ts`, `useAuthCallbackPage.ts`, `auth.api.ts` | 카카오 OAuth 시작→SDK 세션 복원→인증 서버 getUser 확인→기존 tb_user 재사용 또는 M 프로필 생성→달력 이동. 키는 Supabase Dashboard에만 보관 |
@@ -136,7 +138,7 @@ React 화면 → 기능별 TypeScript API → supabase-js → 기존 Supabase Au
 | `tb_mon_ledger_member` | `(ledger_id bigint, user_srno text) 복합 PK/FK`, `joined_at timestamptz`. 역할 컬럼 없음 |
 | `tb_mon_category_group` | `category_group_id bigint identity PK`, `ledger_id bigint FK`, `trans_type text`, `group_name varchar(30)`, `color_code char(7) nullable`, `sort_order integer default 0`, `is_active boolean default true`, `created_at`, `updated_at` |
 | `tb_mon_category` | `category_id bigint identity PK`, `ledger_id bigint FK`, `category_group_id bigint nullable FK`, `parent_category_id bigint nullable self FK`, `trans_type text`, `category_name varchar(30)`, `icon_key varchar(30) nullable`, `sort_order integer`, `is_active boolean`, `created_at`, `updated_at` |
-| `tb_mon_payment_method` | `payment_method_id bigint identity PK`, `ledger_id bigint FK`, `method_type text CARD/CASH`, `method_name varchar(30)`, `sort_order integer`, `is_active boolean`, `created_at`, `updated_at` |
+| `tb_mon_payment_method` | `payment_method_id bigint identity PK`, `ledger_id bigint FK`, `method_type text CARD/CASH`, `method_name varchar(30)`, `icon_key text nullable`, `sort_order integer`, `is_active boolean`, `created_at`, `updated_at` |
 | `tb_mon_transaction` | `transaction_id bigint identity PK`, `ledger_id bigint FK`, `trans_type text`, `category_id bigint FK`, `payment_method_id bigint FK`, `amount numeric(14,0)`, `memo varchar(200) nullable`, `trans_date date`, `trans_time time`, `created_by_user_srno text nullable FK`, `updated_by_user_srno text nullable FK`, `created_at`, `updated_at`, `deleted_at timestamptz nullable` |
 
 - 기존 6개 업무 테이블 외에 새 테이블은 사용자 사전 검토가 필요하다. 동의 이력 테이블은 추가하지 않는다.

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useBottomSheetClose } from '../../../../lib/useBottomSheetClose'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '../../../auth/AuthProvider'
@@ -10,6 +11,7 @@ export function useGroupDetailPage() {
   const { session } = useAuth()
   const query_client = useQueryClient()
   const [sheet_state, set_sheet_state] = useState<'closed' | 'editing' | 'saving'>('closed')
+  const sheet = useBottomSheetClose(() => set_sheet_state('closed'))
   const [group_name, set_group_name] = useState('')
   const [form_error, set_form_error] = useState('')
   const [copy_message, set_copy_message] = useState('')
@@ -35,7 +37,7 @@ export function useGroupDetailPage() {
   }
   function close_sheet() {
     if (sheet_state === 'saving') return
-    set_sheet_state('closed')
+    sheet.request_close()
   }
   async function save_name() {
     if (sheet_state !== 'editing') return
@@ -56,7 +58,7 @@ export function useGroupDetailPage() {
         query_client.invalidateQueries({ queryKey: ['payment-management', 'ledgers', session?.user.id] }),
         query_client.invalidateQueries({ queryKey: ['expense-entry', 'ledgers', session?.user.id] }),
       ])
-      set_sheet_state('closed')
+      sheet.request_close()
     } catch (error) {
       set_form_error(error instanceof Error ? error.message : '그룹 이름을 변경하지 못했습니다.')
       set_sheet_state('editing')
@@ -101,6 +103,6 @@ export function useGroupDetailPage() {
       set_leave_state('idle')
     }
   }
-  return { query, data_state, sheet_state, save_label, group_name, form_error, copy_message,
+  return { query, data_state, sheet_state, sheet_phase: sheet.phase, save_label, group_name, form_error, copy_message,
     leave_state, leave_error, leave, set_group_name, open_sheet, close_sheet, save_name, copy_code }
 }

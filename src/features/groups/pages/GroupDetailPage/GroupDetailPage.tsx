@@ -50,7 +50,9 @@ function GroupDetailPage() {
   if (page.sheet_state !== 'closed') {
     let error_message: ReactNode = null
     if (page.form_error) error_message = <p className="group-form-error" role="alert">{page.form_error}</p>
-    sheet = <div className="group-backdrop"><form className="group-sheet" role="dialog" aria-modal="true" aria-labelledby="group-name-title" onSubmit={(event) => { event.preventDefault(); void page.save_name() }}><header><h2 id="group-name-title">그룹 이름 변경</h2><button type="button" aria-label="닫기" disabled={page.sheet_state === 'saving'} onClick={page.close_sheet}>×</button></header><label htmlFor="group-name">이름</label><input id="group-name" value={page.group_name} onChange={(event) => page.set_group_name(event.target.value)} maxLength={30} disabled={page.sheet_state === 'saving'} autoFocus />{error_message}<button type="submit" className="group-save" disabled={page.sheet_state === 'saving'}>{page.save_label}</button></form></div>
+    sheet = <div className={`group-backdrop bottom-sheet-${page.sheet_phase}`} onClick={(event) => {
+      if (event.target === event.currentTarget) page.close_sheet()
+    }}><form className="group-sheet" role="dialog" aria-modal="true" aria-labelledby="group-name-title" onSubmit={(event) => { event.preventDefault(); void page.save_name() }}><header><h2 id="group-name-title">그룹 이름 변경</h2><button type="button" aria-label="닫기" disabled={page.sheet_state === 'saving'} onClick={page.close_sheet}>×</button></header><label htmlFor="group-name">이름</label><input id="group-name" value={page.group_name} onChange={(event) => page.set_group_name(event.target.value)} maxLength={30} disabled={page.sheet_state === 'saving'} autoFocus />{error_message}<button type="submit" className="group-save" disabled={page.sheet_state === 'saving'}>{page.save_label}</button></form></div>
   }
   return <section className="groups-screen" aria-label="그룹 상세"><header className="groups-topbar"><Link to="/app/settings/groups" aria-label="그룹 목록으로 이동">‹</Link><h1>그룹 상세</h1><span /></header><div className="groups-body">{content}</div>{sheet}</section>
 }

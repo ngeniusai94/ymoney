@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { useBottomSheetClose } from '../../../../lib/useBottomSheetClose'
 
 /** 닫기 애니메이션이 끝날 때까지 폼을 유지하고, 저장 중에는 바깥/ESC 닫기를 막습니다. */
 export function useExpenseSheet(on_close: () => void) {
   const dialog_ref = useRef<HTMLDialogElement>(null)
   const busy_ref = useRef(false)
   const [phase, set_phase] = useState<'opening' | 'open' | 'closing'>('opening')
+  const { phase: close_phase, request_close: request_sheet_close } = useBottomSheetClose(on_close)
 
   useEffect(() => {
     const dialog = dialog_ref.current
@@ -28,18 +30,13 @@ export function useExpenseSheet(on_close: () => void) {
     }
   }, [])
 
-  useEffect(() => {
-    if (phase !== 'closing') return
-    // CSS 종료 시간과 동일합니다. 모션 감소 설정에서도 닫기는 완료됩니다.
-    const timer = window.setTimeout(on_close, 320)
-    return () => window.clearTimeout(timer)
-  }, [phase, on_close])
-
   const set_busy = useCallback((busy: boolean) => { busy_ref.current = busy }, [])
   const request_close = useCallback(() => {
     if (busy_ref.current) return
-    set_phase('closing')
-  }, [])
+    request_sheet_close()
+  }, [request_sheet_close])
 
-  return { dialog_ref, phase, request_close, set_busy }
+  let visible_phase = phase
+  if (close_phase === 'closing') visible_phase = 'closing'
+  return { dialog_ref, phase: visible_phase, request_close, set_busy }
 }

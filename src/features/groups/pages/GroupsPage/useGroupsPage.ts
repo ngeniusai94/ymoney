@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { useBottomSheetClose } from '../../../../lib/useBottomSheetClose'
 import { useNavigate } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '../../../auth/AuthProvider'
@@ -12,6 +13,7 @@ export function useGroupsPage() {
   const navigate = useNavigate()
   const query_client = useQueryClient()
   const [sheet_mode, set_sheet_mode] = useState<'closed' | 'create' | 'join'>('closed')
+  const sheet = useBottomSheetClose(() => set_sheet_mode('closed'))
   const [request_state, set_request_state] = useState<'idle' | 'saving'>('idle')
   const [group_name, set_group_name] = useState('')
   const [invite_code, set_invite_code] = useState('')
@@ -41,7 +43,7 @@ export function useGroupsPage() {
   }
   function close_sheet() {
     if (request_state === 'saving') return
-    set_sheet_mode('closed')
+    sheet.request_close()
   }
   async function submit_sheet() {
     if (request_state === 'saving' || sheet_mode === 'closed') return
@@ -73,7 +75,10 @@ export function useGroupsPage() {
         query_client.invalidateQueries({ queryKey: ['payment-management', 'ledgers'] }),
         query_client.invalidateQueries({ queryKey: ['expense-entry', 'ledgers'] }),
       ])
-      navigate(`/app/settings/groups/${ledger_id}`)
+      sheet.request_close(() => {
+        set_sheet_mode('closed')
+        navigate(`/app/settings/groups/${ledger_id}`)
+      })
     } catch (error) {
       const message = error instanceof Error ? error.message : '요청을 완료하지 못했습니다.'
       if (sheet_mode === 'join') window.alert(message)
@@ -85,6 +90,6 @@ export function useGroupsPage() {
       set_request_state('idle')
     }
   }
-  return { query, data_state, groups: query.data ?? [], sheet_mode, request_state, group_name, invite_code,
+  return { query, data_state, groups: query.data ?? [], sheet_mode, sheet_phase: sheet.phase, request_state, group_name, invite_code,
     form_error, set_group_name, set_invite_code, open_sheet, close_sheet, submit_sheet }
 }

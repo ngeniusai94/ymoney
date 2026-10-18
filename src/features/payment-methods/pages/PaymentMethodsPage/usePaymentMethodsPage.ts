@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useBottomSheetClose } from '../../../../lib/useBottomSheetClose'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '../../../auth/AuthProvider'
 import { loadCurrentProfile } from '../../../auth/auth.api'
@@ -13,10 +14,12 @@ export function usePaymentMethodsPage() {
   const query_client = useQueryClient()
   const [chosen_ledger_id, set_chosen_ledger_id] = useState<string | null>(null)
   const [sheet_state, set_sheet_state] = useState<'closed' | 'create' | 'edit' | 'saving'>('closed')
+  const sheet = useBottomSheetClose(() => set_sheet_state('closed'))
   const [editing_method, set_editing_method] = useState<ManagedPaymentMethod | null>(null)
   const [method_name, set_method_name] = useState('')
   const [method_type, set_method_type] = useState<PaymentMethodType | ''>('')
   const [form_error, set_form_error] = useState('')
+
 
   const ledger_query = useQuery({
     queryKey: ['payment-management', 'ledgers', session?.user.id ?? 'signed-out'],
@@ -80,8 +83,12 @@ export function usePaymentMethodsPage() {
   }
 
   function close_sheet() {
-    if (sheet_state === 'saving') return
-    set_sheet_state('closed')
+    if (sheet_state === 'saving' || sheet_state === 'closed') return
+    sheet.request_close()
+  }
+
+  function choose_method_type(next_type: PaymentMethodType) {
+    set_method_type(next_type)
   }
 
   /** 입력/달력에서 오래된 결제수단 이름·활성 상태를 다시 조회하게 합니다. */
@@ -126,7 +133,7 @@ export function usePaymentMethodsPage() {
         await create_payment_method({ ledger_id, method_name: name, method_type, sort_order })
       }
       await refresh_methods()
-      set_sheet_state('closed')
+      sheet.request_close()
     } catch (error) {
       set_form_error(error instanceof Error ? error.message : '결제수단을 저장하지 못했습니다.')
       set_sheet_state(previous_state)
@@ -145,7 +152,7 @@ export function usePaymentMethodsPage() {
     try {
       await deactivate_payment_method(ledger_id, editing_method.payment_method_id)
       await refresh_methods()
-      set_sheet_state('closed')
+      sheet.request_close()
     } catch (error) {
       set_form_error(error instanceof Error ? error.message : '결제수단을 비활성화하지 못했습니다.')
       set_sheet_state('edit')
@@ -157,5 +164,5 @@ export function usePaymentMethodsPage() {
     else await methods_query.refetch()
   }
 
-  return { data_state, ledgers, ledger_id, ledger_name, nickname: ledger_query.data?.profile.nickname ?? null, methods, sheet_state, sheet_title, save_label, editing_method, method_name, method_type, form_error, set_method_name, set_method_type, choose_ledger, open_add_sheet, open_edit_sheet, close_sheet, save_method, disable_method, retry }
+  return { data_state, ledgers, ledger_id, ledger_name, nickname: ledger_query.data?.profile.nickname ?? null, methods, sheet_state, sheet_phase: sheet.phase, sheet_title, save_label, editing_method, method_name, method_type, form_error, set_method_name, choose_method_type, choose_ledger, open_add_sheet, open_edit_sheet, close_sheet, save_method, disable_method, retry }
 }

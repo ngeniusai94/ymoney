@@ -5,6 +5,8 @@ export function get_ledger_display_name(
   ledger: Pick<LedgerSummary, 'ledger_type' | 'ledger_name'>,
   nickname: string | null | undefined,
 ): string {
-  if (ledger.ledger_type === 'PERSONAL') return nickname?.trim() || '개인 가계부'
+  if (ledger.ledger_type === 'PERSONAL') {
+    return nickname?.trim() || '개인 가계부'
+  }
   return ledger.ledger_name
 }
