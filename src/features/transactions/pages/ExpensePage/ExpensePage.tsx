@@ -148,7 +148,7 @@ export function ExpenseForm({ existing_expense, ...callbacks }: { existing_expen
           <div className="expense-amount-line">
             <input
               id="expense-amount"
-              data-expense-open-click={!form.is_edit_mode ? 'amount' : undefined}
+              data-expense-initial-focus={!form.is_edit_mode ? 'amount' : undefined}
               type="text"
               inputMode="numeric"
               pattern="[0-9]*"

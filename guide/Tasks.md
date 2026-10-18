@@ -90,7 +90,7 @@
 - ✅ 2026-10-18 새 지출 포커스: 신규 폼의 첫 포커스는 기존 금액 입력 autoFocus를 유지한다. 상위/하위 카테고리를 선택하면 첫 결제수단 버튼으로 포커스하고 선택지가 없을 때 결제수단 그룹으로 이동한다. Design에 흐름을 반영했다. `npx.cmd tsc -b --pretty false`, 변경 TSX ESLint, `git diff --check` 통과. 원격 DB 변경 없음.
 - ✅ 2026-10-18 새 지출 첫 포커스 보강: 금액 input의 autoFocus가 네이티브 dialog의 최초 포커스(취소 버튼)에 덮일 수 있어, 신규 입력에만 data 초기 포커스 표시를 주고 showModal 직후 `focus({ preventScroll: true })`로 금액을 명시 선택한다. 수정 화면과 삭제 확인 포커스는 건드리지 않는다. `npx.cmd tsc -b --pretty false`, 변경 TSX 2개 파일 ESLint, `git diff --check` 통과. 원격 DB 변경 없음.
 - ✅ 2026-10-18 모바일 지출 키패드: 사용자는 자동 포커스 대신 시트가 열린 후 금액 입력을 직접 누르는 흐름을 선택했다. `showModal` 직후 수행하던 명시적 금액 focus를 제거해 모바일에서 키패드가 자동으로 화면을 가리지 않게 했다. 금액 입력은 그대로 눌러 입력하며, 카테고리→결제수단 포커스 이동은 유지한다. `npx.cmd tsc -b --pretty false`, 변경 TSX/훅 ESLint, `git diff --check` 통과; 자동 금액 focus 코드 검색 결과 없음. 원격 DB 변경 없음.
-- ✅ 2026-10-18 금액 입력 자동 클릭: 최신 요청에 따라 신규 지출 시트 open 시 금액 input에 `.click()` 동작을 실행한다. `focus()` 직접 호출은 사용하지 않고 수정 시트에는 적용하지 않는다. `npx.cmd tsc -b --pretty false`, 변경 TSX/훅 ESLint, `git diff --check` 통과. 모바일 브라우저가 스크립트 클릭으로 키패드를 여는지는 기기 정책에 따라 다를 수 있어 실기기 확인이 필요하다. 원격 DB 변경 없음.
+- ✅ 2026-10-18 첫 포커스 수정: `.click()`은 취소 버튼에서 기본 다이얼로그 포커스를 이동시키지 못해 제거했다. 신규 지출 시트가 열린 다음 프레임에 `#expense-amount`를 직접 focus({ preventScroll: true })하고, 언마운트 시 RAF를 취소한다. 수정 시트에는 적용하지 않는다. `npx.cmd tsc -b --pretty false`, 관련 ESLint, `git diff --check` 통과. 원격 DB 변경 없음.
 - ✅ 2026-10-18 관리 화면 가계부 콤보박스: 카테고리/결제수단 관리 화면의 투명 select를 표시 영역 전체에 겹쳐 현재 이름과 화살표 어디서나 네이티브 콤보박스가 열리게 했다. 키보드 포커스 outline과 비활성화 동작을 유지한다. `npx.cmd eslint`로 두 화면 TSX를 확인했고 `git diff --check` 통과. 원격 DB 변경 없음.
 - ⏸ `pages/PaymentMethodsPage/` 화면·훅·CSS와 API 연결. CARD/CASH 고정 유형 목록 및 설정 이동 구현, 사용자 화면 확인 대기.
 - ⏸ 추가·이름 변경·유형 이동·비활성화와 유형 변경 안내 구현 및 최소 권한 적용. 실제 저장 확인 대기.
