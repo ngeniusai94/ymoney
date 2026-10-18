@@ -88,6 +88,7 @@
 - ✅ 2026-10-18 기본 아이콘 원복: 현재 Git HEAD에는 결제 아이콘 자산이 추적되지 않음을 확인했다. 작업 중 추가했던 다운로드 PNG 대신 기존 기본 카드·현금 SVG 아이콘을 다시 연결했다. 결제수단 추가/수정의 로고 선택 제거는 유지한다. `npx.cmd tsc -b --pretty false`, `npx.cmd eslint src/features/payment-methods`, 두 SVG XML 검증, `git diff --check` 통과. 원격 DB 변경 없음.
 - ✅ 2026-10-18 아이콘 표시 방식 재확인: 사용자가 확인한 기존 구현에 맞춰 관리 목록의 카드는 인라인 카드 선 SVG, 현금은 `₩` 문자로 복원했다. 임시 이미지 자산과 helper 참조를 제거했다. 로고 선택 기능 제거는 유지한다. `npx.cmd tsc -b --pretty false`, 변경 TSX ESLint, `git diff --check` 통과.
 - ✅ 2026-10-18 새 지출 포커스: 신규 폼의 첫 포커스는 기존 금액 입력 autoFocus를 유지한다. 상위/하위 카테고리를 선택하면 첫 결제수단 버튼으로 포커스하고 선택지가 없을 때 결제수단 그룹으로 이동한다. Design에 흐름을 반영했다. `npx.cmd tsc -b --pretty false`, 변경 TSX ESLint, `git diff --check` 통과. 원격 DB 변경 없음.
+- ✅ 2026-10-18 새 지출 첫 포커스 보강: 금액 input의 autoFocus가 네이티브 dialog의 최초 포커스(취소 버튼)에 덮일 수 있어, 신규 입력에만 data 초기 포커스 표시를 주고 showModal 직후 `focus({ preventScroll: true })`로 금액을 명시 선택한다. 수정 화면과 삭제 확인 포커스는 건드리지 않는다. `npx.cmd tsc -b --pretty false`, 변경 TSX 2개 파일 ESLint, `git diff --check` 통과. 원격 DB 변경 없음.
 - ✅ 2026-10-18 관리 화면 가계부 콤보박스: 카테고리/결제수단 관리 화면의 투명 select를 표시 영역 전체에 겹쳐 현재 이름과 화살표 어디서나 네이티브 콤보박스가 열리게 했다. 키보드 포커스 outline과 비활성화 동작을 유지한다. `npx.cmd eslint`로 두 화면 TSX를 확인했고 `git diff --check` 통과. 원격 DB 변경 없음.
 - ⏸ `pages/PaymentMethodsPage/` 화면·훅·CSS와 API 연결. CARD/CASH 고정 유형 목록 및 설정 이동 구현, 사용자 화면 확인 대기.
 - ⏸ 추가·이름 변경·유형 이동·비활성화와 유형 변경 안내 구현 및 최소 권한 적용. 실제 저장 확인 대기.
