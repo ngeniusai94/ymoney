@@ -12,7 +12,9 @@ import GroupsPage from './features/groups/pages/GroupsPage/GroupsPage'
 import GroupDetailPage from './features/groups/pages/GroupDetailPage/GroupDetailPage'
 import SettingsProfilePage from './features/settings/pages/SettingsProfilePage/SettingsProfilePage'
 import SettingsThemePage from './features/settings/pages/SettingsThemePage/SettingsThemePage'
+import SettingsNotificationsPage from './features/settings/pages/SettingsNotificationsPage/SettingsNotificationsPage'
 import PreviewCalendarPage from './features/preview/pages/PreviewCalendarPage/PreviewCalendarPage'
+import StatisticsPage from './features/statistics/pages/StatisticsPage/StatisticsPage'
 
 /**
  * 애플리케이션의 URL과 화면을 연결하는 최상위 컴포넌트입니다.
@@ -36,10 +38,11 @@ function App() {
           <Route path="calendar" element={<CalendarPage />} />
           <Route path="expenses/new" element={<ExpensePage />} />
           <Route path="expenses/:transaction_id/edit" element={<ExpensePage />} />
-          <Route path="statistics" element={<main className="app-placeholder">통계 화면은 다음 단계에서 연결합니다.</main>} />
+          <Route path="statistics" element={<StatisticsPage />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="settings/profile" element={<SettingsProfilePage />} />
           <Route path="settings/theme" element={<SettingsThemePage />} />
+          <Route path="settings/notifications" element={<SettingsNotificationsPage />} />
           <Route path="settings/categories" element={<CategoriesPage />} />
           <Route path="settings/payment-methods" element={<PaymentMethodsPage />} />
           <Route path="settings/groups" element={<GroupsPage />} />

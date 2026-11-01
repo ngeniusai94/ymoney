@@ -61,6 +61,10 @@ React 화면 → 기능별 TypeScript API → supabase-js → 기존 Supabase Au
 | 필터 | `src/features/calendar/components/CalendarFilterSheet/CalendarFilterSheet.tsx`, `useCalendarFilterSheet.ts`, `CalendarFilterSheet.css` | 가계부별 접기/선택 UI·임시 선택/조회 훅·시트 스타일 |
 | 필터 | `src/features/calendar/filter.api.ts`, `filter.utils.ts` | 기존 가계부/분류/결제수단 읽기 API 조립, 선택 상태·URL 검증·OR/AND 조건 |
 | 관리 | `src/features/settings/pages/SettingsPage/SettingsPage.tsx`, `SettingsPage.css` | 설정 메뉴와 카테고리 관리 이동 |
+| 알림 화면 | `src/features/settings/pages/SettingsNotificationsPage/{SettingsNotificationsPage.tsx,SettingsNotificationsPage.css,useSettingsNotificationsPage.ts}` | 고정 3개 알림 저장·수정. 회원/UUID별 캐시 재사용, 저장 성공 후 갱신·저장 중 연속 클릭 방지·실패 후 서버 재조회. 기기 권한/푸시 발송과 분리해 설정만 검증 |
+| 알림 설정 API | `src/features/settings/notifications.api.ts` | 고정 문구·주기와 본인 user_srno + app_cd=ymoney의 조회/INSERT/UPDATE. 기존 push_srno 유지, 신규 ON만 채번. 기기·토큰 API 없음 |
+| 알림 접근 제어 | `supabase/notification-anonymous-access.sql`, `supabase/notification-owner-access.sql` | 공용 `tb_user_device`/`tb_push_schedule`의 anon 권한 회수, authenticated 본인 행 USING/WITH CHECK 정책. `tb_user` 본인 정책을 재사용하며 신규 함수 없음. 일반 클라이언트는 CRUD만 유지하고 service_role은 보존 |
+| 공용 알림 채번 | `supabase/notification-numbering.sql` | 기존 fn_next_push_srno/fn_next_device_srno가 public.seq_push_srno/seq_device_srno의 nextval 사용. RLS의 본인 행 조회와 분리하며 기존 P/D 접두사 유지. authenticated는 USAGE만 허용, anon 호출 차단. 실패/검증 시에도 번호는 소비됨 |
 | 분류 | `src/features/categories/pages/CategoriesPage/CategoriesPage.tsx`, `useCategoriesPage.ts`, `CategoriesPage.css`, `src/features/categories/categories.api.ts`, `categories.utils.ts` | 가계부별 그룹·상하위 조회/추가/수정/활성화. 관리 아이콘 UI·선택 상태 제거, 신규 icon_key=null/수정 기존 값 보존 |
 | 결제 | `src/features/payment-methods/pages/PaymentMethodsPage/PaymentMethodsPage.tsx`, `usePaymentMethodsPage.ts`, `PaymentMethodsPage.css`, `src/features/payment-methods/payment-methods.api.ts` | 카드/현금 목록·추가·이름/유형 수정·비활성화. 화면/훅/API 분리 |
 | 결제 아이콘 | `src/features/payment-methods/pages/PaymentMethodsPage/PaymentMethodsPage.tsx` | 관리 목록에서 카드는 인라인 카드 선 SVG, 현금은 `₩` 문자로 표시. 추가/수정에서는 로고 선택·저장 기능을 제공하지 않으며 기존 DB icon_key 데이터는 변경하지 않는다 |
@@ -70,7 +74,7 @@ React 화면 → 기능별 TypeScript API → supabase-js → 기존 Supabase Au
 | 계정 삭제 | `src/features/settings/pages/SettingsProfilePage/SettingsAccountDelete.tsx`, `useSettingsAccountDelete.ts`, `src/features/settings/profile.api.ts`, `kakao-withdrawal.api.ts`, `src/features/auth/withdrawal-intent.ts`, `supabase/account-withdrawal.sql` | 전체 폼/훅/API 분리. 아이디 비밀번호 또는 카카오 재로그인 후 확인 입력. 카카오 전용 앱 연결 해제 후 기존 M 삭제 함수 호출. Apple 등 미지원 공급자 차단, 기존 yWeather 함수 보존 |
 | 테마 | `src/features/settings/pages/SettingsThemePage/SettingsThemePage.tsx`, `SettingsThemePage.css` | 승인 B안 팔레트 목록과 즉시 선택 |
 | 테마 | `src/features/theme/ThemeProvider.tsx`, `useTheme.ts`, `theme.const.ts`, `theme.css` | Context·기기 저장/복원·저장 실패 안내·CSS 변수. 인트로도 테마 적용, 소셜 브랜드 색은 유지 |
-| 통계 | `src/features/statistics/StatisticsPage.tsx` | 준비 중 화면 |
+| 통계 | `src/features/statistics/pages/StatisticsPage/{StatisticsPage.tsx,StatisticsBreakdowns.tsx,useStatisticsPage.ts,StatisticsPage.css}`, `src/features/statistics/statistics.utils.ts` | URL 월/범위 빠른 탭, 기존 get_monthly_transactions 및 달력 월 캐시 3개 재사용. 순수 함수로 상위/하위 카테고리·결제수단 이름별 합계/비중 계산, Breakdowns의 native details로 영역/상세 접기. 지출 변경의 기존 캐시 무효화에 함께 반응. 신규 DB/API 없이 구현 |
 | 둘러보기 | `src/features/preview/preview-data.ts`, `src/features/preview/pages/PreviewCalendarPage/PreviewCalendarPage.tsx`, `usePreviewCalendarPage.ts` | CalendarView와 AppLayout 탭 모양만 재사용. 고정 예시 합계와 공통 로그인 안내; URL/선택 상태/필터 시트/다른 화면 없음. 가계부 원격 요청 없음 |
 | 재사용 발생 시 | `src/components/BottomSheet.tsx`, `ConfirmDialog.tsx` | 공통 시트·확인 팝업 |
 | 타입 공유 시 | `src/types.ts` | 실제 사용하는 DB/화면 공통 타입 |
@@ -80,6 +84,8 @@ React 화면 → 기능별 TypeScript API → supabase-js → 기존 Supabase Au
 | 앱 배포 | 추후 결정 | 포장 방식 선택 전 네이티브 파일·플러그인 생성 금지 |
 
 축약한 API 파일 경로는 같은 행의 화면 파일과 동일한 폴더를 사용한다. 예: `categories.api.ts`는 `src/features/categories/categories.api.ts`이다. 화면이 과도하게 커지면 해당 기능 폴더 내부에서 시트/폼만 분리하고 이 지도를 갱신한다.
+
+통계의 그룹 이름은 카테고리 관리의 `['category-management','ledgers',user_uuid]` 캐시와 동일한 `{profile,ledgers}` 조회를 재사용한다. 그룹 선택은 URL `scope=GROUP&ledger=<ledger_id>`로 보존하고, 기존 GROUP 월 배열을 선택 ID로 필터링한 동일 배열에서 합계·분류·결제를 계산한다. 그룹 생성/이름 변경/나가기의 기존 목록 캐시 무효화가 통계에도 반영된다.
 
 지출 목록 조회 모델은 `category_name`(전체 접근성 이름)과 `parent_category_name`/`child_category_name`(배치용 이름)을 따로 전달한다. 화면에서 구분 문자열을 다시 분해하지 않는다. 시트는 opening→open→closing 상태를 사용하며 두 requestAnimationFrame 뒤 열기 전환을 시작한다. CSS 전환과 닫기 지연은 320ms로 맞춘다.
 

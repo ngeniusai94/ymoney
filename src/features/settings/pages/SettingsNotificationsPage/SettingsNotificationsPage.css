@@ -1,0 +1,26 @@
+/* 다른 설정 세부 화면과 같은 헤더·테마를 유지합니다. */
+.notifications-screen { color: var(--app-text); }
+.notifications-topbar { display: grid; grid-template-columns: 40px 1fr 40px; align-items: center; min-height: 49px; margin: -8px -10px 0; padding: 0 13px; border-bottom: 1px solid var(--app-line); background: #fff; }
+.notifications-topbar h1 { margin: 0; text-align: center; font-size: 17px; }
+.notifications-topbar a { display: grid; min-height: 44px; align-items: center; color: var(--app-primary); font-size: 27px; text-decoration: none; }
+.notifications-body { padding: 20px 3px; }
+.notifications-notice { margin: 0 0 24px; padding: 14px 16px; border: 1px solid var(--app-line); border-radius: 14px; background: var(--app-soft); color: var(--app-muted); font-size: 12px; line-height: 1.7; }
+.notifications-section-heading { margin: 0 4px 12px; }
+.notifications-section-heading h2 { margin: 0 0 6px; font-size: 14px; }
+.notifications-section-heading p { margin: 0; color: var(--app-muted); font-size: 11px; line-height: 1.6; }
+.notifications-list { margin: 0; padding: 0; list-style: none; overflow: hidden; border: 1px solid var(--app-line); border-radius: 16px; background: #fff; }
+.notifications-reminder { display: grid; grid-template-columns: minmax(0, 1fr) 48px; align-items: center; gap: 16px; padding: 22px 16px; border-bottom: 1px solid var(--app-line); }
+.notifications-reminder:last-child { border-bottom: 0; }
+.notifications-reminder-content { min-width: 0; overflow-wrap: anywhere; }
+.notifications-reminder h3 { margin: 0; color: var(--app-text); font-size: 14px; font-weight: 700; }
+.notifications-message { margin: 8px 0 0; color: var(--app-muted); font-size: 12px; line-height: 1.6; }
+.notifications-period { margin: 10px 0 0; color: var(--app-primary); font-size: 12px; font-weight: 600; line-height: 1.5; }
+/* 계정의 사용 의사만 변경하며 저장 중에는 중복 입력을 막습니다. */
+.notifications-switch { display: grid; width: 48px; min-height: 44px; place-items: center; padding: 0; border: 0; background: transparent; cursor: pointer; }
+.notifications-switch:disabled { cursor: wait; opacity: .6; }
+.notifications-switch-track { display: block; width: 44px; height: 26px; padding: 3px; border-radius: 999px; background: var(--app-line); }
+.notifications-switch-track > span { display: block; width: 20px; height: 20px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px #00000015; }
+.notifications-switch[aria-checked="true"] .notifications-switch-track { background: var(--app-primary); }
+.notifications-switch[aria-checked="true"] .notifications-switch-track > span { transform: translateX(18px); }
+.notifications-notice button { min-height: 40px; padding: 8px 14px; border: 1px solid var(--app-line); border-radius: 10px; background: #fff; color: var(--app-primary); font: inherit; cursor: pointer; }
+.notifications-save-message { min-height: 20px; margin: 12px 4px 0; color: var(--app-primary); font-size: 12px; line-height: 1.6; }

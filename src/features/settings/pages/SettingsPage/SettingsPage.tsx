@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import './SettingsPage.css'
 
-type MenuIconName = 'profile' | 'theme' | 'category' | 'payment' | 'group'
+type MenuIconName = 'profile' | 'theme' | 'category' | 'payment' | 'group' | 'notification'
 
 /** 설정 목업의 작은 선 아이콘을 메뉴 항목에서 재사용합니다. */
 function MenuIcon({ name }: { name: MenuIconName }) {
@@ -16,6 +16,9 @@ function MenuIcon({ name }: { name: MenuIconName }) {
   }
   if (name === 'payment') {
     return <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2" /><path d="M3 10h18M7 15h3" /></svg>
+  }
+  if (name === 'notification') {
+    return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" /></svg>
   }
   return <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3" /><circle cx="17" cy="9" r="2.5" /><path d="M3 20a6 6 0 0 1 12 0M14 15a5 5 0 0 1 7 4.5" /></svg>
 }
@@ -44,6 +47,12 @@ function SettingsPage() {
           <h2 id="settings-group-title">그룹</h2>
           <div className="settings-menu">
             <Link className="settings-menu-row" to="/app/settings/groups"><span className="settings-row-icon"><MenuIcon name="group" /></span><strong>그룹 관리</strong><span className="settings-row-arrow" aria-hidden="true">›</span></Link>
+          </div>
+        </section>
+        <section className="settings-section" aria-labelledby="settings-notifications-title">
+          <h2 id="settings-notifications-title">알림</h2>
+          <div className="settings-menu">
+            <Link className="settings-menu-row" to="/app/settings/notifications"><span className="settings-row-icon"><MenuIcon name="notification" /></span><strong>알림 관리</strong><span className="settings-row-arrow" aria-hidden="true">›</span></Link>
           </div>
         </section>
       </div>

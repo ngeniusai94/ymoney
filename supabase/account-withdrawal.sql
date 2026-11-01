@@ -1,6 +1,6 @@
 -- 가계부 M 계정 전용. public.fn_withdraw_account와 yWeather 객체는 수정하지 않습니다.
 -- 호출자 이외의 번호/UUID를 받지 않고 세션에서 결정합니다. 실패 시 전체 작업이 롤백됩니다.
-create function ymoney.fn_mon_withdraw_account(p_confirmation text)
+create or replace function ymoney.fn_mon_withdraw_account(p_confirmation text)
 returns void language plpgsql security definer set search_path = '' as $$
 declare
   caller_uid uuid := auth.uid();
@@ -22,9 +22,12 @@ begin
   for update;
   if caller_srno is null then raise exception '삭제할 가계부 M 계정이 없습니다.'; end if;
 
-  -- 공용 UUID/회원정보 삭제가 다른 서비스의 데이터를 정리하지 않도록 연결된 계정은 중단합니다.
-  if exists (select 1 from public.tb_user_device d where d.user_srno = caller_srno)
-     or exists (select 1 from public.tb_push_schedule p where p.user_srno = caller_srno) then
+  -- 본인 ymoney 알림은 아래에서 정리합니다. 다른 서비스의 연결은 기존처럼 삭제를 차단합니다.
+  -- NULL 등 알 수 없는 서비스도 다른 연결로 취급하여 보존합니다.
+  if exists (select 1 from public.tb_user_device d
+       where d.user_srno = caller_srno and d.app_cd is distinct from 'ymoney')
+     or exists (select 1 from public.tb_push_schedule p
+       where p.user_srno = caller_srno and p.app_cd is distinct from 'ymoney') then
     raise exception '다른 서비스에 연결된 계정은 삭제할 수 없습니다. 관리자에게 문의해주세요.';
   end if;
   -- Apple 연결 해제 경로는 아직 구현되지 않았으므로 우회 삭제를 허용하지 않습니다.
@@ -61,6 +64,11 @@ begin
       delete from ymoney.tb_mon_ledger where ledger_id = target_ledger.ledger_id;
     end if;
   end loop;
+
+  -- 공용 회원 FK를 삭제하기 전에 본인의 가계부 서비스 알림만 정리합니다.
+  -- 함수 호출 전체가 같은 트랜잭션이므로 이후 실패하면 이 삭제도 함께 복원됩니다.
+  delete from public.tb_user_device where user_srno = caller_srno and app_cd = 'ymoney';
+  delete from public.tb_push_schedule where user_srno = caller_srno and app_cd = 'ymoney';
 
   -- 남은 공유 거래의 작성자/수정자는 기존 FK의 SET NULL로 익명화합니다.
   delete from public.tb_user where user_uuid = caller_uid and user_srno = caller_srno;
