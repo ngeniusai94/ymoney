@@ -81,7 +81,7 @@ React 화면 → 기능별 TypeScript API → supabase-js → 기존 Supabase Au
 | 필요 승인 후 | `supabase/migrations/<timestamp>_<purpose>.sql` | 승인된 DB 변경만 기록 |
 | MVP 검토 | `eslint.config.js`, `tests/<feature>.test.ts`, `tests/app.spec.ts` | 실제 선택한 최소 검증 도구·핵심 회귀. 미리 생성하지 않음 |
 | 웹 배포 | `vercel.json` | SPA 직접 경로 새로고침 대응 |
-| 앱 배포 | 추후 결정 | 포장 방식 선택 전 네이티브 파일·플러그인 생성 금지 |
+| iOS 앱 시작 화면 | `ios/ContentView.swift` | SwiftUI의 `UIViewRepresentable`로 `WKWebView`를 표시하고 Vercel HTTPS 주소를 로드. Swift는 웹뷰를 위아래로 펼친다. 웹 `index.html`이 배율과 viewport를 설정하고 `src/index.css`가 테마 배경과 안전 영역 여백을 관리 |
 
 축약한 API 파일 경로는 같은 행의 화면 파일과 동일한 폴더를 사용한다. 예: `categories.api.ts`는 `src/features/categories/categories.api.ts`이다. 화면이 과도하게 커지면 해당 기능 폴더 내부에서 시트/폼만 분리하고 이 지도를 갱신한다.
 

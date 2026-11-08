@@ -164,6 +164,16 @@
 
 ## 재개 기록 — 이 영역만 계속 갱신
 
+- iPhone 앱 종료 후 재실행 시 로그인 화면으로 가는 경로를 수정했다. Swift의 시작 URL `/`가 기존에는 와일드카드 라우트에서 `/auth`로 이동했다. `src/App.tsx`에 `/` → `/app/calendar`를 추가해 기존 AppLayout이 저장 세션 복원을 기다린 뒤 달력 또는 로그인 화면으로 분기하도록 했다. `npm.cmd run build`, Node 인라인 라우트 매칭/세션 복원 대기·로그인·비로그인 분기 확인, `git diff --check` 통과. localhost 개발 서버는 연결 거부였으며 실제 iPhone 세션 지속 여부는 웹 배포 후 확인해야 한다.
+
+- 사용자가 iPhone 실기기 설치에 성공했고 상하단 테마를 웹 CSS에서 관리하도록 요청했다. `ios/ContentView.swift`는 시스템 바 뒤까지 웹뷰를 펼친다. `index.html`은 `viewport-fit=cover`를 적용하고 고정 흰색 theme-color를 제거했다. `src/index.css`의 모바일 배경은 기존 `--app-bg`를 따르며 본문·탭·분류/결제수단 추가 버튼에 안전 영역 여백을 반영한다. 웹 빌드(`npm.cmd run build`)와 `git diff --check` 통과. 다음은 웹 배포 후 맥북 Xcode에서 Swift 변경을 한 번 빌드해 실제 iPhone의 테마 전환, 시스템 바 여백과 키보드를 확인하는 단계다.
+
+- 2026-11-08 iOS 웹뷰 역할 정리. 사용자가 Swift를 웹뷰 호출과 향후 브릿지 통신에만 사용하기로 했다. `ios/ContentView.swift`의 viewport 스크립트 주입을 제거해 초기 웹뷰 로딩 코드로 되돌렸다. 웹 `index.html`에 1배 viewport 제한을 넣고 로그인·가입 입력의 글자 크기를 `AuthIdPage.css`에서 16px로 조정했다. viewport 제한은 이를 따르는 일반 브라우저에도 적용된다. `npm.cmd run build`, `git diff --check` 통과. 실제 iPhone 및 배포 검증은 아직이다. 설치 로그에는 `com.yablab.ymoney.ymoney`가 표시됐고 사용자가 원하는 Bundle ID는 `com.yablab.ymoney`다. 다음은 Xcode 앱 Target의 서명 및 Debug Bundle ID를 맞추고 실행한 뒤 웹 배포본의 포커스·핀치·더블탭을 확인하는 단계다.
+
+- iOS 웹뷰 배율 제한. 사용자가 확인한 로그인 입력 포커스 확대에 대응해 `ios/ContentView.swift`에서 가계부 주소의 최상위 문서만 배율 1로 고정했다. WKWebView 설정에서 viewport 제한을 따르도록 명시했다. Node 인라인 검증에서 로그인 페이지의 기존 viewport 변경, 누락 시 생성, 외부 출처 보존을 확인했고 `git diff --check` 통과. 실제 iOS 빌드와 포커스·핀치·더블탭 동작은 맥북에서 확인해야 한다. 사용자의 iPhone은 Xcode 실행 대상에 표시되며, 다음은 앱 대상의 자동 서명/팀 설정과 첫 빌드 오류 확인이다.
+
+- 2026-11-08 iOS 웹뷰 첫 실행 준비. 사용자가 맥북의 Xcode에서 Swift로 웹뷰를 띄우는 방식을 선택했다. SwiftUI App 템플릿의 시작 화면에 붙여 넣을 `ios/ContentView.swift`를 추가했다. 프로젝트 문서의 `https://ymoney.vercel.app/`를 초기 주소로 사용하며 `makeUIView`에서 최초 한 번 로드한다. 작업 환경에 Xcode/Swift 컴파일러가 없어 iOS 빌드는 미실행이고, `curl.exe -I`로 배포 주소를 확인하려 했으나 DNS 조회에 실패했다. 다음은 맥북 Xcode에서 iPhone 시뮬레이터로 첫 화면을 확인하는 단계다.
+
 - 2026-11-01 알림 설정 저장/수정 연결(앱 푸시 방식 유지): 사용자는 웹 푸시 구현이 아니라 현재 웹에서 DB 저장·수정 확인만 원한다고 정정했다. notifications.api.ts에 고정 표시/저장 주기와 save_notification_setting 추가, 본인 user_srno+app_cd=ymoney+reminder_kind 조회 후 신규 ON INSERT·기존 ON/OFF UPDATE·미등록 OFF 무저장. 월말은 NULL days/month_end=true, 한국시간/제목/본문 포함. 화면 훅은 저장 성공 후 UUID별 캐시 갱신·실패 시 재조회·빠른 연속 클릭 방지, TSX는 토글 활성화 및 저장 결과·실제 발송 미연결 안내. 신규 DB 객체/SDK/기기·토큰·권한·발송 없음. PRD/Design/Architecture 갱신.
   - 실제 API를 임시 Node VM 테스트에서 새 M0014 계정 클라이언트로 실행: 빈 OFF 무저장, 3개 ON 최초 저장·재조회, 시각/일요일/월말/한국시간 필드, 전부 OFF 및 주간 재ON, 동일한 행 3개/ID 유지, 기기 등록 0건 검증 통과. 수정된 시퀀스 채번으로 실제 INSERT 성공 확인. 테스트 계정 탈퇴 정리 후 UUID/번호 기반 읽기로 Auth/profile/schedule/device 잔여 0 확인. 임시 실행/결과 파일 삭제. `npx.cmd tsc -b --pretty false`, `npx.cmd eslint src/features/settings/notifications.api.ts src/features/settings/pages/SettingsNotificationsPage`, `git diff --check` 통과. 브라우저 확인 시 localhost:5173 연결 거부로 화면 토글 클릭/레이아웃은 미검증, 개발 서버 임의 실행 안 함. 다른 실제 계정 설정은 변경하지 않음.
   - 한 화면 내 중복 클릭은 방지했지만 서로 다른 탭/기기의 동시 최초 ON에 대한 (회원/서비스/종류) DB UNIQUE는 아직 없음. 동시에 서로 다른 행이 생성되면 기존 로더가 중복 오류로 드러낸다. 실제 발송 출시 전 ymoney 범위의 고유 인덱스 및 충돌 재조회 처리 검토 필요. 현재 검증은 순차 저장/수정 범위이며 동시 저장을 검증 완료로 표시하지 않는다. 다음: 사용자가 개발 서버를 실행한 뒤 토글 변경·화면 재진입 유지 확인. 기기 권한·FCM 수신 정보는 앱 구성 방식 결정 후 연결한다.

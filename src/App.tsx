@@ -24,6 +24,8 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* 앱 재실행 시에도 보호 경로에서 저장된 세션을 확인한 뒤 첫 화면을 결정합니다. */}
+        <Route path="/" element={<Navigate to="/app/calendar" replace />} />
         <Route path="/auth" element={<IntroPage />} />
         <Route path="/auth/id" element={<AuthIdPage />} />
         <Route path="/auth/email" element={<Navigate to="/auth/id" replace />} />
