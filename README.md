@@ -1,5 +1,15 @@
 # React + TypeScript + Vite
 
+가계부 톡톡의 React 앱은 `web/`에 있습니다. 저장소 루트에서 다음 명령으로 웹을 실행합니다.
+
+```sh
+cd web
+npm ci
+npm run dev
+```
+
+로컬 환경 변수는 `web/.env.example`을 참고해 `web/.env`에 설정합니다. Vercel의 **Root Directory**는 `./web`입니다. DB SQL은 `web/supabase/`에 있습니다. 앱 프로젝트는 별도로 준비해 `app/`에 추가합니다.
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:

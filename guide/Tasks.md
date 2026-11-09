@@ -164,6 +164,12 @@
 
 ## 재개 기록 — 이 영역만 계속 갱신
 
+- 사용자가 앱 프로젝트는 다른 PC에서 작업해 커밋하기로 했다. PowerShell `Remove-Item`으로 이 PC의 `app/ios/ContentView.swift`와 빈 폴더를 제거했고 README·Architecture의 현재 경로 설명을 갱신했다. `app/`이 제거됐는지 확인하고 `git diff --check`를 실행했다. 앱 프로젝트는 다른 PC에서 `app/`에 추가할 예정이다.
+
+- 2026-11-09 사용자 요청에 따라 웹·DB 작업 디렉터리와 앱 소스를 분리했다. PowerShell `Move-Item`으로 `supabase/`를 `web/supabase/`, 기존 `ios/`를 `app/ios/`로 이동하고 21개 파일의 이동 전후 SHA-256 일치를 확인했다. Android는 실제 프로젝트 생성 시 `app/android/`에 둔다. README와 Architecture의 경로를 반영했다. `web/`에서 `npm.cmd run build` 통과, `web/dist/`에 SQL 파일이 없음을 확인, `git diff --check` 통과. Git 커밋과 원격 배포는 사용자 작업으로 남아 있다.
+
+- 2026-11-09 웹 앱을 `web/`로 이동했다. PowerShell `Move-Item`으로 React 소스·공개 자산·npm/Vite/TypeScript/ESLint/Vercel 설정과 로컬 환경 파일 및 생성 폴더를 옮겼다. README 실행 방법과 Architecture·agent-dev 경로를 갱신했다. `ios/`, `supabase/`, 목업과 공통 가이드는 저장소 루트에 있다. 새 위치에서 `npm.cmd run build` 통과, Git 추적 웹 파일 106개 이동과 `.env`·`node_modules`·`dist` 무시 확인, `git diff --check` 통과. `npm.cmd run lint`는 내용이 같은 기존 `AuthProvider.tsx`의 `react-refresh/only-export-components` 1건으로 실패했다. 다음 배포 전 Vercel 프로젝트의 Root Directory를 `web`으로 설정한다. 변경은 로컬 작업 트리에 있으며 Vercel 원격 설정은 미적용이다.
+
 - iPhone 앱 종료 후 재실행 시 로그인 화면으로 가는 경로를 수정했다. Swift의 시작 URL `/`가 기존에는 와일드카드 라우트에서 `/auth`로 이동했다. `src/App.tsx`에 `/` → `/app/calendar`를 추가해 기존 AppLayout이 저장 세션 복원을 기다린 뒤 달력 또는 로그인 화면으로 분기하도록 했다. `npm.cmd run build`, Node 인라인 라우트 매칭/세션 복원 대기·로그인·비로그인 분기 확인, `git diff --check` 통과. localhost 개발 서버는 연결 거부였으며 실제 iPhone 세션 지속 여부는 웹 배포 후 확인해야 한다.
 
 - 사용자가 iPhone 실기기 설치에 성공했고 상하단 테마를 웹 CSS에서 관리하도록 요청했다. `ios/ContentView.swift`는 시스템 바 뒤까지 웹뷰를 펼친다. `index.html`은 `viewport-fit=cover`를 적용하고 고정 흰색 theme-color를 제거했다. `src/index.css`의 모바일 배경은 기존 `--app-bg`를 따르며 본문·탭·분류/결제수단 추가 버튼에 안전 영역 여백을 반영한다. 웹 빌드(`npm.cmd run build`)와 `git diff --check` 통과. 다음은 웹 배포 후 맥북 Xcode에서 Swift 변경을 한 번 빌드해 실제 iPhone의 테마 전환, 시스템 바 여백과 키보드를 확인하는 단계다.

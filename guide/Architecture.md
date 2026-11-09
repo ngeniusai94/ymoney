@@ -9,6 +9,7 @@ React 화면 → 기능별 TypeScript API → supabase-js → 기존 Supabase Au
 ```
 
 - React + TypeScript + Vite, React Router, CSS 변수로 시작한다. 웹 배포는 Vercel을 목표로 한다.
+- 저장소에서 웹 앱은 `web/`, DB SQL은 `web/supabase/`에 둔다. 네이티브 프로젝트는 별도 PC에서 준비해 `app/`에 추가한다. 웹 빌드와 Supabase CLI의 작업 디렉터리는 `web/`이다.
 - Supabase DB는 계속 사용한다. 별도 API 서버, Edge Function, ORM, 복잡한 계층을 선행 추가하지 않는다.
 - 일반 조회/저장은 `supabase.from(...).select/insert/update/delete`로 처리한다. 첫 개인 가계부 생성·멤버 연결과 본인 가계부 목록은 각각 별도 RPC로 처리한다. 생성 시 두 테이블을 함께 저장해야 하고 기존 멤버 INSERT 정책에 재귀 오류가 있기 때문이다.
 - 아이디 가입에서는 과거 이메일 중복 확인 RPC를 사용하지 않는다. M 번호 발급은 `fn_mon_next_user_srno` RPC를 사용하며, 나머지 회원정보는 `tb_user` 직접 CRUD로 처리한다.
@@ -21,7 +22,7 @@ React 화면 → 기능별 TypeScript API → supabase-js → 기존 Supabase Au
 
 ## 2. 파일 지도 — 필요할 때만 생성
 
-아래는 전체 목표 파일의 위치와 책임이다. **최종 파일 수를 고정하지 않는다.** 아직 쓰지 않는 빈 파일을 만들지 말고 추가/통합 시 이 표를 함께 고친다. `.env`와 생성 산출물은 가이드가 아니므로 현재 정리본에는 없다.
+이 문서의 웹·DB 경로는 `web/` 기준이다. 예를 들어 `src/App.tsx`는 `web/src/App.tsx`, `supabase/`는 `web/supabase/`를 뜻한다. `app/`과 `.gitignore`는 저장소 루트 기준이다. **최종 파일 수를 고정하지 않는다.** 아직 쓰지 않는 빈 파일을 만들지 말고 추가/통합 시 이 표를 함께 고친다. `.env`와 생성 산출물은 가이드가 아니므로 현재 정리본에는 없다.
 파일명은 기능 폴더 아래에서 해당 기능 접두어를 사용한다. 화면 렌더링과 화면 상태/동작은 분리하고, API는 여러 화면에서 공유할 수 있도록 기능 루트에 둔다. 실제로 공유되는 타입 등 필요한 파일만 추가한다.
 
 | 시점 | 파일 경로 | 책임 |
@@ -81,7 +82,6 @@ React 화면 → 기능별 TypeScript API → supabase-js → 기존 Supabase Au
 | 필요 승인 후 | `supabase/migrations/<timestamp>_<purpose>.sql` | 승인된 DB 변경만 기록 |
 | MVP 검토 | `eslint.config.js`, `tests/<feature>.test.ts`, `tests/app.spec.ts` | 실제 선택한 최소 검증 도구·핵심 회귀. 미리 생성하지 않음 |
 | 웹 배포 | `vercel.json` | SPA 직접 경로 새로고침 대응 |
-| iOS 앱 시작 화면 | `ios/ContentView.swift` | SwiftUI의 `UIViewRepresentable`로 `WKWebView`를 표시하고 Vercel HTTPS 주소를 로드. Swift는 웹뷰를 위아래로 펼친다. 웹 `index.html`이 배율과 viewport를 설정하고 `src/index.css`가 테마 배경과 안전 영역 여백을 관리 |
 
 축약한 API 파일 경로는 같은 행의 화면 파일과 동일한 폴더를 사용한다. 예: `categories.api.ts`는 `src/features/categories/categories.api.ts`이다. 화면이 과도하게 커지면 해당 기능 폴더 내부에서 시트/폼만 분리하고 이 지도를 갱신한다.
 
@@ -279,7 +279,7 @@ React 화면 → 기능별 TypeScript API → supabase-js → 기존 Supabase Au
 현재는 로컬 설정 준비 단계다. 실제 업로드·외부 프로젝트 생성·공개 배포는 별도 진행한다. [Tasks.md](Tasks.md)의 MVP 보안/권한 점검 전에는 외부 실사용 공개를 하지 않으며, 시험 배포는 접근을 제한하고 테스트 계정만 사용한다.
 
 1. 배포 방법을 정한다. GitHub 연결 방식은 먼저 사용자가 이 프로젝트의 저장소를 준비한 뒤 Vercel에서 Import한다. Git 없이 직접 올리려면 사용자가 Vercel CLI 방식을 선택한다. 현재 폴더의 Git 초기화/원격 연결/CLI 설치는 에이전트가 임의로 하지 않는다.
-2. 프로젝트 루트는 package.json/vercel.json이 있는 폴더다. Framework Preset은 Vite, Build Command는 npm run build, Output Directory는 dist다. npm 잠금 파일을 함께 사용한다.
+2. Vercel 프로젝트의 Settings → Build and Deployment → Root Directory에 `./web`을 설정한다. Framework Preset은 Vite, Build Command는 `npm run build`, Output Directory는 `dist`다. 해당 폴더의 `package-lock.json`과 `vercel.json`을 사용한다.
 3. Vercel 프로젝트 Settings → Environment Variables에서 VITE_SUPABASE_URL과 VITE_SUPABASE_PUBLISHABLE_KEY를 직접 입력한다. 테스트용 Preview 환경에 우선 설정하고 실제 공개 시 Production에도 설정한다. 로컬 .env는 업로드하지 않으며 secret/service_role/카카오 Client Secret은 넣지 않는다. VITE_ 값은 브라우저 번들에 포함되므로 공개용 값만 사용한다.
 4. 환경변수 변경 후 새 배포/재배포로 빌드에 반영한다. 생성된 HTTPS 주소를 확인하고 시험 배포의 접근 보호 설정을 확인한다. HTTPS 주소만 있다고 비공개 테스트가 보장되는 것은 아니다.
 5. 테스트 주소가 확정되면 Supabase Authentication → URL Configuration → Redirect URLs에 정확한 `https://<테스트도메인>/auth/callback`을 추가한다. 기존 yWeather Site URL/Redirect URLs는 유지한다. 배포마다 바뀌는 주소를 포괄적으로 허용하기보다 실제 테스트할 주소만 등록한다. 카카오 Developers의 공급자 Callback URL은 기존 Supabase Auth Callback이며 앱 주소로 바꾸지 않는다.
