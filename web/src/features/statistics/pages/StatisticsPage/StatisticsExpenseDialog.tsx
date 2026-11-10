@@ -25,6 +25,7 @@ export default function StatisticsExpenseDialog({ details, month_label, on_close
     if (!dialog) return
 
     dialog.showModal()
+    dialog.focus({ preventScroll: true })
     const previous_overflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
     return () => {
@@ -61,7 +62,7 @@ export default function StatisticsExpenseDialog({ details, month_label, on_close
   }
 
   return (
-    <dialog ref={dialog_ref} className="statistics-expense-dialog" aria-labelledby="statistics-expense-dialog-title"
+    <dialog ref={dialog_ref} className="statistics-expense-dialog" aria-labelledby="statistics-expense-dialog-title" tabIndex={-1}
       onCancel={event => { event.preventDefault(); close_dialog() }}
       onClick={event => { if (event.target === event.currentTarget) close_dialog() }}>
       <div className="statistics-expense-dialog-panel">
