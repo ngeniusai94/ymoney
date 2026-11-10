@@ -1,4 +1,5 @@
 import { format_expense_total } from '../../../calendar/calendar.utils'
+import LedgerTabs from '../../../ledgers/components/LedgerTabs'
 import { useStatisticsPage } from './useStatisticsPage'
 import StatisticsBreakdowns from './StatisticsBreakdowns'
 import './StatisticsPage.css'
@@ -39,7 +40,14 @@ function StatisticsCharts({ model }: { model: StatisticsModel }) {
           ))}
         </ul>
       </section>
-      <StatisticsBreakdowns key={`${model.scope}:${model.selected_group_id}:${model.month_label}`} categories={model.categories} payment_methods={model.payment_methods} />
+      <StatisticsBreakdowns
+        key={`${model.scope}:${model.selected_group_id}:${model.month_label}`}
+        categories={model.categories}
+        category_group_breakdown={model.category_group_breakdown}
+        payment_methods={model.payment_methods}
+        selected_expenses={model.selected_expenses}
+        month_label={model.month_label}
+      />
     </>
   )
 }
@@ -47,16 +55,29 @@ function StatisticsCharts({ model }: { model: StatisticsModel }) {
 /** 화면은 표시만 담당하고 URL 변경·조회·집계는 전용 훅과 순수 함수가 담당합니다. */
 export default function StatisticsPage() {
   const model = useStatisticsPage()
+  const ledger_options = [
+    { id: 'ALL', name: '전체' },
+    { id: 'PERSONAL', name: '개인 가계부' },
+    ...model.group_ledgers.map(ledger => ({ id: ledger.ledger_id, name: ledger.ledger_name })),
+  ]
+
+  function choose_scope(id: string) {
+    if (id === 'ALL' || id === 'PERSONAL') {
+      model.change_scope(id)
+      return
+    }
+    model.change_scope('GROUP', id)
+  }
+
   return (
     <section className="statistics-screen">
       <header className="statistics-header"><h1>통계</h1></header>
-      <div className="statistics-scope-tabs" role="group" aria-label="통계 가계부 범위">
-        <button type="button" aria-pressed={model.scope === 'ALL'} onClick={() => model.change_scope('ALL')}>전체</button>
-        <button type="button" aria-pressed={model.scope === 'PERSONAL'} onClick={() => model.change_scope('PERSONAL')}>개인 가계부</button>
-        {model.group_ledgers.map(ledger => (
-          <button type="button" key={ledger.ledger_id} title={ledger.ledger_name} aria-pressed={model.scope === 'GROUP' && model.selected_group_id === ledger.ledger_id} onClick={() => model.change_scope('GROUP', ledger.ledger_id)}>{ledger.ledger_name}</button>
-        ))}
-      </div>
+      <LedgerTabs
+        label="통계 가계부 범위"
+        options={ledger_options}
+        selected_id={model.scope === 'GROUP' ? model.selected_group_id : model.scope}
+        on_select={choose_scope}
+      />
       <nav className="statistics-month-picker" aria-label="통계 월 선택">
         <button type="button" aria-label="이전 달" onClick={() => model.change_month(-1)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 6-6 6 6 6" /></svg></button>
         <strong aria-live="polite">{model.month_label}</strong>

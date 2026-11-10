@@ -2,10 +2,6 @@
 .statistics-screen { display: grid; gap: 22px; padding: 12px 6px 16px; }
 .statistics-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .statistics-header h1 { margin: 0; font-size: 20px; }
-/* 그룹이 여러 개면 동일 너비의 다음 행으로 이어집니다. 각 그룹은 실제 저장된 이름을 표시합니다. */
-.statistics-scope-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3px; padding: 4px; border-radius: 13px; background: var(--app-accent); }
-.statistics-scope-tabs button { min-width: 0; min-height: 44px; padding: 8px 4px; border: 0; border-radius: 10px; background: transparent; color: var(--app-muted); font: inherit; font-size: 13px; cursor: pointer; overflow-wrap: anywhere; }
-.statistics-scope-tabs button[aria-pressed='true'] { background: #fff; color: var(--app-primary); font-weight: 700; box-shadow: 0 2px 6px #0000000a; }
 .statistics-month-picker { display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; text-align: center; }
 .statistics-month-picker strong { font-size: 16px; }
 .statistics-month-picker button { display: grid; width: 44px; height: 44px; place-items: center; border: 0; border-radius: 50%; background: transparent; color: var(--app-primary); cursor: pointer; }
@@ -31,7 +27,7 @@
 .statistics-category-name { min-width: 0; overflow-wrap: anywhere; }
 .statistics-category-name small { display: inline-block; margin-left: 7px; color: var(--app-muted); font-size: 11px; }
 .statistics-category-heading strong { flex-shrink: 0; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; }
-.statistics-category-track { height: 6px; overflow: hidden; border-radius: 10px; background: var(--app-soft); }
+.statistics-category-track { display: block; height: 6px; overflow: hidden; border-radius: 10px; background: var(--app-soft); }
 .statistics-category-track span { display: block; height: 100%; border-radius: inherit; background: var(--app-primary); opacity: .6; }
 .statistics-category-list li:first-child .statistics-category-track span { opacity: 1; }
 /* details/summary의 기본 키보드·접기 동작을 유지하고 화살표만 테마에 맞춰 표시합니다. */
@@ -49,9 +45,13 @@
 .statistics-children { margin-top: 14px; padding: 12px; border-radius: 12px; background: var(--app-soft); }
 .statistics-children-heading { display: flex; justify-content: space-between; gap: 12px; color: var(--app-muted); font-size: 11px; }
 .statistics-children ul { margin: 5px 0 0; padding: 0; list-style: none; }
-.statistics-children li { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--app-line); font-size: 12px; }
-.statistics-children li:last-child { border-bottom: 0; padding-bottom: 0; }
-.statistics-children li > span:first-child { min-width: 0; overflow-wrap: anywhere; }
+.statistics-children li { border-bottom: 1px solid var(--app-line); }
+.statistics-children li:last-child { border-bottom: 0; }
+.statistics-expense-trigger { display: block; width: 100%; padding: 0; border: 0; background: transparent; color: inherit; text-align: start; cursor: pointer; }
+.statistics-expense-trigger:active { background: var(--app-accent); }
+.statistics-child-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 12px 0; font-size: 12px; }
+.statistics-children li:last-child .statistics-child-row { padding-bottom: 0; }
+.statistics-child-row > span:first-child { min-width: 0; overflow-wrap: anywhere; }
 .statistics-child-amount { flex-shrink: 0; font-variant-numeric: tabular-nums; }
 .statistics-child-amount small { display: inline-block; min-width: 35px; margin-left: 8px; color: var(--app-muted); font-size: 11px; text-align: right; }
 @media (prefers-reduced-motion: reduce) { .statistics-chevron { transition: none; } }
@@ -59,4 +59,23 @@
 .statistics-empty { margin-top: 20px; border: 0; background: var(--app-soft); }
 .statistics-state p { margin: 0 0 10px; }
 .statistics-state button { min-height: 44px; padding: 8px 16px; border: 0; border-radius: 10px; background: var(--app-accent); color: var(--app-text); font: inherit; cursor: pointer; }
+.statistics-expense-dialog { position: fixed; inset: 0; width: min(398px, calc(100% - 32px)); max-height: 76dvh; margin: auto; padding: 0; border: 0; border-radius: 20px; overflow: hidden; background: #fff; color: var(--app-text); box-shadow: 0 12px 40px var(--app-shadow); }
+.statistics-expense-dialog[open] { display: flex; }
+.statistics-expense-dialog::backdrop { background: var(--app-backdrop); }
+.statistics-expense-dialog-panel { display: flex; flex: 1; flex-direction: column; min-width: 0; min-height: 0; padding: 14px 18px 12px; }
+.statistics-expense-dialog-header { display: flex; flex-shrink: 0; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
+.statistics-expense-dialog-header h2 { margin: 4px 0 0; font-size: 17px; overflow-wrap: anywhere; }
+.statistics-expense-dialog-header p { margin: 4px 0 0; color: var(--app-muted); font-size: 12px; overflow-wrap: anywhere; }
+.statistics-expense-dialog-header button { flex: 0 0 44px; height: 44px; padding: 0; border: 0; background: transparent; color: var(--app-muted); font-size: 24px; cursor: pointer; }
+.statistics-expense-dialog-summary { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.statistics-expense-dialog-summary { flex-shrink: 0; padding: 10px 12px; border-radius: 12px; background: var(--app-soft); font-size: 13px; }
+.statistics-expense-dialog-summary strong { font-size: 16px; }
+.statistics-expense-dialog-list { min-height: 0; margin: 6px 0 0; padding: 0; overflow-y: auto; overscroll-behavior: contain; list-style: none; }
+/* 월과 일이 모두 두 자리여도 같은 날짜 칸을 사용합니다. */
+.statistics-expense-dialog-list li { border-bottom: 1px solid var(--app-line); font-size: 13px; }
+.statistics-expense-dialog-list li:last-child { border-bottom: 0; }
+.statistics-expense-dialog-row { display: grid; grid-template-columns: 4em minmax(0, 1fr) max-content; align-items: baseline; column-gap: 8px; padding: 12px 0; }
+.statistics-expense-dialog-row > span { min-width: 0; overflow-wrap: anywhere; }
+.statistics-expense-dialog-row time { display: flex; justify-content: space-between; gap: 3px; color: var(--app-muted); font-size: 11px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.statistics-expense-dialog-panel strong { flex-shrink: 0; font-variant-numeric: tabular-nums; }
 @media (max-width: 360px) { .statistics-screen { padding-inline: 2px; } .statistics-panel { padding: 16px; } .statistics-month-plot strong { font-size: 11px; } }

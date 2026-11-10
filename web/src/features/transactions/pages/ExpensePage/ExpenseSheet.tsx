@@ -4,12 +4,13 @@ import { useExpenseSheet } from './useExpenseSheet'
 import './ExpenseSheet.css'
 
 /** 추가·수정 폼을 같은 시트에 표시하며, 조회 중에도 동일한 열기/닫기 전환을 유지합니다. */
-export default function ExpenseSheet({ transaction_id, on_close, on_saved }: {
+export default function ExpenseSheet({ transaction_id, on_close, on_saved, lock_body_scroll = true }: {
   transaction_id?: string
   on_close: () => void
-  on_saved: (date: string) => void
+  on_saved?: (date: string) => void
+  lock_body_scroll?: boolean
 }) {
-  const { dialog_ref, phase, request_close, set_busy } = useExpenseSheet(on_close)
+  const { dialog_ref, phase, request_close, set_busy } = useExpenseSheet(on_close, lock_body_scroll)
   const record_query = useExpenseRecord(transaction_id)
   let sheet_label = '새 지출 입력'
   if (transaction_id) sheet_label = '지출 수정'
@@ -24,7 +25,7 @@ export default function ExpenseSheet({ transaction_id, on_close, on_saved }: {
       on_close={request_close} on_saved={(date) => {
         // 저장·삭제 완료 후 먼저 보호를 해제해야 같은 닫기 애니메이션을 시작할 수 있습니다.
         set_busy(false)
-        on_saved(date)
+        on_saved?.(date)
       }} on_busy_change={set_busy} />
   }
   return <dialog ref={dialog_ref} className={`expense-sheet is-${phase}`} aria-label={sheet_label}

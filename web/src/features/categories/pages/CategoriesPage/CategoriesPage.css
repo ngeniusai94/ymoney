@@ -4,15 +4,6 @@
 .categories-topbar a { color: var(--app-primary); font-size: 27px; text-decoration: none; }
 .categories-body { padding: 15px 3px 12px; }
 .categories-ledger-label { margin: 0 3px 8px; color: var(--app-muted); font-size: 11px; font-weight: 800; }
-.categories-ledger-picker { display: flex; width: 100%; min-height: 47px; align-items: center; justify-content: space-between; padding: 0 10px 0 13px; gap: 8px; border: 1px solid var(--app-line); border-radius: 12px; background: #fff; color: inherit; font-size: 13px; }
-.categories-ledger-picker strong { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-/* CSS 화살표는 테마 변수를 상속합니다. 클릭은 아래 select로 전달합니다. */
-.categories-ledger-picker { position: relative; }
-.categories-ledger-picker::after { content: ''; position: absolute; right: 25px; top: 50%; width: 6px; height: 6px; margin-top: -5px; border-right: 1.5px solid var(--app-primary); border-bottom: 1.5px solid var(--app-primary); transform: rotate(45deg); pointer-events: none; }
-.categories-ledger-select { position: absolute; inset: 0; width: 100%; height: 100%; padding: 0; appearance: none; border: 0; border-radius: 12px; background: transparent; opacity: 0; cursor: pointer; }
-.categories-ledger-select option { color: var(--app-text); }
-.categories-ledger-picker:focus-within { outline: 2px solid var(--app-primary); outline-offset: 2px; }
-.categories-ledger-select:disabled { cursor: default; opacity: .5; }
 .categories-list-toolbar { display: flex; min-height: 37px; align-items: center; justify-content: space-between; margin: 12px 3px 8px; }
 .categories-list-heading { margin: 0; font-size: 13px; font-weight: 900; }
 .categories-list-toolbar button { min-height: 28px; padding: 0 9px; border: 0; border-radius: 15px; background: var(--app-accent); color: var(--app-primary); font-size: 10px; font-weight: 800; cursor: pointer; }

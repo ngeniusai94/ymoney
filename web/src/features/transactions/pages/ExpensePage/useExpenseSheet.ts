@@ -2,16 +2,20 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useBottomSheetClose } from '../../../../lib/useBottomSheetClose'
 
 /** 닫기 애니메이션이 끝날 때까지 폼을 유지하고, 저장 중에는 바깥/ESC 닫기를 막습니다. */
-export function useExpenseSheet(on_close: () => void) {
+export function useExpenseSheet(on_close: () => void, lock_body_scroll: boolean) {
   const dialog_ref = useRef<HTMLDialogElement>(null)
   const busy_ref = useRef(false)
   const [phase, set_phase] = useState<'opening' | 'open' | 'closing'>('opening')
-  const { phase: close_phase, request_close: request_sheet_close } = useBottomSheetClose(on_close)
+  const { phase: close_phase, request_close: request_sheet_close } = useBottomSheetClose(() => {
+    // 제거 전에 닫아 시트를 연 버튼으로 브라우저의 포커스가 돌아가게 합니다.
+    dialog_ref.current?.close()
+    on_close()
+  })
 
   useEffect(() => {
     const dialog = dialog_ref.current
     const previous_overflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
+    if (lock_body_scroll) document.body.style.overflow = 'hidden'
     // 네이티브 dialog가 배경을 inert 처리하고 포커스를 시트 안에 가둡니다.
     dialog?.showModal()
     let focus_frame = 0
@@ -32,9 +36,9 @@ export function useExpenseSheet(on_close: () => void) {
       window.cancelAnimationFrame(next_frame)
       window.cancelAnimationFrame(focus_frame)
       dialog?.close()
-      document.body.style.overflow = previous_overflow
+      if (lock_body_scroll) document.body.style.overflow = previous_overflow
     }
-  }, [])
+  }, [lock_body_scroll])
 
   const set_busy = useCallback((busy: boolean) => { busy_ref.current = busy }, [])
   const request_close = useCallback(() => {

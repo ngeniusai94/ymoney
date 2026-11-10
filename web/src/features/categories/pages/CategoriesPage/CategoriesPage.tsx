@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
+import LedgerTabs from '../../../ledgers/components/LedgerTabs'
 import { get_ledger_display_name } from '../../../ledgers/ledgers.utils'
 import { useCategoriesPage } from './useCategoriesPage'
 import './CategoriesPage.css'
@@ -75,25 +76,12 @@ function CategoriesPage() {
       </header>
       <div className="categories-body">
         <div className="categories-ledger-label">관리할 가계부</div>
-        <div className="categories-ledger-picker">
-          <strong>{page.selected_ledger
-            ? get_ledger_display_name(page.selected_ledger, page.nickname)
-            : '가계부를 불러오는 중'}</strong>
-          <select
-            className="categories-ledger-select"
-            aria-label="관리할 가계부 선택"
-            value={page.selected_ledger?.ledger_id ?? ''}
-            onChange={(event) => page.choose_ledger(event.target.value)}
-            disabled={page.ledgers.length === 0}
-          >
-            {page.ledgers.length === 0 ? <option value="">선택</option> : null}
-            {page.ledgers.map((ledger) => (
-              <option key={ledger.ledger_id} value={ledger.ledger_id}>
-                {get_ledger_display_name(ledger, page.nickname)}
-              </option>
-            ))}
-          </select>
-        </div>
+        <LedgerTabs
+          label="관리할 가계부 선택"
+          options={page.ledgers.map(ledger => ({ id: ledger.ledger_id, name: get_ledger_display_name(ledger, page.nickname) }))}
+          selected_id={page.selected_ledger?.ledger_id ?? null}
+          on_select={page.choose_ledger}
+        />
         <div className="categories-list-toolbar">
           <h2 className="categories-list-heading">카테고리 그룹</h2>
           <button type="button" onClick={page.open_add_group_sheet}>＋ 그룹 추가</button>

@@ -4,7 +4,6 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '../../../auth/AuthProvider'
 import { loadCurrentProfile } from '../../../auth/auth.api'
 import { list_my_ledgers } from '../../../ledgers/ledgers.api'
-import { get_ledger_display_name } from '../../../ledgers/ledgers.utils'
 import { create_payment_method, deactivate_payment_method, get_payment_methods, update_payment_method } from '../../payment-methods.api'
 import type { ManagedPaymentMethod, PaymentMethodType } from '../../payment-methods.api'
 
@@ -52,8 +51,6 @@ export function usePaymentMethodsPage() {
   else if (methods_query.isPending) data_state = 'loading'
   else if (methods_query.isError) data_state = 'error'
 
-  let ledger_name = '가계부를 불러오는 중'
-  if (selected_ledger) ledger_name = get_ledger_display_name(selected_ledger, ledger_query.data?.profile.nickname ?? null)
   let sheet_title = '결제수단 추가'
   if (editing_method) sheet_title = '결제수단 수정'
   let save_label = '저장'
@@ -164,5 +161,5 @@ export function usePaymentMethodsPage() {
     else await methods_query.refetch()
   }
 
-  return { data_state, ledgers, ledger_id, ledger_name, nickname: ledger_query.data?.profile.nickname ?? null, methods, sheet_state, sheet_phase: sheet.phase, sheet_title, save_label, editing_method, method_name, method_type, form_error, set_method_name, choose_method_type, choose_ledger, open_add_sheet, open_edit_sheet, close_sheet, save_method, disable_method, retry }
+  return { data_state, ledgers, ledger_id, nickname: ledger_query.data?.profile.nickname ?? null, methods, sheet_state, sheet_phase: sheet.phase, sheet_title, save_label, editing_method, method_name, method_type, form_error, set_method_name, choose_method_type, choose_ledger, open_add_sheet, open_edit_sheet, close_sheet, save_method, disable_method, retry }
 }

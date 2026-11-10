@@ -1,12 +1,46 @@
+import { useRef, useState } from 'react'
 import { useQueries, useQuery } from '@tanstack/react-query'
 import { useSearchParams } from 'react-router-dom'
 import { useAuth } from '../../../auth/AuthProvider'
 import { loadCurrentProfile } from '../../../auth/auth.api'
 import { format_expense_total, get_calendar_start_date, get_local_date_key, move_month } from '../../../calendar/calendar.utils'
+import { get_category_management_data } from '../../../categories/categories.api'
 import type { LedgerScope } from '../../../ledgers/ledgers.api'
 import { list_my_ledgers } from '../../../ledgers/ledgers.api'
 import { get_monthly_transactions } from '../../../transactions/transactions.api'
-import { filter_statistics_ledger, get_statistics_months, summarize_categories, summarize_payment_methods } from '../../statistics.utils'
+import type { MonthlyExpense } from '../../../transactions/transactions.api'
+import { filter_statistics_ledger, get_statistics_expense_details, get_statistics_months, summarize_categories, summarize_category_groups, summarize_payment_methods } from '../../statistics.utils'
+import type { CategoryGroupAssignments, StatisticsExpenseSelection } from '../../statistics.utils'
+
+export type CategoryGroupBreakdown =
+  | { state: 'hidden' }
+  | { state: 'error'; retry: () => void }
+  | { state: 'ready'; groups: ReturnType<typeof summarize_categories>; assignments: CategoryGroupAssignments }
+
+/** 월·범위별로 다시 마운트되는 통계 카드 안에서 목록 선택을 관리합니다. */
+export function useStatisticsExpenseDetails(expenses: readonly MonthlyExpense[], assignments?: CategoryGroupAssignments) {
+  const [selection, set_selection] = useState<StatisticsExpenseSelection | null>(null)
+  const [editing_transaction_id, set_editing_transaction_id] = useState<string | null>(null)
+  const opener = useRef<HTMLButtonElement>(null)
+  const details = selection === null ? null : get_statistics_expense_details(expenses, selection, assignments)
+
+  function open_expenses(next_selection: StatisticsExpenseSelection, trigger: HTMLButtonElement) {
+    opener.current = trigger
+    trigger.focus({ preventScroll: true })
+    set_selection(next_selection)
+  }
+
+  function close_expenses() {
+    set_selection(null)
+    opener.current?.focus({ preventScroll: true })
+  }
+
+  return {
+    details, open_expenses, close_expenses, editing_transaction_id,
+    edit_expense: (transaction_id: number) => set_editing_transaction_id(String(transaction_id)),
+    close_editor: () => set_editing_transaction_id(null),
+  }
+}
 
 /** URL의 월/범위를 원본으로 삼고, 달력과 동일한 월별 캐시 세 개를 구독합니다. */
 export function useStatisticsPage() {
@@ -35,6 +69,18 @@ export function useStatisticsPage() {
   const selected_group = group_ledgers.find(ledger => ledger.ledger_id === requested_group_id)
   let selected_group_id: string | null = null
   if (scope === 'GROUP') selected_group_id = requested_group_id ?? null
+  const scoped_ledgers = (ledger_query.data?.ledgers ?? []).filter(ledger => {
+    if (scope === 'GROUP') return ledger.ledger_id === selected_group?.ledger_id
+    return scope === 'ALL' || ledger.ledger_type === scope
+  })
+  const category_queries = useQueries({
+    // 카테고리 관리의 캐시를 공유하여 그룹 이름·소속 변경을 통계에도 반영합니다.
+    queries: scoped_ledgers.map(ledger => ({
+      queryKey: ['category-management', 'categories', session?.user.id ?? 'signed-out', ledger.ledger_id],
+      queryFn: () => get_category_management_data(ledger.ledger_id),
+      enabled: Boolean(session),
+    })),
+  })
   const months = get_statistics_months(selected_month)
   const queries = useQueries({
     queries: months.map(month => ({
@@ -92,5 +138,21 @@ export function useStatisticsPage() {
 
   function retry() { void Promise.all([ledger_query.refetch(), ...queries.map(query => query.refetch())]) }
 
-  return { state, scope, group_ledgers, selected_group_id, month_label, total_label, monthly_totals, categories, payment_methods, change_month, change_scope, retry }
+  function get_category_group_breakdown(): CategoryGroupBreakdown {
+    if (category_queries.some(query => query.isError)) {
+      return { state: 'error', retry: () => { void Promise.all(category_queries.map(query => query.refetch())) } }
+    }
+    if (category_queries.some(query => query.isPending)) return { state: 'hidden' }
+
+    const category_data = new Map<string, Awaited<ReturnType<typeof get_category_management_data>>>()
+    category_queries.forEach((query, index) => {
+      if (query.data) category_data.set(scoped_ledgers[index].ledger_id, query.data)
+    })
+    const breakdown = summarize_category_groups(selected_expenses, category_data)
+    if (breakdown === null) return { state: 'hidden' }
+    return { state: 'ready', ...breakdown }
+  }
+
+  const category_group_breakdown = get_category_group_breakdown()
+  return { state, scope, group_ledgers, selected_group_id, month_label, total_label, monthly_totals, categories, category_group_breakdown, payment_methods, selected_expenses, change_month, change_scope, retry }
 }

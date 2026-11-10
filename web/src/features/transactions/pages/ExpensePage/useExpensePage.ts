@@ -9,11 +9,15 @@ import { get_existing_expense_values, get_initial_expense_datetime, normalize_ex
 import { create_expense, delete_expense, get_expense, update_expense } from '../../transactions.api'
 import type { ExistingExpense } from '../../transactions.api'
 
+function expense_record_query_key(user_uuid: string | undefined, transaction_id: string | undefined) {
+  return ['expense-entry', 'record', user_uuid ?? 'signed-out', transaction_id] as const
+}
+
 /** 수정 URL에서는 거래 한 건만 조회하며, 신규 입력에서는 요청을 실행하지 않습니다. */
 export function useExpenseRecord(transaction_id: string | undefined) {
   const { session } = useAuth()
   return useQuery({
-    queryKey: ['expense-entry', 'record', session?.user.id ?? 'signed-out', transaction_id],
+    queryKey: expense_record_query_key(session?.user.id, transaction_id),
     queryFn: () => {
       if (!transaction_id) throw new Error('지출 번호가 없습니다.')
       return get_expense(transaction_id)
@@ -149,6 +153,11 @@ export function useExpensePage(existing_expense: ExistingExpense | null, callbac
           ...values,
           updated_by_user_srno: ledger_query.data.profile.user_srno,
         })
+        // 목록으로 돌아간 뒤 같은 지출을 다시 열 때 저장 전 값이 표시되지 않게 합니다.
+        query_client.setQueryData<ExistingExpense>(
+          expense_record_query_key(session?.user.id, existing_expense.transaction_id),
+          { ...existing_expense, ...values },
+        )
       } else {
         await create_expense({
           ...values,

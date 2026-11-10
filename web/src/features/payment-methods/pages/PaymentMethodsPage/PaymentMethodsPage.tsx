@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
+import LedgerTabs from '../../../ledgers/components/LedgerTabs'
 import { get_ledger_display_name } from '../../../ledgers/ledgers.utils'
 import type { PaymentMethodType } from '../../payment-methods.api'
 import { usePaymentMethodsPage } from './usePaymentMethodsPage'
@@ -85,7 +86,12 @@ function PaymentMethodsPage() {
     <header className="payments-topbar"><Link to="/app/settings" aria-label="설정으로 이동">‹</Link><h1>결제수단 관리</h1><span aria-hidden="true" /></header>
     <div className="payments-body">
       <div className="payments-ledger-label">관리할 가계부</div>
-      <div className="payments-ledger-picker"><strong>{page.ledger_name}</strong><select className="payments-ledger-select" aria-label="관리할 가계부 선택" value={page.ledger_id ?? ''} onChange={(event) => page.choose_ledger(event.target.value)} disabled={page.ledgers.length === 0}><option value="" disabled hidden>선택</option>{page.ledgers.map((ledger) => <option key={ledger.ledger_id} value={ledger.ledger_id}>{get_ledger_display_name(ledger, page.nickname)}</option>)}</select></div>
+      <LedgerTabs
+        label="관리할 가계부 선택"
+        options={page.ledgers.map(ledger => ({ id: ledger.ledger_id, name: get_ledger_display_name(ledger, page.nickname) }))}
+        selected_id={page.ledger_id}
+        on_select={page.choose_ledger}
+      />
       <h2 className="payments-list-title">결제수단</h2>
       {content}
     </div>

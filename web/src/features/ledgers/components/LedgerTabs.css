@@ -1,0 +1,7 @@
+/* 가계부 이름은 최대 세 칸씩 같은 너비로 배치하고, 긴 이름은 줄바꿈합니다. */
+.ledger-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3px; padding: 4px; border-radius: 13px; background: var(--app-accent); }
+.ledger-tabs[data-columns='1'] { grid-template-columns: minmax(0, 1fr); }
+.ledger-tabs[data-columns='2'] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.ledger-tabs button { min-width: 0; min-height: 44px; padding: 8px 4px; border: 0; border-radius: 10px; background: transparent; color: var(--app-muted); font: inherit; font-size: 13px; cursor: pointer; overflow-wrap: anywhere; }
+.ledger-tabs button[aria-pressed='true'] { background: #fff; color: var(--app-primary); font-weight: 700; box-shadow: 0 2px 6px #0000000a; }
+.ledger-tabs button:focus-visible { outline: 2px solid var(--app-primary); outline-offset: -2px; }
