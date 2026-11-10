@@ -33,7 +33,6 @@ export function usePaymentMethodsPage() {
   const ledgers = ledger_query.data?.ledgers ?? []
   const default_ledger = ledgers.find((ledger) => ledger.ledger_type === 'PERSONAL') ?? ledgers[0]
   const ledger_id = chosen_ledger_id ?? default_ledger?.ledger_id ?? null
-  const selected_ledger = ledgers.find((ledger) => ledger.ledger_id === ledger_id)
   const methods_query = useQuery({
     queryKey: ['payment-management', 'methods', session?.user.id ?? 'signed-out', ledger_id],
     queryFn: () => {
