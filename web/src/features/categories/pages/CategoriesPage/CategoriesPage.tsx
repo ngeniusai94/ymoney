@@ -1,13 +1,50 @@
 import type { ReactNode } from 'react'
+import { useState } from 'react'
+import StatusToast from '../../../../components/StatusToast/StatusToast'
 import { Link } from 'react-router-dom'
 import LedgerTabs from '../../../ledgers/components/LedgerTabs'
 import { get_ledger_display_name } from '../../../ledgers/ledgers.utils'
 import { useCategoriesPage } from './useCategoriesPage'
+import ReorderHandle from '../../../../components/ReorderHandle/ReorderHandle'
+import type { ReorderTarget } from '../../../../components/ReorderHandle/ReorderHandle'
+import type { ManagedCategory } from '../../categories.utils'
 import './CategoriesPage.css'
 
 /** 선택한 가계부의 카테고리 그룹·상위·하위를 승인 목업 구조로 보여줍니다. */
 function CategoriesPage() {
   const page = useCategoriesPage()
+  const [drop_target, set_drop_target] = useState<{ id: string; side: 'before' | 'after' } | null>(null)
+
+  function reorder_handle(category: ManagedCategory, siblings: ManagedCategory[], scope: string, level: 'parent' | 'child') {
+    const id = category.category_id
+    const from = siblings.findIndex(item => item.category_id === id)
+    const target_index = (target: ReorderTarget | null) => {
+      if (target?.scope !== scope) return -1
+      return siblings.findIndex(item => item.category_id === target.id)
+    }
+
+    return <ReorderHandle className="categories-more" target_selector={`[data-reorder-${level}]`}
+      name={category.category_name} disabled={page.is_reordering}
+      on_preview={(target) => {
+        const to = target_index(target)
+        const side = from < to ? 'after' : 'before'
+        const next = target && to >= 0 && to !== from ? { id: target.id, side } as const : null
+        set_drop_target(current => current?.id === next?.id && current?.side === next?.side ? current : next)
+      }}
+      on_drop={(target) => {
+        const to = target_index(target)
+        if (to < 0) {
+          page.reorder_toast.show('그룹 내에서만 이동할 수 있습니다.')
+          return
+        }
+        void page.reorder_categories(siblings, from, to)
+      }}
+      on_step={(direction) => void page.reorder_categories(siblings, from, from + direction)} />
+  }
+
+  function drop_side(id: string) {
+    if (drop_target?.id === id) return drop_target.side
+  }
   let content: ReactNode
   let disable_action: ReactNode = null
   if (page.editing_category && page.sheet_state !== 'closed') {
@@ -45,19 +82,23 @@ function CategoriesPage() {
             </header>
           ) : null}
           {section.items.map((item) => (
-            <div className="categories-parent-block" key={item.category_id}>
+            <div className="categories-parent-block" key={item.category_id} data-reorder-parent=""
+              data-reorder-id={item.category_id} data-reorder-scope={`group:${section.group_id ?? 'none'}`}
+              data-drop-side={drop_side(item.category_id)}>
               <div className="categories-parent-row">
                 <button type="button" className="categories-edit-name" aria-label={`${item.category_name} 수정`} onClick={() => page.open_edit_sheet(item)}><strong>{item.category_name}</strong></button>
                 {item.is_active ? null : <small className="categories-inactive">비활성</small>}
                 {item.is_active ? <button type="button" className="categories-child-add" aria-label={`${item.category_name} 하위 카테고리 추가`} onClick={() => page.open_add_child_sheet(item)}>＋</button> : null}
-                <button type="button" className="categories-more" aria-label={`${item.category_name} 메뉴`} onClick={() => page.open_edit_sheet(item)}>⋮</button>
+                {reorder_handle(item, section.items, `group:${section.group_id ?? 'none'}`, 'parent')}
               </div>
               {item.children.map((child) => (
-                <div className="categories-child-row" key={child.category_id}>
+                <div className="categories-child-row" key={child.category_id} data-reorder-child=""
+                  data-reorder-id={child.category_id} data-reorder-scope={`parent:${item.category_id}`}
+                  data-drop-side={drop_side(child.category_id)}>
                   <span aria-hidden="true">└</span>
                   <button type="button" className="categories-edit-name" aria-label={`${child.category_name} 수정`} onClick={() => page.open_edit_sheet(child)}>{child.category_name}</button>
                   {child.is_active ? null : <small className="categories-inactive">비활성</small>}
-                  <button type="button" className="categories-more" aria-label={`${child.category_name} 메뉴`} onClick={() => page.open_edit_sheet(child)}>⋮</button>
+                  {reorder_handle(child, item.children, `parent:${item.category_id}`, 'child')}
                 </div>
               ))}
             </div>
@@ -88,6 +129,7 @@ function CategoriesPage() {
         </div>
         {content}
       </div>
+      <StatusToast message={page.reorder_toast.message} />
       {page.selected_ledger ? (
         <button type="button" className="categories-add-button" aria-label="카테고리 추가" onClick={page.open_add_sheet}>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>

@@ -16,9 +16,17 @@ export function get_initial_expense_datetime(date_key: string | null, now: Date)
   return `${selected_date_key}T${hour}:${minute}`
 }
 
-/** 기기 숫자 키보드와 붙여넣기 입력을 14자리 원화 정수 문자열로 제한합니다. */
-export function normalize_expense_amount(value: string): string {
-  return value.replace(/\D/g, '').slice(0, 14)
+const expense_audit_formatter = new Intl.DateTimeFormat('ko-KR', {
+  timeZone: 'Asia/Seoul',
+  year: '2-digit', month: '2-digit', day: '2-digit',
+  hour: '2-digit', minute: '2-digit', hourCycle: 'h23',
+})
+
+/** DB 시각을 기기의 시간대와 관계없이 한국시간으로 표시합니다. */
+export function format_expense_audit_time(timestamp: string): string {
+  const parts = expense_audit_formatter.formatToParts(new Date(timestamp))
+  const { year, month, day, hour, minute } = Object.fromEntries(parts.map(({ type, value }) => [type, value]))
+  return `${year}.${month}.${day} ${hour}:${minute}`
 }
 
 /** 선택한 상위 카테고리 바로 아래의 항목을 반환합니다. */

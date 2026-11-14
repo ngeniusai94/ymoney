@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useStatusToast } from '../../../../components/StatusToast/useStatusToast'
 import { useBottomSheetClose } from '../../../../lib/useBottomSheetClose'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { loadCurrentProfile } from '../../../auth/auth.api'
@@ -7,6 +8,7 @@ import { list_my_ledgers } from '../../../ledgers/ledgers.api'
 import { create_category_group, create_child_category, create_parent_category, deactivate_category, deactivate_category_group, get_category_management_data, update_category, update_category_group } from '../../categories.api'
 import { build_category_sections, get_category_group_error, get_child_category_error, get_parent_category_error } from '../../categories.utils'
 import type { CategoryGroup, ManagedCategory } from '../../categories.utils'
+import { save_category_order } from '../../categories.api'
 
 /** 관리할 가계부 선택과 해당 가계부의 카테고리 조회 상태를 소유합니다. */
 export function useCategoriesPage() {
@@ -22,6 +24,8 @@ export function useCategoriesPage() {
   const [new_group_id, set_new_group_id] = useState<string | null>(null)
   const [new_group_name, set_new_group_name] = useState('')
   const [form_error, set_form_error] = useState('')
+  const [is_reordering, set_is_reordering] = useState(false)
+  const reorder_toast = useStatusToast()
 
   const ledger_query = useQuery({
     queryKey: ['category-management', 'ledgers', session?.user.id ?? 'signed-out'],
@@ -52,11 +56,30 @@ export function useCategoriesPage() {
     : []
 
   function choose_ledger(next_ledger_id: string) {
-    if (sheet_state.endsWith('saving')) return
+    if (sheet_state.endsWith('saving') || is_reordering) return
+    reorder_toast.clear()
     set_sheet_state('closed')
     set_editing_category(null)
     set_editing_group(null)
     set_chosen_ledger_id(next_ledger_id)
+  }
+
+  async function reorder_categories(siblings: ManagedCategory[], from: number, to: number) {
+    if (!ledger_id || is_reordering || from === to || from < 0 || to < 0 || to >= siblings.length) return
+    const ordered_ids = siblings.map(category => category.category_id)
+    const [moved] = ordered_ids.splice(from, 1)
+    ordered_ids.splice(to, 0, moved)
+    reorder_toast.clear()
+    set_is_reordering(true)
+    try {
+      await save_category_order(ledger_id, siblings, ordered_ids)
+      await refresh_group_options()
+    } catch (error) {
+      reorder_toast.show(error instanceof Error ? error.message : '순서를 저장하지 못했습니다.')
+      await category_query.refetch()
+    } finally {
+      set_is_reordering(false)
+    }
   }
 
   function open_add_sheet() {
@@ -285,6 +308,9 @@ export function useCategoriesPage() {
     editing_category,
     editing_group,
     form_error,
+    is_reordering,
+    reorder_categories,
+    reorder_toast,
     ledger_query,
     ledgers,
     nickname: ledger_query.data?.profile.nickname ?? null,

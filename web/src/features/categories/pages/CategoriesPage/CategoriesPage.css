@@ -23,7 +23,7 @@
 .categories-child-add { min-height: 26px; padding: 0 8px; border: 0; border-radius: 15px; background: var(--app-accent); color: var(--app-primary); font-size: 10px; font-weight: 800; cursor: pointer; }
 .categories-child-parent-name { margin: 0 0 12px; color: var(--app-primary); font-size: 13px; font-weight: 800; }
 .categories-child-row { display: grid; min-height: 36px; grid-template-columns: 17px 1fr auto auto; align-items: center; padding: 0 12px 0 32px; gap: 8px; border-top: 1px solid var(--app-line); color: var(--app-text); font-size: 11px; }
-.categories-more { min-width: 24px; min-height: 32px; padding: 0; border: 0; background: transparent; color: var(--app-muted); font-size: 20px; cursor: pointer; }
+.categories-more { margin-left: auto; grid-column: -2 / -1; }
 .categories-child-row > span:first-child { color: var(--app-muted); }
 .categories-inactive { color: #9b7777; font-size: 10px; }
 .categories-state { margin: 0; padding: 16px 12px; border: 1px solid var(--app-line); border-radius: 12px; background: #fff; color: var(--app-muted); font-size: 12px; text-align: center; }

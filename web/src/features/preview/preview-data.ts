@@ -10,5 +10,6 @@ export function get_preview_expenses(year: number, month: number): MonthlyExpens
     { transaction_id: 3, ledger_id: 2, category_id: 3, payment_method_id: 2, category_name: '장보기', category_icon: '🛒', amount: 32000, memo: '함께 먹을 식재료', trans_date: `${month_key}-11`, trans_time: '18:00:00' },
     { transaction_id: 4, ledger_id: 2, category_id: 3, payment_method_id: 2, category_name: '장보기', category_icon: '🛒', amount: 18000, memo: null, trans_date: `${month_key}-05`, trans_time: '17:00:00' },
   ].map((expense) => ({ ...expense, parent_category_name: expense.category_name, child_category_name: null,
-    payment_method_name: expense.payment_method_id === 1 ? '현금' : '카드' }))
+    payment_method_name: expense.payment_method_id === 1 ? '현금' : '카드',
+    payment_method_type: expense.payment_method_id === 1 ? 'CASH' : 'CARD', payment_method_icon_key: null }))
 }

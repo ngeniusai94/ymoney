@@ -4,6 +4,7 @@ import { get_month_range } from '../calendar/calendar.utils'
 import { list_my_ledgers } from '../ledgers/ledgers.api'
 import type { LedgerScope } from '../ledgers/ledgers.api'
 import { get_soft_delete_values } from './expense.utils'
+import type { PaymentMethodType } from '../payment-methods/payment-methods.api'
 
 type TransactionRow = {
   transaction_id: number
@@ -30,6 +31,8 @@ export type MonthlyExpense = {
   payment_method_id: number
   category_name: string
   payment_method_name: string
+  payment_method_type: PaymentMethodType | null
+  payment_method_icon_key: string | null
   // 화면에서 문자열을 분리하지 않도록 실제 부모·하위 이름을 각각 전달합니다.
   parent_category_name: string
   child_category_name: string | null
@@ -60,6 +63,13 @@ export type NewExpense = {
 
 export type ExistingExpense = Omit<NewExpense, 'created_by_user_srno'> & {
   transaction_id: string
+}
+
+type ExpenseAudit = {
+  creator_nickname: string
+  created_at: string
+  editor_nickname: string | null
+  updated_at: string | null
 }
 
 export type ExpenseChanges = Omit<NewExpense, 'created_by_user_srno'> & {
@@ -102,15 +112,29 @@ export async function get_expense(transaction_id: string): Promise<ExistingExpen
   }
 }
 
-/** 거래 ID와 원래 가계부를 함께 제한한 뒤 수정합니다. 소속 가계부는 바꾸지 않습니다. */
-export async function update_expense(transaction_id: string, changes: ExpenseChanges): Promise<void> {
+/** 수정 화면에 필요한 닉네임과 시각만 조회합니다. */
+export async function get_expense_audit(transaction_id: string): Promise<ExpenseAudit | null> {
+  const { data, error } = await get_supabase_client()
+    .schema('ymoney')
+    .rpc('fn_mon_expense_audit', { p_transaction_id: transaction_id })
+    .maybeSingle<ExpenseAudit>()
+
+  if (error) throw new Error('지출 이력을 불러오지 못했습니다.')
+  return data
+}
+
+/** 거래 ID와 원래 가계부를 함께 제한한 뒤 수정합니다. */
+export async function update_expense(transaction_id: string, original_ledger_id: string, changes: ExpenseChanges): Promise<void> {
   const { ledger_id, ...editable_values } = changes
+  // 기존 가계부에서 해당 거래를 찾고, 이동 시 분류·결제수단과 함께 한 번에 바꿉니다.
+  const update_values = { ...editable_values, updated_at: new Date().toISOString() }
+  const payload = ledger_id === original_ledger_id ? update_values : { ...update_values, ledger_id }
   const { data, error } = await get_supabase_client()
     .schema('ymoney')
     .from('tb_mon_transaction')
-    .update({ ...editable_values, updated_at: new Date().toISOString() })
+    .update(payload)
     .eq('transaction_id', transaction_id)
-    .eq('ledger_id', ledger_id)
+    .eq('ledger_id', original_ledger_id)
     .eq('trans_type', 'EXPENSE')
     .is('deleted_at', null)
     .select('transaction_id')
@@ -238,22 +262,27 @@ export async function get_monthly_transactions(
   const payment_method_ids = [...new Set(transaction_rows.map((row) => row.payment_method_id))]
   const { data: payment_methods, error: payment_error } = await supabase.schema('ymoney')
     .from('tb_mon_payment_method')
-    .select('payment_method_id, method_name, method_type')
+    .select('payment_method_id, method_name, method_type, icon_key')
     .in('payment_method_id', payment_method_ids)
     .in('ledger_id', ledger_ids)
   if (payment_error) throw new Error('지출 결제수단을 불러오지 못했습니다.')
-  const payment_name_by_id = new Map<string, string>()
+  const payment_by_id = new Map<string, Pick<MonthlyExpense, 'payment_method_name' | 'payment_method_type' | 'payment_method_icon_key'>>()
   for (const method of payment_methods ?? []) {
     let method_name = method.method_name?.trim()
     if (!method_name && method.method_type === 'CARD') method_name = '카드'
     else if (!method_name && method.method_type === 'CASH') method_name = '현금'
-    payment_name_by_id.set(String(method.payment_method_id), method_name || '결제수단 없음')
+    payment_by_id.set(String(method.payment_method_id), {
+      payment_method_name: method_name || '결제수단 없음',
+      payment_method_type: method.method_type === 'CARD' || method.method_type === 'CASH' ? method.method_type : null,
+      payment_method_icon_key: method.icon_key,
+    })
   }
 
   return {
     has_ledger: true,
     expenses: transaction_rows.map((row) => {
       const category = category_by_id.get(String(row.category_id))
+      const payment = payment_by_id.get(String(row.payment_method_id))
       const parent = category?.parent_category_id !== null && category?.parent_category_id !== undefined
         ? category_by_id.get(String(category.parent_category_id))
         : undefined
@@ -261,7 +290,9 @@ export async function get_monthly_transactions(
       return {
         ...row,
         amount: Number(row.amount),
-        payment_method_name: payment_name_by_id.get(String(row.payment_method_id)) ?? '결제수단 없음',
+        payment_method_name: payment?.payment_method_name ?? '결제수단 없음',
+        payment_method_type: payment?.payment_method_type ?? null,
+        payment_method_icon_key: payment?.payment_method_icon_key ?? null,
         category_name: parent ? `${parent.category_name} · ${category?.category_name}` : category?.category_name ?? '카테고리 없음',
         parent_category_name: parent?.category_name ?? category?.category_name ?? '카테고리 없음',
         child_category_name: parent ? category?.category_name ?? null : null,

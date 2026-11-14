@@ -20,7 +20,7 @@ export function useExpenseSheet(on_close: () => void, lock_body_scroll: boolean)
     dialog?.showModal()
     let focus_frame = 0
     focus_frame = window.requestAnimationFrame(() => {
-      dialog?.querySelector<HTMLInputElement>('[data-expense-initial-focus="amount"]')
+      dialog?.querySelector<HTMLButtonElement>('[data-expense-initial-focus="amount"]')
         ?.focus({ preventScroll: true })
     })
     // 첫 프레임에서 화면 아래의 위치를 그린 뒤 다음 프레임에 전환을 시작합니다.

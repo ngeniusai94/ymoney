@@ -164,6 +164,54 @@
 
 ## 재개 기록 — 이 영역만 계속 갱신
 
+- 2026-11-14 카테고리·결제수단의 순서 저장 실패와 범위 밖 드롭 안내에 공용 `StatusToast`를 연결했다. `tsc -b --pretty false`, 토스트·두 관리 화면 ESLint, `git diff --check` 통과. localhost 결제수단 저장 실패에서 하단 고정, 목록 좌표 유지, 자동 숨김을 확인했다. 원격 변경 없음. 다음은 결제수단 정렬 SQL 적용 후 저장 확인이다.
+
+- 2026-11-14 카테고리·결제수단에 공용 `ReorderHandle`을 연결했다. 결제수단은 같은 카드/현금 유형 내 정렬, 범위 밖 안내, 이름 클릭 수정, 기존 캐시 갱신을 사용한다. 저장 SQL은 `web/supabase/payment-method-reorder.sql`에 준비했다. 원격 읽기 확인에서 함수와 sort_order 수정 권한이 없었으며 원격 변경은 없다. `tsc -b --pretty false`, 변경 폴더 ESLint, `git diff --check` 통과. 다음은 SQL 적용 후 카드/현금 실제 드래그와 새로고침 유지 검증이다.
+
+- 2026-11-14 지출 추가·수정 결제수단 칩에 기존 `icon_key`와 공용 `PaymentIcon`을 연결했다. `expense-options.api.ts`, `ExpensePage.tsx/CSS`, Design 변경. localhost 추가 시트에서 삼성·현대·우리·기본 카드 SVG와 현금 기호를 확인했다. `tsc -b --pretty false`, 변경 파일 ESLint, `git diff --check` 통과. 원격 DB 변경 없음. 다음은 배포 후 실기기에서 칩 표시를 확인하는 것이다.
+
+- 2026-11-14 카테고리 관리의 세 줄 길게 누르기 핸들과 놓을 위치 표시, 범위 밖 알림을 구현했다. `CategoriesPage.tsx/CSS`, `CategoryReorderHandle.tsx`, `useCategoriesPage.ts`, `categories.api.ts`, `web/supabase/category-reorder.sql` 변경. TypeScript와 카테고리 ESLint 통과. localhost에서 핸들·하위 범위·이름 수정 진입, 저장 실패 안내를 확인했다. 원격 쓰기 없음. 다음은 사용자 검토 후 순서를 원자적으로 저장하는 DB 함수 적용 및 실기기 드래그·새로고침 확인이다.
+
+- 2026-11-14 `ExpenseSheet.tsx`가 신규일 때만 `open_keypad_on_mount`를 참으로 전달하도록 변경했다. localhost에서 신규 키패드 자동 표시, 수정의 저장 버튼 초기 표시, 금액을 누르면 키패드 열림, 완료 후 저장 버튼 복원을 확인했다. `tsc -b --pretty false`, 변경 TSX ESLint, `git diff --check` 통과. 실제 저장과 원격 변경 없음. 다음은 iPhone에서 두 시트의 진입 동작을 확인하는 것이다.
+
+- 2026-11-14 새 지출·지출 수정 시트가 처음부터 금액 아래에 4×4 키패드를 표시하고, 완료 시 카테고리·결제수단·메모·저장을 되돌리도록 변경했다. `ExpensePage.tsx/CSS`, `ExpenseSheet.tsx/CSS`, `useExpensePage.ts` 변경. `tsc -b --pretty false`, 변경 폴더 ESLint, `git diff --check` 통과. localhost에서 키 사이 4px, 금액과 키패드 사이 5px, 추가·수정 시트의 자동 표시 및 완료 후 저장 버튼 복원을 확인했다. 원격 변경 없음. 다음은 iPhone에서 짧은 화면과 하단 안전 영역을 확인하는 것이다.
+
+- 2026-11-14 공용 지출 폼의 금액을 4×4 커스텀 키패드로 입력하도록 변경했다. `src/components/AmountKeypad/`에 키 배치·계산을 분리하고 `src/lib/triggerHaptic.ts`로 WebView 메시지를 연결했다. Node 계산 12건, `tsc -b --pretty false`, 변경 코드 ESLint, `git diff --check` 통과. localhost 새 지출에서 16키·4열과 16,500원 계산, 수정에서 기존 금액과 0원 하한·완료 시 닫힘을 확인했다. 저장과 원격 변경 없음. 다음은 실기기와 RN 햅틱 수신을 확인하는 것이다.
+
+- 2026-11-14 통계 결제수단별 지출에 관리 화면의 아이콘을 표시했다. 월간 조회에 기존 `icon_key`를 포함하고, 이름별 집계를 유지하며 공용 `PaymentIcon`을 재사용한다. 변경 범위는 결제수단 화면/컴포넌트, 거래 조회, 둘러보기 데이터, 통계 집계/화면이다. `tsc -b --pretty false`, 변경 파일 ESLint, Node 집계 검증, `git diff --check` 통과. localhost 개인 통계에서 삼성·현대 SVG 로딩과 이름 앞 배치를 확인했다. 원격 변경 없음. 다음은 운영 배포 후 표시 확인이다.
+
+- 2026-11-14 카드사별 키워드 11개 매핑과 결제수단 이름에 일치하는 아이콘 우선 정렬을 연결했다. 변경 파일은 `payment-method-icons.ts`, `usePaymentMethodsPage.ts`, `PaymentMethodsPage.tsx`다. TypeScript, 결제수단 ESLint, Node 키워드·순서 검증, `git diff --check` 통과. 원격 변경 없음. 다음은 추가 시트에서 이름을 입력해 아이콘 순서를 확인하는 것이다.
+
+- 2026-11-14 결제수단 추가·수정의 카드 유형에 선택 아이콘을 추가했다. 카드사·은행별 색상 SVG 11개와 공통 카드 1개를 `payment-method-icons.ts`와 관리 화면에 연결하고 기존 `icon_key`로 저장한다. DB 권한 읽기 확인만 수행했다. SVG XML 12개, `tsc -b --pretty false`, 결제수단 ESLint, `git -c core.safecrlf=false diff --check` 통과. localhost 추가 시트에서 SVG 12개 로딩, 삼성 선택, 현금 전환 시 숨김을 확인했다. 다음은 테스트 결제수단의 실제 저장 후 재조회 확인이다.
+
+- 2026-11-14 결제수단 관리의 `PaymentIcon`이 목록·그룹 제목·추가/수정의 종류 버튼에서 `assets/default-card.svg`를 재사용하도록 변경했다. 목록은 저장된 결제수단 이름을 함께 표시하고 현금에는 `₩`를 쓴다. SVG XML 및 viewBox, `tsc -b --pretty false`, 변경 TSX ESLint, `git -c core.safecrlf=false diff --check` 통과. localhost에서 카드 항목 7개의 공통 SVG 로딩 및 현금 `₩` 표시를 확인했다. 원격 변경 없음. 이후 공식 심볼 사용 허락을 확보하면 해당 파일의 적용을 검토한다.
+
+- 2026-11-14 지출 수정 헤더의 삭제 버튼 여백을 제거하고 메모 아래에 등록·마지막 수정 이력을 8px 우측 정렬로 표시했다. `ExpensePage.tsx`·`ExpensePage.css`·`useExpensePage.ts`·`expense.utils.ts`·`transactions.api.ts`와 원격 `20261114083733_expense_audit_details`를 반영했다. TypeScript, 변경 파일 ESLint, `git diff --check`, 한국시간 포맷 Node 검증 2건, 원격 수정 유무 2건의 멤버·비회원 조회와 authenticated/anon 실행 권한을 확인했다. localhost 통계에서 세 항목의 수직 중심 일치, 메모 바로 아래 8px 우측 정렬, 미수정 건의 괄호 생략을 확인했다. 다음은 실기기에서 실제 저장 후 이력을 확인하는 것이다.
+
+- 2026-11-14 공용 지출 폼의 금액 입력에 실시간 쉼표와 커서 유지를 적용했다. `ExpensePage.tsx`·`ExpensePage.css`·`useExpensePage.ts`·`transactions.api.ts`에서 수정 시 최초 등록자 번호를 조회하고 본인의 경우 메모 아래 닉네임을 표시한다. Supabase 읽기 조회에서 거래의 등록자 번호 SELECT 허용과 공용 프로필의 본인만 조회하는 정책을 확인했다. 원격 변경 없음. TypeScript, 변경 TS/TSX ESLint, Node 입력 검증 6건 통과. 브라우저·실기기 및 실제 저장 미검증. 다음은 해당 거래를 볼 수 있는 회원에게 등록자 닉네임 한 필드만 반환하는 가계부 전용 조회의 사용자 검토다.
+
+- 2026-11-14 지출 수정 폼에 가계부 선택을 연결했다. 원격 `20261114081024_expense_ledger_move_access`로 대상 멤버십 제한 정책과 ledger_id 열 UPDATE 권한을 적용했다. 메타데이터에서 정책과 authenticated 허용·anon 차단을 확인했고 authenticated UPDATE의 EXPLAIN, TypeScript, 변경 파일 ESLint, Git diff 검사가 통과했다. 실제 거래 이동 저장은 미검증이다.
+
+- 2026-11-14 그룹별 지출의 상세를 상위 카테고리 한 줄 목록으로 복원했다. 해당 행을 선택하면 그룹과 카테고리 범위의 지출 팝업을 바로 연다. 통계 화면의 버튼과 펼침 제목에 테마색 키보드 포커스를 적용했고, 팝업 자체의 자동 포커스 외곽선을 제거했다. 로컬 브라우저에서 생활비의 식비 행, 팝업 목록과 닫힘, 제목의 테마색 포커스를 확인했다. TypeScript, 통계 ESLint와 Git diff 검사를 실행했다.
+
+- 2026-11-14 그룹별 지출 상세가 기존 `CategoryList`와 `CategoryItem`을 재사용한다. 그룹 안에서 상위·하위 금액을 집계하고 팝업도 같은 그룹과 하위 항목으로 제한한다. Node 인라인 검증으로 같은 이름의 다른 그룹 분리, 상위 직접 기록, 하위 없는 항목을 확인했다. 로컬 브라우저에서 생활비·식비·외식 팝업의 합계와 카페 바로 열기를 확인했다. TypeScript와 통계 ESLint 검사를 통과했다.
+
+- 2026-11-14 카테고리·결제수단 관리 가계부 선택 작업 확인. 공통 `LedgerTabs`는 `7d82bbd`에, 결제수단 미사용 변수 정리는 `c039942`에 반영됐다. 로컬 브라우저에서 두 화면의 개인·그룹 전환, 선택 표시와 목록 갱신을 검증했다. `tsc -b --pretty false`, 관련 화면·컴포넌트 ESLint, `git -c core.safecrlf=false diff --check` 통과. 운영 배포와 모바일 실기기에서는 검증하지 않았다.
+
+- 2026-11-11 통계 지출내역 팝업을 열 때 브라우저가 닫기 버튼에 자동 포커스를 주며 전역 `button:focus-visible` 스타일의 회색 사각형이 표시되는 원인을 확인했다. `StatisticsExpenseDialog.tsx`의 네이티브 dialog 자체에 초기 포커스를 이동하도록 바꿨다. 파일 문제 진단 없음, `npm run build`와 `git -c core.safecrlf=false diff --check` 통과. 로그인 화면 상태라 통계 팝업의 브라우저 시각 확인은 미실행. 다음은 통계 팝업을 열어 포커스 사각형이 사라지고 키보드 탭 표시가 유지되는지 확인한다.
+
+- 2026-11-10 통계 지출 수정 시 기존 내역 팝업을 유지하고 그 위에 `ExpenseSheet`를 연다. `StatisticsBreakdowns.tsx`·`StatisticsExpenseDialog.tsx`·`ExpenseSheet.tsx`·`useExpenseSheet.ts`를 변경해 목록이 배경 스크롤 잠금을 맡고 시트를 제거하기 전에 닫도록 했다. localhost에서 변경 전 목록이 사라지는 동작을 재현했고, 변경 후 두 dialog가 동시에 열리고 취소 시 거래 행 포커스가 복원되며 목록을 닫을 때 배경 스크롤 잠금이 해제되는 것을 확인했다. `tsc -b --pretty false`, 통계·수정 시트 ESLint, `git -c core.safecrlf=false diff --check` 통과. 긴 목록과 iPhone 실기기는 미검증. 다음은 모바일에서 스크롤한 목록 위에 수정 시트를 열고 닫아보는 것이다.
+
+- 2026-11-10 통계 중앙 팝업의 거래 행에서 달력과 같은 `ExpenseSheet` 수정 시트를 연다. 통계 월·범위를 유지하고 시트 종료 후 원래 목록으로 복귀한다. 그룹 상세 카테고리와 결제수단에서 같은 팝업을 열고 집계 기준으로 거래를 골랐다. 일 숫자의 오른쪽 끝과 메모 열을 정렬했다. 기존 월 거래 캐시 무효화에 수정 레코드 캐시 갱신을 더했다. `node -` 인라인 검증으로 그룹 소속 분리·그룹 미지정·결제수단·기존 카테고리 필터를 확인했고, `tsc -b --pretty false`, 통계·수정 시트 ESLint, `git -c core.safecrlf=false diff --check` 통과. localhost에서 쿠팡 날짜 정렬, 거래값을 채운 수정 시트와 취소 후 목록 복귀, 그룹·결제수단 거래 합계 일치를 확인했다. 실데이터 저장·삭제는 실행하지 않았다. 다음은 테스트 거래 저장 후 목록과 합계 반영을 확인하는 것이다.
+
+- 2026-11-10 통계 지출 팝업의 날짜·메모·금액을 별도 열로 배치했다. `StatisticsExpenseDialog.tsx`와 `StatisticsPage.css`를 변경했으며, 로컬 브라우저에서 날짜 자릿수에 따라 약 6px 달랐던 쿠팡 내역 다섯 행의 메모 시작 좌표가 모두 일치함을 확인했다. 원격 변경 없음. 다음은 모바일에서 긴 메모 줄바꿈과 목록 스크롤을 확인하는 것이다.
+
+- 2026-11-10 통계 지출 내역을 화면 중앙 팝업으로 변경. `StatisticsExpenseDialog.tsx`, `StatisticsBreakdowns.tsx`, `StatisticsPage.css`에 네이티브 dialog와 목록 내부 스크롤을 적용하고 Design·Architecture에 반영했다. 로컬 브라우저에서 상위 카테고리로 열기, 가로·세로 중앙 정렬, 목록 합계와 닫기 후 행 포커스 복귀를 확인했다. `tsc -b --pretty false`, `eslint src/features/statistics`, `git -c core.safecrlf=false diff --check` 통과. 하위 항목의 팝업 재검증과 iPhone 실기기 스크롤은 미확인. 다음은 실제 모바일에서 긴 목록의 스크롤을 확인하는 것이다.
+
+- 2026-11-10 통계 카테고리 지출 내역 바텀시트 추가. `StatisticsBreakdowns.tsx`에서 하위 상세 행과 하위 지출이 없는 상위 행을 연결하고, `useStatisticsPage.ts`의 선택 월·가계부 범위 거래를 `statistics.utils.ts`에서 기존 집계 키로 필터링한다. `StatisticsExpenseSheet.tsx`는 날짜·메모·금액과 합계·건수를 표시하고 기존 지출 시트 애니메이션을 재사용한다. 그룹·결제수단 목록은 기존 조회 방식 유지. `node -` 인라인 검증에서 구현 전 직접 열기 실패 후 상위·하위·직접 기록 분리와 최신순 통과. `tsc -b --pretty false`, `eslint src/features/statistics`, `git -c core.safecrlf=false diff --check` 통과. localhost 브라우저에서 쇼핑 바로 열기와 마트 상세 열기, 두 합계 일치, 닫기와 포커스 복귀를 확인했다. 원격 변경은 없으며 iPhone 실기기는 미검증. 다음은 사용자 모바일 통계에서 시트 목록 스크롤을 확인하는 것이다.
+
+- 2026-11-10 통계에 그룹별 지출 카드 추가. `StatisticsPage.tsx`, `StatisticsBreakdowns.tsx`, `useStatisticsPage.ts`, `statistics.utils.ts`를 변경해 기존 스타일로 카테고리와 결제수단 카드 사이에 표시하고, 현재 범위에 활성 카테고리 그룹이 없으면 숨긴다. 하위 지출은 상위의 그룹에 합산한다. 카테고리 관리 조회와 캐시를 재사용하고 원격 변경은 없다. PRD·Design·Architecture에 반영했다. `node -` 인라인 검증에서 구현 전 카드 순서 실패, 구현 후 카드 순서·숨김·오류 안내·하위 합산·동일 그룹명·미지정 구분·기존 카테고리 상세 통과. `tsc -b --pretty false`, `eslint src/features/statistics`, `git -c core.safecrlf=false diff --check` 통과. 현재 환경의 localhost 연결 권한 오류로 로그인 브라우저 확인은 미실행. 다음은 실제 계정으로 그룹이 있는 범위와 없는 범위를 전환해 카드 표시를 확인하는 것이다.
+
 - 사용자가 앱 프로젝트는 다른 PC에서 작업해 커밋하기로 했다. PowerShell `Remove-Item`으로 이 PC의 `app/ios/ContentView.swift`와 빈 폴더를 제거했고 README·Architecture의 현재 경로 설명을 갱신했다. `app/`이 제거됐는지 확인하고 `git diff --check`를 실행했다. 앱 프로젝트는 다른 PC에서 `app/`에 추가할 예정이다.
 
 - 2026-11-09 사용자 요청에 따라 웹·DB 작업 디렉터리와 앱 소스를 분리했다. PowerShell `Move-Item`으로 `supabase/`를 `web/supabase/`, 기존 `ios/`를 `app/ios/`로 이동하고 21개 파일의 이동 전후 SHA-256 일치를 확인했다. Android는 실제 프로젝트 생성 시 `app/android/`에 둔다. README와 Architecture의 경로를 반영했다. `web/`에서 `npm.cmd run build` 통과, `web/dist/`에 SQL 파일이 없음을 확인, `git diff --check` 통과. Git 커밋과 원격 배포는 사용자 작업으로 남아 있다.

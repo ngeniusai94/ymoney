@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { format_expense_total } from '../../../calendar/calendar.utils'
+import PaymentIcon from '../../../payment-methods/PaymentIcon'
 import type { MonthlyExpense } from '../../../transactions/transactions.api'
 import ExpenseSheet from '../../../transactions/pages/ExpensePage/ExpenseSheet'
 import type { StatisticsExpenseSelection, summarize_categories, summarize_payment_methods } from '../../statistics.utils'
@@ -17,10 +18,13 @@ function Chevron() {
   return <svg className="statistics-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
 }
 
-function AmountHeading({ item }: { item: PaymentMethod }) {
+function AmountHeading({ item, icon }: { item: Pick<PaymentMethod, 'name' | 'amount' | 'percentage'>; icon?: ReactNode }) {
   return (
     <span className="statistics-category-heading">
-      <span className="statistics-category-name">{item.name}<small>{new Intl.NumberFormat('ko-KR', { maximumFractionDigits: 1 }).format(item.percentage)}%</small></span>
+      <span className="statistics-category-name">
+        {icon}
+        {item.name}<small>{new Intl.NumberFormat('ko-KR', { maximumFractionDigits: 1 }).format(item.percentage)}%</small>
+      </span>
       <strong>{format_expense_total(item.amount)}</strong>
     </span>
   )
@@ -123,7 +127,9 @@ function PaymentList({ methods, on_open_expenses }: { methods: PaymentMethod[]; 
         <li key={method.name}>
           <ExpenseListButton class_name="statistics-category-trigger" label={method.name}
             selection={{ kind: 'payment', name: method.name }} on_open_expenses={on_open_expenses}>
-            <AmountHeading item={method} />
+            <AmountHeading item={method} icon={method.type && (
+              <span className="statistics-payment-icon"><PaymentIcon type={method.type} icon_key={method.icon_key} /></span>
+            )} />
             <AmountTrack amount={method.amount} maximum={maximum} />
           </ExpenseListButton>
         </li>

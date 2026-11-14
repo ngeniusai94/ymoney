@@ -1,5 +1,7 @@
 import { Link, useParams } from 'react-router-dom'
 import { useRef } from 'react'
+import AmountKeypad from '../../../../components/AmountKeypad/AmountKeypad'
+import PaymentIcon from '../../../payment-methods/PaymentIcon'
 import type { ExistingExpense } from '../../transactions.api'
 import { get_ledger_display_name } from '../../../ledgers/ledgers.utils'
 import { useExpensePage, useExpenseRecord } from './useExpensePage'
@@ -7,11 +9,15 @@ import type { ExpenseFormCallbacks } from './useExpensePage'
 import './ExpensePage.css'
 
 /** 신규 입력과 수정을 같은 한 화면 폼으로 렌더링합니다. */
-export function ExpenseForm({ existing_expense, ...callbacks }: { existing_expense: ExistingExpense | null } & ExpenseFormCallbacks) {
+export function ExpenseForm({ existing_expense, open_keypad_on_mount = false, ...callbacks }: {
+  existing_expense: ExistingExpense | null
+  open_keypad_on_mount?: boolean
+} & ExpenseFormCallbacks) {
   // 화면이 DOM 참조를 소유하고, 클릭 시에만 훅의 포커스 이동 함수에 전달합니다.
   const memo_ref = useRef<HTMLInputElement>(null)
+  const amount_ref = useRef<HTMLButtonElement>(null)
   const payment_methods_ref = useRef<HTMLDivElement>(null)
-  const form = useExpensePage(existing_expense, callbacks)
+  const form = useExpensePage(existing_expense, callbacks, open_keypad_on_mount)
   let ledger_content
   let category_content
   let payment_content
@@ -27,18 +33,18 @@ export function ExpenseForm({ existing_expense, ...callbacks }: { existing_expen
     ledger_content = <p className="expense-form-state">가계부를 불러오고 있어요.</p>
   } else if (form.ledger_query.isError) {
     ledger_content = <p className="expense-form-state is-error">가계부를 불러오지 못했습니다.</p>
-  } else if (form.visible_ledgers.length === 0) {
+  } else if (form.ledgers.length === 0) {
     ledger_content = <p className="expense-form-state">사용할 수 있는 가계부가 없습니다.</p>
   } else {
     ledger_content = (
       <div className="expense-chip-row" role="group" aria-label="가계부 선택">
-        {form.visible_ledgers.map((ledger) => (
+        {form.ledgers.map((ledger) => (
           <button
             key={ledger.ledger_id}
             type="button"
             className={`expense-chip expense-ledger-chip${form.ledger_id === ledger.ledger_id ? ' is-selected' : ''}`}
             aria-pressed={form.ledger_id === ledger.ledger_id}
-            disabled={form.is_edit_mode}
+            disabled={form.is_saving || form.is_deleting || form.is_delete_confirm_open}
             onClick={() => form.choose_ledger(ledger.ledger_id)}
           >
             {ledger.ledger_type === 'PERSONAL' ? '👤' : '🏠'} {get_ledger_display_name(ledger, form.ledger_query.data?.profile.nickname)}
@@ -100,7 +106,10 @@ export function ExpenseForm({ existing_expense, ...callbacks }: { existing_expen
             aria-pressed={form.payment_method_id === method.payment_method_id}
             onClick={() => form.choose_payment_method(method.payment_method_id, memo_ref.current)}
           >
-            <span aria-hidden="true">{method.method_type === 'CARD' ? '💳' : '💵'}</span> {method.method_name}
+            <span className="expense-payment-chip-label">
+              <PaymentIcon type={method.method_type} icon_key={method.icon_key} />
+              {method.method_name}
+            </span>
           </button>
         ))}
       </div>
@@ -123,7 +132,7 @@ export function ExpenseForm({ existing_expense, ...callbacks }: { existing_expen
         ) : null}        
       </header>
 
-      <div className="expense-fields">
+      <div className={form.is_keypad_open ? 'expense-fields is-entering-amount' : 'expense-fields'}>
         
         <div className="expense-field">
           <span className="expense-field-label">가계부</span>
@@ -146,57 +155,63 @@ export function ExpenseForm({ existing_expense, ...callbacks }: { existing_expen
         <div className="expense-field">
           <label className="expense-field-label" htmlFor="expense-amount">금액</label>
           <div className="expense-amount-line">
-            <input
+            <button
               id="expense-amount"
+              ref={amount_ref}
               data-expense-initial-focus={!form.is_edit_mode ? 'amount' : undefined}
-              type="text"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              autoComplete="off"
-              maxLength={14}
-              value={form.amount}
-              onChange={(event) => form.set_amount(form.normalize_expense_amount(event.target.value))}
-              placeholder="0"
-              aria-label="지출 금액"
-            />
+              type="button"
+              aria-label={`지출 금액 ${form.display_amount}원`}
+              aria-expanded={form.is_keypad_open}
+              aria-controls={form.is_keypad_open ? 'expense-amount-keypad' : undefined}
+              disabled={form.is_saving || form.is_deleting}
+              onClick={() => form.is_keypad_open ? form.finish_amount() : form.set_is_keypad_open(true)}
+            >{form.display_amount}</button>
             <span>원</span>
           </div>
         </div>
 
-        <div className="expense-field">
-          <span className="expense-field-label">카테고리</span>
-          {category_content}
+        {form.is_keypad_open && (
+          <div className="expense-keypad-area">
+            <AmountKeypad id="expense-amount-keypad" on_key={form.enter_amount_key} on_done={() => {
+              form.finish_amount()
+              amount_ref.current?.focus({ preventScroll: true })
+            }} />
+          </div>
+        )}
+
+        <div hidden={form.is_keypad_open}>
+          <div className="expense-field">
+            <span className="expense-field-label">카테고리</span>
+            {category_content}
+          </div>
+
+          <div className="expense-field">
+            <span className="expense-field-label">결제수단</span>
+            {payment_content}
+          </div>
+
+          <div className="expense-field">
+            <label className="expense-field-label" htmlFor="expense-memo">메모(선택)</label>
+            <input
+              id="expense-memo"
+              ref={memo_ref}
+              className="expense-memo"
+              type="text"
+              maxLength={200}
+              value={form.memo}
+              onChange={(event) => form.set_memo(event.target.value)}
+              placeholder="어디에 썼는지 적어주세요"
+            />
+            {form.audit_text && <p className="expense-audit">{form.audit_text}</p>}
+          </div>
+
+          {form.form_error ? <p className="expense-form-error" role="alert">{form.form_error}</p> : null}
         </div>
-
-
-
-        <div className="expense-field">
-          <span className="expense-field-label">결제수단</span>
-          {payment_content}
-        </div>
-
-        <div className="expense-field">
-          <label className="expense-field-label" htmlFor="expense-memo">메모(선택)</label>
-          <input
-            id="expense-memo"
-            ref={memo_ref}
-            className="expense-memo"
-            type="text"
-            maxLength={200}
-            value={form.memo}
-            onChange={(event) => form.set_memo(event.target.value)}
-            placeholder="어디에 썼는지 적어주세요"
-          />
-        </div>
-
-
-
-        {form.form_error ? <p className="expense-form-error" role="alert">{form.form_error}</p> : null}
       </div>
 
-      <div className="expense-save-area">
+      <div className="expense-save-area" hidden={form.is_keypad_open}>
         <button type="button" onClick={() => void form.save_expense()} disabled={form.is_saving || form.is_deleting || form.is_delete_confirm_open || form.options_query.isPending}>
-          {form.is_saving ? '저장 중...' : form.is_edit_mode ? '변경사항 저장' : `${form.display_amount || '0'}원 지출 저장`}
+          {form.is_saving ? '저장 중...' : form.is_edit_mode ? '변경사항 저장' : `${form.save_amount}원 지출 저장`}
         </button>
       </div>
 

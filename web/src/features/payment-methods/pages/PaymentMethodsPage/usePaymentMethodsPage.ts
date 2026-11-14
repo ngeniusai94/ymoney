@@ -1,11 +1,13 @@
 import { useState } from 'react'
+import { useStatusToast } from '../../../../components/StatusToast/useStatusToast'
 import { useBottomSheetClose } from '../../../../lib/useBottomSheetClose'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '../../../auth/AuthProvider'
 import { loadCurrentProfile } from '../../../auth/auth.api'
 import { list_my_ledgers } from '../../../ledgers/ledgers.api'
-import { create_payment_method, deactivate_payment_method, get_payment_methods, update_payment_method } from '../../payment-methods.api'
+import { create_payment_method, deactivate_payment_method, get_payment_methods, save_payment_method_order, update_payment_method } from '../../payment-methods.api'
 import type { ManagedPaymentMethod, PaymentMethodType } from '../../payment-methods.api'
+import { get_ordered_card_icons } from '../../payment-method-icons'
 
 /** 조회/입력 상태와 저장 이벤트는 훅이 담당하고 화면은 렌더링만 합니다. */
 export function usePaymentMethodsPage() {
@@ -17,7 +19,10 @@ export function usePaymentMethodsPage() {
   const [editing_method, set_editing_method] = useState<ManagedPaymentMethod | null>(null)
   const [method_name, set_method_name] = useState('')
   const [method_type, set_method_type] = useState<PaymentMethodType | ''>('')
+  const [icon_key, set_icon_key] = useState<string | null>(null)
   const [form_error, set_form_error] = useState('')
+  const [is_reordering, set_is_reordering] = useState(false)
+  const reorder_toast = useStatusToast()
 
 
   const ledger_query = useQuery({
@@ -56,7 +61,8 @@ export function usePaymentMethodsPage() {
   if (sheet_state === 'saving') save_label = '저장 중...'
 
   function choose_ledger(next_ledger_id: string) {
-    if (sheet_state === 'saving') return
+    if (sheet_state === 'saving' || is_reordering) return
+    reorder_toast.clear()
     set_sheet_state('closed')
     set_editing_method(null)
     set_chosen_ledger_id(next_ledger_id)
@@ -66,6 +72,7 @@ export function usePaymentMethodsPage() {
     set_editing_method(null)
     set_method_name('')
     set_method_type('')
+    set_icon_key(null)
     set_form_error('')
     set_sheet_state('create')
   }
@@ -74,6 +81,7 @@ export function usePaymentMethodsPage() {
     set_editing_method(method)
     set_method_name(method.method_name)
     set_method_type(method.method_type)
+    set_icon_key(method.icon_key)
     set_form_error('')
     set_sheet_state('edit')
   }
@@ -122,17 +130,42 @@ export function usePaymentMethodsPage() {
     try {
       if (editing_method) {
         const input: Parameters<typeof update_payment_method>[0] = { ledger_id, payment_method_id: editing_method.payment_method_id, method_name: name, method_type, expected_is_active: editing_method.is_active }
+        const next_icon_key = method_type === 'CARD' ? icon_key : null
+        // 이름만 변경할 때는 DB의 기존 아이콘 값에 손대지 않습니다.
+        if (next_icon_key !== editing_method.icon_key && (method_type === 'CARD' || editing_method.method_type !== method_type)) {
+          input.icon_key = next_icon_key
+        }
         if (activate) input.is_active = true
         await update_payment_method(input)
       } else {
         const sort_order = Math.max(-1, ...methods.filter((method) => method.method_type === method_type).map((method) => method.sort_order)) + 1
-        await create_payment_method({ ledger_id, method_name: name, method_type, sort_order })
+        await create_payment_method({ ledger_id, method_name: name, method_type, icon_key: method_type === 'CARD' ? icon_key : null, sort_order })
       }
       await refresh_methods()
       sheet.request_close()
     } catch (error) {
       set_form_error(error instanceof Error ? error.message : '결제수단을 저장하지 못했습니다.')
       set_sheet_state(previous_state)
+    }
+  }
+
+  async function reorder_methods(type: PaymentMethodType, siblings: ManagedPaymentMethod[], from: number, to: number) {
+    if (!ledger_id || is_reordering || sheet_state !== 'closed' || from === to || from < 0 || to < 0 || to >= siblings.length) return
+    const expected_ids = siblings.map(method => method.payment_method_id)
+    const ordered_ids = [...expected_ids]
+    const [moved] = ordered_ids.splice(from, 1)
+    ordered_ids.splice(to, 0, moved)
+
+    reorder_toast.clear()
+    set_is_reordering(true)
+    try {
+      await save_payment_method_order(ledger_id, type, expected_ids, ordered_ids)
+      await refresh_methods()
+    } catch (error) {
+      reorder_toast.show(error instanceof Error ? error.message : '결제수단 순서를 저장하지 못했습니다.')
+      await methods_query.refetch()
+    } finally {
+      set_is_reordering(false)
     }
   }
 
@@ -160,5 +193,7 @@ export function usePaymentMethodsPage() {
     else await methods_query.refetch()
   }
 
-  return { data_state, ledgers, ledger_id, nickname: ledger_query.data?.profile.nickname ?? null, methods, sheet_state, sheet_phase: sheet.phase, sheet_title, save_label, editing_method, method_name, method_type, form_error, set_method_name, choose_method_type, choose_ledger, open_add_sheet, open_edit_sheet, close_sheet, save_method, disable_method, retry }
+  const ordered_card_icons = get_ordered_card_icons(method_name)
+
+  return { data_state, ledgers, ledger_id, nickname: ledger_query.data?.profile.nickname ?? null, methods, sheet_state, sheet_phase: sheet.phase, sheet_title, save_label, editing_method, method_name, method_type, icon_key, ordered_card_icons, set_icon_key, form_error, set_method_name, choose_method_type, choose_ledger, open_add_sheet, open_edit_sheet, close_sheet, save_method, disable_method, retry, is_reordering, reorder_toast, reorder_methods }
 }

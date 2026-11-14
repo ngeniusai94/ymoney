@@ -1,6 +1,18 @@
 import { get_supabase_client } from '../../lib/supabase'
 import type { CategoryGroup, ManagedCategory } from './categories.utils'
 
+export async function save_category_order(ledger_id: string, siblings: ManagedCategory[], ordered_ids: string[]) {
+  const first = siblings[0]
+  const { error } = await get_supabase_client().schema('ymoney').rpc('fn_mon_reorder_categories', {
+    p_ledger_id: ledger_id,
+    p_parent_id: first.parent_category_id,
+    p_group_id: first.category_group_id,
+    p_expected_ids: siblings.map((category) => category.category_id),
+    p_ordered_ids: ordered_ids,
+  })
+  if (error) throw new Error('순서를 저장하지 못했습니다. 목록을 확인하고 다시 시도해주세요.')
+}
+
 /** 삭제하지 않고 활성 상태만 변경합니다. 상위와 하위는 한 UPDATE로 함께 처리합니다. */
 export async function deactivate_category(ledger_id: string, category: ManagedCategory): Promise<void> {
   let request = get_supabase_client().schema('ymoney').from('tb_mon_category')

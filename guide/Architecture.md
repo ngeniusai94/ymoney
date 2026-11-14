@@ -56,6 +56,7 @@ React 화면 → 기능별 TypeScript API → supabase-js → 기존 Supabase Au
 | 달력 | `src/features/transactions/transactions.api.ts` | 월 조회·지출 저장/수정·소프트 삭제 |
 | 원격 데이터 | `src/lib/queryClient.ts` | TanStack Query 클라이언트 기본 설정 |
 | 지출 | `src/features/transactions/pages/ExpensePage/ExpensePage.tsx`, `useExpensePage.ts`, `ExpensePage.css` | 새 지출과 기존 지출 수정에 공용으로 쓰는 폼 UI·상태·화면 스타일 |
+| 금액 키패드 | `src/components/AmountKeypad/`, `src/lib/triggerHaptic.ts` | 키 배치와 순수 계산 함수를 분리한다. 화면 훅이 금액 상태와 완료·저장을 관리한다. React Native WebView가 연결된 환경에서 키 탭마다 `{ type: 'HAPTIC_TAP' }`를 전달한다 |
 | 지출 시트 | `src/features/transactions/pages/ExpensePage/ExpenseSheet.tsx`, `useExpenseSheet.ts`, `ExpenseSheet.css` | 추가·수정 모두 기존 ExpenseForm과 시트 애니메이션 재사용. 수정 ID로 useExpenseRecord 조회, 로딩/오류는 시트 안에 표시. 80dvh/320ms/배경 스크롤 잠금. 저장·삭제 후 월 캐시 갱신 및 달력 유지 |
 | 공통 시트 닫기 | `src/lib/useBottomSheetClose.ts`, `src/lib/bottom-sheet.css` | 중복 요청 방지·320ms 제거 대기·화면 이동 시 타이머 정리. 카테고리/결제/필터/그룹은 공통 클래스, 네이티브 지출 dialog는 기존 transform/::backdrop 유지하며 같은 훅 재사용 |
 | 지출 | `src/features/transactions/expense-options.api.ts`, `expense.utils.ts` | 가계부별 초기 항목·선택 목록, 날짜/금액 입력 규칙 |
@@ -68,7 +69,7 @@ React 화면 → 기능별 TypeScript API → supabase-js → 기존 Supabase Au
 | 공용 알림 채번 | `supabase/notification-numbering.sql` | 기존 fn_next_push_srno/fn_next_device_srno가 public.seq_push_srno/seq_device_srno의 nextval 사용. RLS의 본인 행 조회와 분리하며 기존 P/D 접두사 유지. authenticated는 USAGE만 허용, anon 호출 차단. 실패/검증 시에도 번호는 소비됨 |
 | 분류 | `src/features/categories/pages/CategoriesPage/CategoriesPage.tsx`, `useCategoriesPage.ts`, `CategoriesPage.css`, `src/features/categories/categories.api.ts`, `categories.utils.ts` | 가계부별 그룹·상하위 조회/추가/수정/활성화. 관리 아이콘 UI·선택 상태 제거, 신규 icon_key=null/수정 기존 값 보존 |
 | 결제 | `src/features/payment-methods/pages/PaymentMethodsPage/PaymentMethodsPage.tsx`, `usePaymentMethodsPage.ts`, `PaymentMethodsPage.css`, `src/features/payment-methods/payment-methods.api.ts` | 카드/현금 목록·추가·이름/유형 수정·비활성화. 화면/훅/API 분리 |
-| 결제 아이콘 | `src/features/payment-methods/pages/PaymentMethodsPage/PaymentMethodsPage.tsx` | 관리 목록에서 카드는 인라인 카드 선 SVG, 현금은 `₩` 문자로 표시. 추가/수정에서는 로고 선택·저장 기능을 제공하지 않으며 기존 DB icon_key 데이터는 변경하지 않는다 |
+| 결제 아이콘 | `src/features/payment-methods/assets/`, `src/features/payment-methods/payment-method-icons.ts` | 결제수단 관리의 카드 그림은 기존 `icon_key`로 SVG에 연결한다. 미선택·미등록 키는 공통 SVG로 표시하고 현금에는 `₩`를 사용한다 |
 | 그룹 | `src/features/groups/pages/GroupsPage/{GroupsPage.tsx,useGroupsPage.ts,GroupsPage.css}`, `pages/GroupDetailPage/{GroupDetailPage.tsx,useGroupDetailPage.ts,GroupDetailPage.css}`, `groups.api.ts` | 목록·상세·생성/참여·멤버 표시·이름 변경·코드 복사·나가기. 코드 재발급은 후속 |
 | 내 정보 | `src/features/settings/pages/SettingsProfilePage/SettingsProfilePage.tsx`, `useSettingsProfilePage.ts`, `SettingsProfilePage.css`, `src/features/settings/profile.api.ts` | 닉네임·본인 로그인 정보·현재 기기 로그아웃 |
 | 소셜 인증 | `src/features/auth/useIntroPage.ts`, `useAuthCallbackPage.ts`, `auth.api.ts` | 카카오 OAuth 시작→SDK 세션 복원→인증 서버 getUser 확인→기존 tb_user 재사용 또는 M 프로필 생성→달력 이동. 키는 Supabase Dashboard에만 보관 |
@@ -86,6 +87,10 @@ React 화면 → 기능별 TypeScript API → supabase-js → 기존 Supabase Au
 축약한 API 파일 경로는 같은 행의 화면 파일과 동일한 폴더를 사용한다. 예: `categories.api.ts`는 `src/features/categories/categories.api.ts`이다. 화면이 과도하게 커지면 해당 기능 폴더 내부에서 시트/폼만 분리하고 이 지도를 갱신한다.
 
 통계의 그룹 이름은 카테고리 관리의 `['category-management','ledgers',user_uuid]` 캐시와 동일한 `{profile,ledgers}` 조회를 재사용한다. 그룹 선택은 URL `scope=GROUP&ledger=<ledger_id>`로 보존하고, 기존 GROUP 월 배열을 선택 ID로 필터링한 동일 배열에서 합계·분류·결제를 계산한다. 그룹 생성/이름 변경/나가기의 기존 목록 캐시 무효화가 통계에도 반영된다.
+
+카테고리 그룹별 지출은 선택 범위의 가계부별 `['category-management','categories',user_uuid,ledger_id]` 캐시를 재사용한다. `summarize_category_groups`가 선택 월 거래의 category_id로 상위 카테고리와 그룹을 찾고, 기존 카테고리 집계와 표시 로직에 전달한다. 이 조회의 오류는 그룹 카드에서 재시도한다.
+
+`StatisticsExpenseDialog.tsx`는 선택 월 거래 배열을 재사용한다. `get_statistics_expense_details`는 카테고리·결제수단 집계 기준과 그룹별 합산 시 만든 거래별 그룹 소속을 사용한다. `useStatisticsExpenseDetails`가 선택한 목록과 수정 거래를 관리한다. 거래를 선택하면 목록 팝업을 유지한 채 달력과 같은 `ExpenseSheet`를 위에 열고, 배경 스크롤 잠금은 목록 팝업이 담당한다. 기존 월 거래 캐시 무효화로 수정 후 통계와 팝업 합계도 다시 계산한다. 중앙 팝업을 닫을 때 통계 행으로 포커스를 복원한다.
 
 지출 목록 조회 모델은 `category_name`(전체 접근성 이름)과 `parent_category_name`/`child_category_name`(배치용 이름)을 따로 전달한다. 화면에서 구분 문자열을 다시 분해하지 않는다. 시트는 opening→open→closing 상태를 사용하며 두 requestAnimationFrame 뒤 열기 전환을 시작한다. CSS 전환과 닫기 지연은 320ms로 맞춘다.
 
@@ -237,7 +242,8 @@ React 화면 → 기능별 TypeScript API → supabase-js → 기존 Supabase Au
 
 ### 지출 수정 최소 접근 — 2026-10-04 적용
 
-- 달력의 지출 행을 누르면 `/app/expenses/:transaction_id/edit`에서 같은 입력 폼에 원래 값을 채운다. 거래의 `ledger_id`는 고정하며 저장 후 월간 캐시를 무효화하고 수정된 날짜의 달력으로 돌아간다.
+- 지출 수정은 원래 값을 채운 입력 폼에서 소속 가계부를 고른다. 이동 시 원래 `ledger_id`로 거래를 찾고 대상 `ledger_id`와 분류·결제수단을 한 UPDATE에서 저장한다. 기존 UPDATE 정책과 대상 멤버십 제한 정책을 적용하고 월간 캐시를 갱신한다.
+- 수정 폼의 이력은 `get_expense_audit`가 `ymoney.fn_mon_expense_audit`를 호출해 읽는다. 함수는 삭제되지 않은 지출의 현재 가계부 멤버십을 확인하고 등록자·마지막 수정자의 닉네임과 시각만 반환한다. 등록·수정 시각의 한국시간 표시는 `format_expense_audit_time`이 담당한다.
 - `expense_edit_access` migration은 거래 테이블의 금액·분류·결제수단·날짜·시간·메모·수정자·수정시각 열에만 `authenticated` UPDATE를 허용한다. 작성자·소속 가계부·유형·삭제 상태는 이 경로에서 바꿀 수 없다. RLS는 현재 가계부 멤버의 수정만 허용하며 두 멤버 모두 수정 가능하다. 새 테이블·함수·트리거는 없다. SQL mirror는 `supabase/migrations/202610040002_expense_edit_access.sql`이다.
 - 비활성화된 과거 카테고리/결제수단도 기존 거래의 수정 대상일 수 있으므로 UPDATE 정책은 같은 가계부 소속만 확인한다. 새로 선택할 수 있는 목록은 화면에서 활성 항목으로 제한한다. 실제 수정 저장과 달력 반영은 사용자가 확인했다.
 

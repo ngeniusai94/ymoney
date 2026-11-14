@@ -1,0 +1,7 @@
+.amount-keypad { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 7px; margin-top: 10px; }
+.amount-keypad button { display: grid; place-items: center; min-height: 44px; padding: 0; border: 1px solid var(--app-line); border-radius: 12px; background: #fff; color: var(--app-text); font: inherit; font-size: 17px; font-weight: 750; cursor: pointer; touch-action: manipulation; }
+.amount-keypad button[data-key="backspace"], .amount-keypad button[data-key="+"], .amount-keypad button[data-key="-"] { background: var(--app-accent); color: var(--app-primary); }
+.amount-keypad button[data-key="done"] { background: var(--app-primary); color: #fff; }
+.amount-keypad button:active { filter: brightness(.92); }
+.amount-keypad button:focus-visible { outline: 2px solid var(--app-primary); outline-offset: 2px; }
+.amount-keypad svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }

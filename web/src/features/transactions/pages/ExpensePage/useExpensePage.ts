@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import { completeAmount, createAmount, formatAmount, pressAmountKey } from '../../../../components/AmountKeypad/amount-calculator'
+import type { AmountKey } from '../../../../components/AmountKeypad/amount-calculator'
 import { loadCurrentProfile } from '../../../auth/auth.api'
 import { useAuth } from '../../../auth/AuthProvider'
 import { list_my_ledgers } from '../../../ledgers/ledgers.api'
 import { get_expense_options } from '../../expense-options.api'
-import { get_existing_expense_values, get_initial_expense_datetime, normalize_expense_amount, select_child_categories } from '../../expense.utils'
-import { create_expense, delete_expense, get_expense, update_expense } from '../../transactions.api'
+import { format_expense_audit_time, get_existing_expense_values, get_initial_expense_datetime, select_child_categories } from '../../expense.utils'
+import { create_expense, delete_expense, get_expense, get_expense_audit, update_expense } from '../../transactions.api'
 import type { ExistingExpense } from '../../transactions.api'
 
 function expense_record_query_key(user_uuid: string | undefined, transaction_id: string | undefined) {
@@ -33,7 +35,7 @@ export type ExpenseFormCallbacks = {
   on_busy_change?: (busy: boolean) => void
 }
 
-export function useExpensePage(existing_expense: ExistingExpense | null, callbacks: ExpenseFormCallbacks = {}) {
+export function useExpensePage(existing_expense: ExistingExpense | null, callbacks: ExpenseFormCallbacks = {}, open_keypad_on_mount = false) {
   const { session } = useAuth()
   const navigate = useNavigate()
   const query_client = useQueryClient()
@@ -48,7 +50,8 @@ export function useExpensePage(existing_expense: ExistingExpense | null, callbac
     if (filters) params.set('filters', filters)
     return `/app/calendar?${params.toString()}`
   }
-  const [amount, set_amount] = useState(() => existing_expense ? get_existing_expense_values(existing_expense).amount : '')
+  const [amount, set_amount] = useState(() => createAmount(existing_expense ? get_existing_expense_values(existing_expense).amount : ''))
+  const [is_keypad_open, set_is_keypad_open] = useState(open_keypad_on_mount)
   const [memo, set_memo] = useState(() => existing_expense ? get_existing_expense_values(existing_expense).memo : '')
   const [date_time, set_date_time] = useState(() =>
     existing_expense
@@ -65,6 +68,23 @@ export function useExpensePage(existing_expense: ExistingExpense | null, callbac
   const on_busy_change = callbacks.on_busy_change
   useEffect(() => { on_busy_change?.(is_saving || is_deleting) }, [is_saving, is_deleting, on_busy_change])
 
+  const transaction_id = existing_expense?.transaction_id
+  const audit_query_key = ['expense-entry', 'audit', session?.user.id, transaction_id] as const
+  const audit_query = useQuery({
+    queryKey: audit_query_key,
+    queryFn: () => transaction_id ? get_expense_audit(transaction_id) : null,
+    enabled: Boolean(session && transaction_id),
+    staleTime: 0,
+  })
+  const audit = audit_query.data
+  let audit_text = ''
+  if (audit) {
+    audit_text = `${audit.creator_nickname} ${format_expense_audit_time(audit.created_at)}`
+    if (audit.editor_nickname && audit.updated_at) {
+      audit_text += ` (${audit.editor_nickname} ${format_expense_audit_time(audit.updated_at)})`
+    }
+  }
+
   const ledger_query = useQuery({
     queryKey: ['expense-entry', 'ledgers', session?.user.id ?? 'signed-out'],
     queryFn: async () => {
@@ -78,10 +98,7 @@ export function useExpensePage(existing_expense: ExistingExpense | null, callbac
   })
   const ledgers = ledger_query.data?.ledgers ?? []
   const default_ledger = ledgers.find((ledger) => ledger.ledger_type === 'PERSONAL') ?? ledgers[0]
-  const ledger_id = existing_expense?.ledger_id ?? chosen_ledger_id ?? default_ledger?.ledger_id ?? null
-  const visible_ledgers = existing_expense
-    ? ledgers.filter((ledger) => ledger.ledger_id === existing_expense.ledger_id)
-    : ledgers
+  const ledger_id = chosen_ledger_id ?? existing_expense?.ledger_id ?? default_ledger?.ledger_id ?? null
 
   const options_query = useQuery({
     queryKey: ['expense-entry', 'options', session?.user.id ?? 'signed-out', ledger_id],
@@ -97,20 +114,33 @@ export function useExpensePage(existing_expense: ExistingExpense | null, callbac
   const active_parent_id = selected_category?.parent_category_id ?? selected_category?.category_id ?? null
   const parent_categories = categories.filter((category) => category.parent_category_id === null)
   const child_categories = select_child_categories(categories, active_parent_id)
-  const display_amount = amount ? new Intl.NumberFormat('ko-KR').format(Number(amount)) : ''
+  const display_amount = formatAmount(amount)
+  const save_amount = formatAmount(createAmount(String(completeAmount(amount))))
+
+  function enter_amount_key(key: AmountKey) {
+    set_amount(current => pressAmountKey(current, key))
+  }
+
+  function finish_amount() {
+    set_amount(current => createAmount(String(completeAmount(current))))
+    set_is_keypad_open(false)
+  }
 
   function choose_ledger(next_ledger_id: string) {
-    if (existing_expense) return
+    if (is_saving || is_deleting || is_delete_confirm_open) return
     if (next_ledger_id === ledger_id) return
     set_chosen_ledger_id(next_ledger_id)
-    set_category_id(null)
-    set_payment_method_id(null)
+    // 원래 가계부를 다시 선택하면 저장된 분류와 결제수단을 복원합니다.
+    set_category_id(next_ledger_id === existing_expense?.ledger_id ? existing_expense.category_id : null)
+    set_payment_method_id(next_ledger_id === existing_expense?.ledger_id ? existing_expense.payment_method_id : null)
     set_form_error('')
   }
 
   function reset_form() {
     const original = existing_expense ? get_existing_expense_values(existing_expense) : null
-    set_amount(original?.amount ?? '')
+    set_chosen_ledger_id(null)
+    set_amount(createAmount(original?.amount ?? ''))
+    set_is_keypad_open(false)
     set_memo(original?.memo ?? '')
     set_category_id(original?.category_id ?? null)
     set_payment_method_id(original?.payment_method_id ?? null)
@@ -126,7 +156,7 @@ export function useExpensePage(existing_expense: ExistingExpense | null, callbac
 
   async function save_expense() {
     if (is_saving || is_deleting || is_delete_confirm_open) return
-    const numeric_amount = Number(amount)
+    const numeric_amount = completeAmount(amount)
     if (!ledger_id || !category_id || !payment_method_id || !date_time || !Number.isInteger(numeric_amount) || numeric_amount <= 0) {
       set_form_error('금액·카테고리·결제수단·날짜와 시간을 확인해주세요.')
       return
@@ -136,6 +166,7 @@ export function useExpensePage(existing_expense: ExistingExpense | null, callbac
       return
     }
 
+    finish_amount()
     set_is_saving(true)
     set_form_error('')
     try {
@@ -149,7 +180,7 @@ export function useExpensePage(existing_expense: ExistingExpense | null, callbac
         trans_time: `${date_time.slice(11, 16)}:00`,
       }
       if (existing_expense) {
-        await update_expense(existing_expense.transaction_id, {
+        await update_expense(existing_expense.transaction_id, existing_expense.ledger_id, {
           ...values,
           updated_by_user_srno: ledger_query.data.profile.user_srno,
         })
@@ -158,6 +189,7 @@ export function useExpensePage(existing_expense: ExistingExpense | null, callbac
           expense_record_query_key(session?.user.id, existing_expense.transaction_id),
           { ...existing_expense, ...values },
         )
+        await query_client.invalidateQueries({ queryKey: audit_query_key })
       } else {
         await create_expense({
           ...values,
@@ -225,7 +257,7 @@ export function useExpensePage(existing_expense: ExistingExpense | null, callbac
 
   return {
     active_parent_id,
-    amount,
+    audit_text,
     categories,
     category_id,
     child_categories,
@@ -236,27 +268,29 @@ export function useExpensePage(existing_expense: ExistingExpense | null, callbac
     confirm_delete,
     date_time,
     display_amount,
+    enter_amount_key,
+    finish_amount,
     form_error,
     is_edit_mode: Boolean(existing_expense),
+    is_keypad_open,
     is_delete_confirm_open,
     is_deleting,
     is_saving,
     ledger_id,
     ledger_query,
     ledgers,
-    visible_ledgers,
     memo,
-    normalize_expense_amount,
     options_query,
     parent_categories,
     payment_method_id,
     payment_methods,
     reset_form,
     request_delete,
+    save_amount,
     save_expense,
-    set_amount,
     set_category_id,
     set_date_time,
+    set_is_keypad_open,
     set_memo,
     set_payment_method_id,
   }

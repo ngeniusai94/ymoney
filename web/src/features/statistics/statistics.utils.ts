@@ -136,13 +136,23 @@ export function summarize_category_groups(
 }
 
 /** 등록된 결제수단 이름별로 합산합니다. 다른 가계부의 같은 이름도 기존 카테고리처럼 묶습니다. */
-export function summarize_payment_methods(expenses: ReadonlyArray<{ payment_method_name: string; amount: number }>) {
-  const amounts = new Map<string, number>()
+export function summarize_payment_methods(expenses: ReadonlyArray<Pick<MonthlyExpense,
+  'payment_method_name' | 'payment_method_type' | 'payment_method_icon_key' | 'amount'>>) {
+  const methods = new Map<string, { amount: number; type: MonthlyExpense['payment_method_type']; icon_key: string | null }>()
   for (const expense of expenses) {
-    amounts.set(expense.payment_method_name, (amounts.get(expense.payment_method_name) ?? 0) + expense.amount)
+    const { payment_method_name: name, payment_method_type: type, payment_method_icon_key: icon_key, amount } = expense
+    const method = methods.get(name)
+    if (!method) {
+      methods.set(name, { amount, type, icon_key })
+      continue
+    }
+    // 같은 이름으로 합산된 거래의 아이콘이 다르면 공통 유형 아이콘을 사용합니다.
+    method.amount += amount
+    if (method.type !== type) method.type = null
+    if (method.icon_key !== icon_key) method.icon_key = null
   }
   const total = expenses.reduce((sum, expense) => sum + expense.amount, 0)
-  return [...amounts].filter(([, amount]) => amount > 0)
-    .map(([name, amount]) => ({ name, amount, percentage: amount / total * 100 }))
+  return [...methods].filter(([, method]) => method.amount > 0)
+    .map(([name, method]) => ({ name, ...method, percentage: method.amount / total * 100 }))
     .sort((a, b) => b.amount - a.amount || a.name.localeCompare(b.name, 'ko'))
 }

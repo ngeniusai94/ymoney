@@ -22,6 +22,7 @@ export default function ExpenseSheet({ transaction_id, on_close, on_saved, lock_
       <p>수정할 지출을 불러오지 못했어요.</p><button type="button" onClick={() => void record_query.refetch()}>다시 시도</button></div>
   } else {
     content = <ExpenseForm key={transaction_id ?? 'new'} existing_expense={record_query.data ?? null}
+      open_keypad_on_mount={!transaction_id}
       on_close={request_close} on_saved={(date) => {
         // 저장·삭제 완료 후 먼저 보호를 해제해야 같은 닫기 애니메이션을 시작할 수 있습니다.
         set_busy(false)

@@ -1,0 +1,2 @@
+.status-toast { position: fixed; z-index: 19; bottom: calc(var(--app-tab-bottom) + 65px); left: 50%; width: min(calc(100% - 32px), 398px); transform: translateX(-50%); pointer-events: none; }
+.status-toast p { width: fit-content; margin: 0 auto; padding: 10px 14px; border-radius: 12px; background: var(--app-text); color: var(--app-bg); box-shadow: 0 5px 16px var(--app-shadow); font-size: 13px; line-height: 1.45; text-align: center; }

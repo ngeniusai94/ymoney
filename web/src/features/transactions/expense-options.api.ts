@@ -12,6 +12,7 @@ export type ExpensePaymentMethod = {
   payment_method_id: string
   method_type: 'CARD' | 'CASH'
   method_name: string
+  icon_key: string | null
   sort_order: number
 }
 
@@ -93,7 +94,7 @@ export async function get_expense_options(ledger_id: string): Promise<{
       .eq('ledger_id', ledger_id).eq('trans_type', 'EXPENSE').eq('is_active', true)
       .order('sort_order'),
     supabase.from('tb_mon_payment_method')
-      .select('payment_method_id, method_type, method_name, sort_order, is_active')
+      .select('payment_method_id, method_type, method_name, icon_key, sort_order, is_active')
       .eq('ledger_id', ledger_id).eq('is_active', true).order('sort_order'),
   ])
 
@@ -113,6 +114,7 @@ export async function get_expense_options(ledger_id: string): Promise<{
       payment_method_id: String(row.payment_method_id),
       method_type: row.method_type,
       method_name: row.method_name,
+      icon_key: row.icon_key,
       sort_order: row.sort_order,
     })),
   }

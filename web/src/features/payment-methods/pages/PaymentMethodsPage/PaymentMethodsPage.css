@@ -10,14 +10,20 @@
 .payments-type-card header small { color: var(--app-muted); font-size: 10px; }
 .payments-type-icon, .payments-method-icon { display: grid; place-items: center; width: 27px; height: 27px; border-radius: 8px; background: var(--app-soft); color: var(--app-primary); }
 .payments-type-icon { background: #fff; }
+.payments-card-icon { display: block; width: 24px; height: 15px; }
+.payments-icon-field { margin-top: 14px; }
+.payments-icon-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(44px, 1fr)); gap: 6px; }
+.payments-icon-options button { display: grid; place-items: center; min-height: 44px; padding: 4px; border: 1px solid var(--app-line); border-radius: 10px; background: #fff; cursor: pointer; }
+.payments-icon-options button[aria-pressed="true"] { border-color: var(--app-primary); background: var(--app-accent); box-shadow: inset 0 0 0 1px var(--app-primary); }
+.payments-icon-options .payments-card-icon { width: 32px; height: 20px; }
 .payments-screen svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-.payments-method { display: grid; width: 100%; min-height: 45px; grid-template-columns: 29px 1fr auto; gap: 8px; align-items: center; padding: 0 11px; border: 0; border-top: 1px solid var(--app-line); background: #fff; color: inherit; text-align: left; font: inherit; font-size: 12px; cursor: pointer; }
+.payments-method { display: grid; min-height: 45px; grid-template-columns: minmax(0, 1fr) auto; gap: 6px; align-items: center; padding-right: 8px; border-top: 1px solid var(--app-line); }
+.payments-method-edit { display: grid; align-items: center; align-self: stretch; grid-template-columns: 29px minmax(0, 1fr) auto; gap: 8px; padding: 0 0 0 11px; border: 0; background: #fff; color: inherit; text-align: left; font: inherit; font-size: 12px; cursor: pointer; }
 .payments-method strong { min-width: 0; overflow-wrap: anywhere; }
-.payments-method { grid-template-columns: 29px 1fr auto; }
 .payments-method-icon { width: 27px; background: transparent; }
-.payments-method:disabled { cursor: default; color: var(--app-muted); }
+.payments-method-edit:disabled { cursor: default; color: var(--app-muted); }
 .payments-inactive { color: #9b7777; font-size: 10px; }
-.payments-method-actions { display: flex; align-items: center; gap: 9px; }
+.payments-method .reorder-handle svg { width: 18px; height: 18px; stroke-width: 2; }
 .payments-state, .payments-empty { margin: 0; padding: 16px 12px; color: var(--app-muted); font-size: 12px; text-align: center; }
 .payments-state { border: 1px solid var(--app-line); border-radius: 12px; background: #fff; }
 .payments-state.is-error, .payments-form-error { color: #b85f5f; }
