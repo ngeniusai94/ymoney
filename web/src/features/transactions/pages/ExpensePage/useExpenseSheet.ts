@@ -18,11 +18,8 @@ export function useExpenseSheet(on_close: () => void, lock_body_scroll: boolean)
     if (lock_body_scroll) document.body.style.overflow = 'hidden'
     // 네이티브 dialog가 배경을 inert 처리하고 포커스를 시트 안에 가둡니다.
     dialog?.showModal()
-    let focus_frame = 0
-    focus_frame = window.requestAnimationFrame(() => {
-      dialog?.querySelector<HTMLButtonElement>('[data-expense-initial-focus="amount"]')
-        ?.focus({ preventScroll: true })
-    })
+    // 처음에는 시트 자체에 포커스를 두고 버튼은 사용자가 탐색할 때 강조합니다.
+    dialog?.focus({ preventScroll: true })
     // 첫 프레임에서 화면 아래의 위치를 그린 뒤 다음 프레임에 전환을 시작합니다.
     // 바로 최종 위치로 렌더링되거나 StrictMode 재실행으로 시작 상태가 생략되는 것을 막습니다.
     let next_frame = 0
@@ -34,7 +31,6 @@ export function useExpenseSheet(on_close: () => void, lock_body_scroll: boolean)
     return () => {
       window.cancelAnimationFrame(first_frame)
       window.cancelAnimationFrame(next_frame)
-      window.cancelAnimationFrame(focus_frame)
       dialog?.close()
       if (lock_body_scroll) document.body.style.overflow = previous_overflow
     }

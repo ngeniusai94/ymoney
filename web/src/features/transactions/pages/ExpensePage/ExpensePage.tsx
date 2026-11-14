@@ -158,13 +158,16 @@ export function ExpenseForm({ existing_expense, open_keypad_on_mount = false, ..
             <button
               id="expense-amount"
               ref={amount_ref}
-              data-expense-initial-focus={!form.is_edit_mode ? 'amount' : undefined}
               type="button"
               aria-label={`지출 금액 ${form.display_amount}원`}
               aria-expanded={form.is_keypad_open}
               aria-controls={form.is_keypad_open ? 'expense-amount-keypad' : undefined}
               disabled={form.is_saving || form.is_deleting}
-              onClick={() => form.is_keypad_open ? form.finish_amount() : form.set_is_keypad_open(true)}
+              onClick={(event) => {
+                if (event.detail !== 0) event.currentTarget.blur()
+                if (form.is_keypad_open) form.finish_amount()
+                else form.set_is_keypad_open(true)
+              }}
             >{form.display_amount}</button>
             <span>원</span>
           </div>
@@ -172,9 +175,9 @@ export function ExpenseForm({ existing_expense, open_keypad_on_mount = false, ..
 
         {form.is_keypad_open && (
           <div className="expense-keypad-area">
-            <AmountKeypad id="expense-amount-keypad" on_key={form.enter_amount_key} on_done={() => {
+            <AmountKeypad id="expense-amount-keypad" on_key={form.enter_amount_key} on_done={(restore_focus) => {
               form.finish_amount()
-              amount_ref.current?.focus({ preventScroll: true })
+              if (restore_focus) amount_ref.current?.focus({ preventScroll: true })
             }} />
           </div>
         )}

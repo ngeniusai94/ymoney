@@ -29,7 +29,7 @@ export default function ExpenseSheet({ transaction_id, on_close, on_saved, lock_
         on_saved?.(date)
       }} on_busy_change={set_busy} />
   }
-  return <dialog ref={dialog_ref} className={`expense-sheet is-${phase}`} aria-label={sheet_label}
+  return <dialog ref={dialog_ref} className={`expense-sheet is-${phase}`} aria-label={sheet_label} tabIndex={-1}
     onCancel={(event) => { event.preventDefault(); request_close() }}
     onClick={(event) => { if (event.target === event.currentTarget) request_close() }}>
     <div className="expense-sheet-panel">

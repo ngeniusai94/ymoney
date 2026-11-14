@@ -25,6 +25,7 @@
 .expense-amount-line { display: flex; align-items: baseline; gap: 7px; border-bottom: 2px solid var(--app-primary); }
 .expense-amount-line button { min-width: 0; flex: 1; padding: 4px 0 9px; border: 0; background: transparent; color: var(--app-text); font: inherit; font-size: clamp(23px, 7vw, 34px); font-weight: 900; text-align: right; overflow-wrap: anywhere; cursor: pointer; }
 .expense-amount-line button:focus-visible { outline: 2px solid var(--app-primary); outline-offset: -2px; }
+.expense-amount-line button { -webkit-tap-highlight-color: transparent; }
 .expense-amount-line span { font-size: 17px; font-weight: 800; }
 .expense-datetime-line { display: flex; min-height: 48px; align-items: center; padding: 0 12px; gap: 9px; border: 1px solid var(--app-line); border-radius: 13px; background: #fff; }
 .expense-datetime-line > span { color: var(--app-primary); font-size: 18px; }

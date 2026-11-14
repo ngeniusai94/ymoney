@@ -2,6 +2,7 @@
 /* hidden은 showModal의 자동 포커스에 의해 스크롤될 수 있습니다. clip으로 위치 튐을 막습니다. */
 .expense-sheet { position: fixed; inset: 0; width: 100%; max-width: none; height: 100dvh; max-height: none; margin: 0; padding: 0; border: 0; background: transparent; color: var(--app-text); overflow: clip; }
 .expense-sheet[open] { display: flex; align-items: flex-end; justify-content: center; }
+.expense-sheet:focus { outline: none; }
 .expense-sheet::backdrop { background: var(--app-backdrop); animation: expense-backdrop-in 320ms ease-in-out both; }
 /* opening에서 아래 위치를 먼저 그린 후 open으로 바뀌며 양방향 동일한 속도로 전환합니다. */
 .expense-sheet-panel { width: min(100%, 430px); height: 80dvh; max-height: 80dvh; padding: 10px 10px 0; border-radius: 24px 24px 0 0; background: var(--app-bg); box-shadow: 0 -12px 40px var(--app-shadow); transform: translateY(100%); transition: transform 320ms ease-in-out; }
