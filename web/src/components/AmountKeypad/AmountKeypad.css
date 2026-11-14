@@ -3,5 +3,5 @@
 .amount-keypad button[data-key="backspace"], .amount-keypad button[data-key="+"], .amount-keypad button[data-key="-"] { background: var(--app-accent); color: var(--app-primary); }
 .amount-keypad button[data-key="done"] { background: var(--app-primary); color: #fff; }
 .amount-keypad button:active { filter: brightness(.92); }
-.amount-keypad button:focus-visible { outline: 2px solid var(--app-primary); outline-offset: 2px; }
+.amount-keypad button:focus { outline: none; }
 .amount-keypad svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
