@@ -17,7 +17,6 @@
 .auth-field > span { display: block; margin: 0 2px 7px; color: var(--app-muted); font-size: 12px; font-weight: 800; }
 /* iPhone에서 작은 입력 글씨를 읽기 위해 화면이 자동으로 확대되는 것을 줄입니다. */
 .auth-field input { width: 100%; min-height: 50px; padding: 0 14px; border: 1px solid var(--app-line); border-radius: 13px; outline: none; background: #ffffff; color: var(--app-text); font: inherit; font-size: 16px; }
-.auth-field input:focus { border-color: var(--app-primary); box-shadow: 0 0 0 3px rgba(79, 154, 128, 0.13); }
 .auth-field input::placeholder { color: var(--app-muted); }
 .auth-field small { display: block; margin: 6px 2px 0; color: var(--app-muted); font-size: 10px; }
 .auth-submit { width: 100%; min-height: 50px; margin-top: 24px; border: 0; border-radius: 13px; background: var(--app-primary); color: #ffffff; cursor: pointer; font-size: 14px; font-weight: 900; }

@@ -37,7 +37,6 @@
 .calendar-expense-list { display: grid; margin: 0; padding: 0; list-style: none; }
 .calendar-expense-list li { min-width: 0; border-bottom: 1px solid var(--app-line); }
 .calendar-expense-item { display: flex; width: 100%; min-width: 0; align-items: center; padding: 10px 2px; gap: 9px; border: 0; background: transparent; color: inherit; text-align: left; cursor: pointer; }
-.calendar-expense-item:focus-visible { border-radius: 8px; outline: 2px solid var(--app-primary); outline-offset: 2px; }
 /* 분류의 실제 글자 폭을 사용해 짧은 분류 뒤에도 메모가 가까이 붙습니다. */
 .calendar-expense-description { display: flex; min-width: 0; max-width: 35%; flex: 0 1 auto; flex-direction: column; gap: 2px; }
 .calendar-expense-memo { min-width: 0; flex: 1; margin-left: 3px; overflow: hidden; color: var(--app-muted); font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }

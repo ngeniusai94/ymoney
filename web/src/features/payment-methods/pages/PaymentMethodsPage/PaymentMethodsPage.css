@@ -46,4 +46,3 @@
 .payments-save { width: 100%; height: 45px; margin-top: 18px; border: 0; border-radius: 11px; background: var(--app-primary); color: #fff; font-size: 13px; font-weight: 800; cursor: pointer; }
 .payments-disable { display: block; min-height: 36px; margin: 10px auto 0; padding: 0 12px; border: 0; background: transparent; color: #b85f5f; font-size: 12px; cursor: pointer; }
 .payments-sheet button:disabled { opacity: .6; cursor: default; }
-.payments-screen button:focus-visible, .payments-screen select:focus-visible { outline: 2px solid var(--app-primary); outline-offset: 2px; }

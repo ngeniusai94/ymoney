@@ -211,6 +211,10 @@
 
 ## 재개 기록
 
+- 2026-11-14 웹앱 전역의 포커스 외곽선·WebKit 탭 강조를 `src/index.css`에서 끄고 각 화면과 공용 버튼에 남아 있던 포커스 스타일을 제거했다. localhost 통계 지출 내역 팝업과 Tab으로 이동한 내부 버튼에서 outline 없음 및 탭 강조 투명 상태를 확인했다. `git diff --check` 통과. 다음은 운영 배포 후 iPhone WebView에서 확인하는 것이다.
+
+- 2026-11-14 카테고리 관리와 통계의 포커스 테두리 및 WebKit 탭 강조를 해당 화면 CSS에서 제거했다. `CategoriesPage.css`, `StatisticsPage.css`, Design 변경. localhost에서 두 화면의 활성 요소 outline이 none임을 확인했다. `git diff --check` 통과. 다음은 운영 배포 후 iPhone 터치 확인이다.
+
 - 2026-11-14 iPhone 터치 후 테두리가 남는다는 제보를 반영해 금액·키패드 버튼의 포커스 테두리를 제거했다. 변경은 `AmountKeypad.css`, `ExpensePage.css`, Design이다. localhost에서 숫자 버튼에 `:focus-visible`이 적용된 상태와 완료 후 금액 버튼에 포커스가 복원된 상태 모두 outline이 없음을 확인했다. `git diff --check` 통과. 다음은 배포 후 iPhone 실기기 재확인이다.
 
 - 2026-11-14 금액·키패드 포커스 사각형을 수정했다. 지출 시트의 초기 포커스는 dialog에 두고, 금액·키패드의 포인터 클릭 뒤 버튼 포커스를 해제하며 WebKit 탭 강조를 끈다. 완료 후 포커스 복원은 키보드 작동에 적용한다. `AmountKeypad.tsx/CSS`, `ExpensePage.tsx/CSS`, `ExpenseSheet.tsx/CSS`, `useExpenseSheet.ts`, Design 변경. localhost에서 초기 버튼 테두리 없음, 숫자·완료 클릭 후 포커스 없음, 키보드 테두리 및 복원 확인. 원격 변경 없음. 다음은 iPhone WebView의 실제 탭 확인이다.

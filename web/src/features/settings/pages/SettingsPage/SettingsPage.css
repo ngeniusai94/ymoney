@@ -10,7 +10,6 @@
 .settings-menu-row strong { font-size: 13px; font-weight: 800; }
 .settings-menu-row small { color: var(--app-muted); font-size: 10px; }
 .settings-menu-row:not(.is-pending):active { background: var(--app-soft); }
-.settings-menu-row:focus-visible { outline: 2px solid var(--app-primary); outline-offset: -2px; }
 .settings-row-icon { display: grid; width: 30px; height: 30px; place-items: center; border-radius: 9px; background: var(--app-soft); color: var(--app-primary); }
 .settings-row-icon svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .settings-row-arrow { color: var(--app-muted); font-size: 19px; }

@@ -2,7 +2,6 @@
 .reorder-handle svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
 .reorder-handle[data-dragging] { background: var(--app-accent); color: var(--app-primary); cursor: grabbing; }
 .reorder-handle:disabled { opacity: .5; cursor: default; }
-.reorder-handle:focus-visible { outline: 2px solid var(--app-primary); }
 [data-reorder-id] { position: relative; }
 [data-drop-side]::after { content: ''; position: absolute; inset-inline: 0; z-index: 1; height: 2px; background: var(--app-primary); pointer-events: none; }
 [data-drop-side="before"]::after { top: 0; }

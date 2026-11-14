@@ -52,8 +52,6 @@
 .statistics-expense-trigger { display: block; width: 100%; padding: 0; border: 0; background: transparent; color: inherit; text-align: start; cursor: pointer; }
 .statistics-expense-trigger:active { background: var(--app-accent); }
 /* 키보드 포커스는 버튼 바깥의 회색 테두리 대신 테마색으로 표시합니다. */
-.statistics-screen button:focus-visible,
-.statistics-screen summary:focus-visible { outline: 2px solid var(--app-primary); outline-offset: -2px; border-radius: 8px; }
 .statistics-child-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 12px 0; font-size: 12px; }
 .statistics-children li:last-child .statistics-child-row { padding-bottom: 0; }
 .statistics-child-row > span:first-child { min-width: 0; overflow-wrap: anywhere; }
@@ -66,7 +64,6 @@
 .statistics-state button { min-height: 44px; padding: 8px 16px; border: 0; border-radius: 10px; background: var(--app-accent); color: var(--app-text); font: inherit; cursor: pointer; }
 .statistics-expense-dialog { position: fixed; inset: 0; width: min(398px, calc(100% - 32px)); max-height: 76dvh; margin: auto; padding: 0; border: 0; border-radius: 20px; overflow: hidden; background: #fff; color: var(--app-text); box-shadow: 0 12px 40px var(--app-shadow); }
 .statistics-expense-dialog[open] { display: flex; }
-.statistics-expense-dialog:focus { outline: none; }
 .statistics-expense-dialog::backdrop { background: var(--app-backdrop); }
 .statistics-expense-dialog-panel { display: flex; flex: 1; flex-direction: column; min-width: 0; min-height: 0; padding: 14px 18px 12px; }
 .statistics-expense-dialog-header { display: flex; flex-shrink: 0; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
