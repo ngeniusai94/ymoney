@@ -211,6 +211,8 @@
 
 ## 재개 기록
 
+- 2026-11-15 키패드 햅틱 호출을 `src/native/features.ts`의 `callApp.triggerHaptic()`으로 옮기고 `src/native/bridge.ts`에 전송을 분리했다. 기존 메시지 형식을 유지한다. TypeScript, 변경 파일 ESLint, Node의 메시지·브릿지 부재·전송 실패 검증을 통과했다. 원격 변경 없음. 다음은 iPhone WebView에서 실제 햅틱을 확인하는 것이다.
+
 ### 26.11.14 검증과 후속 확인
 
 기능 요약은 [날짜별 변경·배포 기록](#날짜별-변경배포-기록)을 참고한다.

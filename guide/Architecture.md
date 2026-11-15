@@ -56,7 +56,8 @@ React 화면 → 기능별 TypeScript API → supabase-js → 기존 Supabase Au
 | 달력 | `src/features/transactions/transactions.api.ts` | 월 조회·지출 저장/수정·소프트 삭제 |
 | 원격 데이터 | `src/lib/queryClient.ts` | TanStack Query 클라이언트 기본 설정 |
 | 지출 | `src/features/transactions/pages/ExpensePage/ExpensePage.tsx`, `useExpensePage.ts`, `ExpensePage.css` | 새 지출과 기존 지출 수정에 공용으로 쓰는 폼 UI·상태·화면 스타일 |
-| 금액 키패드 | `src/components/AmountKeypad/`, `src/lib/triggerHaptic.ts` | 키 배치와 순수 계산 함수를 분리한다. 화면 훅이 금액 상태와 완료·저장을 관리한다. React Native WebView가 연결된 환경에서 키 탭마다 `{ type: 'HAPTIC_TAP' }`를 전달한다 |
+| 금액 키패드 | `src/components/AmountKeypad/` | 키 배치와 순수 계산 함수를 분리한다. 화면 훅이 금액 상태와 완료·저장을 관리하고, 키를 누를 때 `callApp.triggerHaptic()`을 호출한다 |
+| 앱 브릿지 | `src/native/features.ts`, `src/native/bridge.ts` | 화면은 `callApp`에서 앱 기능을 호출한다. `features.ts`가 햅틱 명령을 정하고 `bridge.ts`가 React Native WebView로 기존 메시지 `{ type: 'HAPTIC_TAP' }`를 보낸다 |
 | 지출 시트 | `src/features/transactions/pages/ExpensePage/ExpenseSheet.tsx`, `useExpenseSheet.ts`, `ExpenseSheet.css` | 추가·수정 모두 기존 ExpenseForm과 시트 애니메이션 재사용. 수정 ID로 useExpenseRecord 조회, 로딩/오류는 시트 안에 표시. 80dvh/320ms/배경 스크롤 잠금. 저장·삭제 후 월 캐시 갱신 및 달력 유지 |
 | 공통 시트 닫기 | `src/lib/useBottomSheetClose.ts`, `src/lib/bottom-sheet.css` | 중복 요청 방지·320ms 제거 대기·화면 이동 시 타이머 정리. 카테고리/결제/필터/그룹은 공통 클래스, 네이티브 지출 dialog는 기존 transform/::backdrop 유지하며 같은 훅 재사용 |
 | 지출 | `src/features/transactions/expense-options.api.ts`, `expense.utils.ts` | 가계부별 초기 항목·선택 목록, 날짜/금액 입력 규칙 |

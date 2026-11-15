@@ -1,4 +1,4 @@
-import { triggerHaptic } from '../../lib/triggerHaptic'
+import { callApp } from '../../native/features'
 import type { AmountKey } from './amount-calculator'
 import './AmountKeypad.css'
 
@@ -18,7 +18,8 @@ export default function AmountKeypad({ id, on_key, on_done }: {
   on_done: (restore_focus: boolean) => void
 }) {
   function press(key: KeypadKey, from_keyboard: boolean) {
-    triggerHaptic()
+    // 숫자·연산·완료 키를 처리하기 전에 같은 앱 햅틱을 요청합니다.
+    callApp.triggerHaptic()
     if (key === 'done') on_done(from_keyboard)
     else on_key(key)
   }
