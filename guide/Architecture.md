@@ -282,7 +282,7 @@ React 화면 → 기능별 TypeScript API → supabase-js → 기존 Supabase Au
 
 ### Vercel 배포 준비와 사용자 작업
 
-현재는 로컬 설정 준비 단계다. 실제 업로드·외부 프로젝트 생성·공개 배포는 별도 진행한다. [Tasks.md](Tasks.md)의 MVP 보안/권한 점검 전에는 외부 실사용 공개를 하지 않으며, 시험 배포는 접근을 제한하고 테스트 계정만 사용한다.
+배포 이력과 검증 상태는 [Tasks.md](Tasks.md#날짜별-변경배포-기록)에서 관리한다. 시험 배포는 접근을 제한하고 테스트 계정만 사용한다.
 
 1. 배포 방법을 정한다. GitHub 연결 방식은 먼저 사용자가 이 프로젝트의 저장소를 준비한 뒤 Vercel에서 Import한다. Git 없이 직접 올리려면 사용자가 Vercel CLI 방식을 선택한다. 현재 폴더의 Git 초기화/원격 연결/CLI 설치는 에이전트가 임의로 하지 않는다.
 2. Vercel 프로젝트의 Settings → Build and Deployment → Root Directory에 `./web`을 설정한다. Framework Preset은 Vite, Build Command는 `npm run build`, Output Directory는 `dist`다. 해당 폴더의 `package-lock.json`과 `vercel.json`을 사용한다.

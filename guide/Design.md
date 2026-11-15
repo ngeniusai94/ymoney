@@ -36,17 +36,17 @@
 
 | 화면 | 보존 목업 | 구현 시 기준 |
 |---|---|---|
-| 인증 폼 | [이전 인증 목업](design-mockup/auth-social-login-review-v1.html) | 최신 아이디 가입/로그인은 구현 화면 기준. 기존 이메일 확인 목업은 과거안이며 별도 HTML 갱신 전까지 참고용 |
-| 월간 달력 | [메인](design-mockup/calendar-main-current-final.html) | 큰 달력, 작은 월 합계, 날짜 선택, 아래 한 줄 지출 목록 |
-| 지출 폼 | [지출 입력](design-mockup/expense-entry-current-final.html) | 금액·카테고리·상세 한 화면. 하위 선택은 아래 규칙을 추가 적용. 수정할 때는 기존 값을 채우고 소속 가계부를 선택할 수 있다. |
-| 조회 필터 | [필터](design-mockup/filter-final-mobile-360.html) | 전체/그룹/개인, 가계부별 접기, 그룹별 체크 영역 |
-| 상태 | [달력 상태](design-mockup/app-states-from-confirmed-calendar-v5.html) | 로딩/무지출/오류에도 달력 유지 |
-| 설정 | [설정 메인](design-mockup/settings-mvp-sections-final.html) | 서비스·가계부·그룹 구분 |
-| 카테고리 | [카테고리 관리](design-mockup/category-management-v6-independent-add.html) | 독립 + 카테고리 추가, 선택 그룹, 부모 안에서 하위 추가 |
-| 결제수단 | [결제수단 관리](design-mockup/payment-method-management-v1.html) | 카드·현금 영역과 개별 항목 |
-| 그룹 | [목록·상세](design-mockup/group-management-detail-b-v1.html) / [생성·참여 시트](design-mockup/group-create-join-sheets-v1.html) | B안 목록→상세, 입력은 시트 |
-| 내 정보 | [프로필·계정 삭제](design-mockup/profile-management-v1.html) | 프로필 요약 제거, 닉네임/로그인 정보/계정 작업 |
-| 테마 | [테마 B안](design-mockup/theme-picker-approved-b.html) | 한 줄 목록, 팔레트와 체크, 즉시 적용 |
+| 인증 폼 | [이전 인증 목업](../design-mockup/auth-social-login-review-v1.html) | 최신 아이디 가입/로그인은 구현 화면 기준. 기존 이메일 확인 목업은 과거안이며 별도 HTML 갱신 전까지 참고용 |
+| 월간 달력 | [메인](../design-mockup/calendar-main-current-final.html) | 큰 달력, 작은 월 합계, 날짜 선택, 아래 한 줄 지출 목록 |
+| 지출 폼 | [지출 입력](../design-mockup/expense-entry-current-final.html) | 금액·카테고리·상세 한 화면. 하위 선택은 아래 규칙을 추가 적용. 수정할 때는 기존 값을 채우고 소속 가계부를 선택할 수 있다. |
+| 조회 필터 | [필터](../design-mockup/filter-final-mobile-360.html) | 전체/그룹/개인, 가계부별 접기, 그룹별 체크 영역 |
+| 상태 | [달력 상태](../design-mockup/app-states-from-confirmed-calendar-v5.html) | 로딩/무지출/오류에도 달력 유지 |
+| 설정 | [설정 메인](../design-mockup/settings-mvp-sections-final.html) | 서비스·가계부·그룹 구분 |
+| 카테고리 | [카테고리 관리](../design-mockup/category-management-v6-independent-add.html) | 독립 + 카테고리 추가, 선택 그룹, 부모 안에서 하위 추가 |
+| 결제수단 | [결제수단 관리](../design-mockup/payment-method-management-v1.html) | 카드·현금 영역과 개별 항목 |
+| 그룹 | [목록·상세](../design-mockup/group-management-detail-b-v1.html) / [생성·참여 시트](../design-mockup/group-create-join-sheets-v1.html) | B안 목록→상세, 입력은 시트 |
+| 내 정보 | [프로필·계정 삭제](../design-mockup/profile-management-v1.html) | 프로필 요약 제거, 닉네임/로그인 정보/계정 작업 |
+| 테마 | [테마 B안](../design-mockup/theme-picker-approved-b.html) | 한 줄 목록, 팔레트와 체크, 즉시 적용 |
 | 통계 | 2026-10-30 승인 조합안(기존 준비 중 목업 대체) | 최근 3개월 세로 막대 + 선택 월 카테고리별 가로 막대. 실제 데이터만 표시 |
 
 HTML이 더 오래된 표현을 포함하면 아래 변경 사항과 PRD를 적용한다. 목업은 레이아웃/밀도의 근거이지 최신 데이터 정책을 덮어쓰는 명세가 아니다.

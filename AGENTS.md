@@ -6,7 +6,7 @@
 
 ## 개발 작업 시 참고 문서
 
-프로젝트 안내 문서는 [guide/](guide/)에 모아 둔다. 실제 코드·설계 문서·개발 환경을 만들거나 변경하는 작업에 착수할 때만 다음 개발 지침과 프로젝트 문서를 확인한다. 단순 질의나 설명 요청에는 적용하지 않는다.
+프로젝트 문서의 목차는 [guide/README.md](guide/README.md)에 있다. 실제 코드·설계 문서·개발 환경을 만들거나 변경하는 작업에 착수할 때 아래 문서를 확인한다.
 
 1. [agent-dev.md](guide/agent-dev.md)의 개발·협업·검증 규칙과 [Tasks.md](guide/Tasks.md)의 현재 재개 기록을 확인한다.
 2. 작업 범위에 맞춰 [PRD.md](guide/PRD.md)의 제품 정책, [Design.md](guide/Design.md)와 [design-mockup/index.html](design-mockup/index.html)의 화면, [Architecture.md](guide/Architecture.md)의 기술 구조를 확인한다.
