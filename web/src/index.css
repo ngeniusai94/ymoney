@@ -245,3 +245,13 @@ button { font: inherit; }
 .app-tab.is-active svg { stroke-width: 2.25; }
 .app-message,.app-placeholder { display: grid; min-height: 100dvh; padding: 24px; place-content: center; color: var(--app-muted); font-size: 14px; text-align: center; }
 .app-message a { color: var(--app-primary); }
+
+/* 조작 요소를 길게 눌러도 글자 선택이나 iOS 메뉴가 뜨지 않게 합니다. */
+button,
+a,
+summary,
+.calendar-grid {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
